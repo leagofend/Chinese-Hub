@@ -32,7 +32,7 @@
     .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; outline: none; transition: 0.2s; }
     .auth-card input:focus { border-color: var(--mint); }
     .auth-card .btn { width: 100%; margin-bottom: 10px; }
-    .auth-alert { background: var(--yellow); padding: 15px; border-radius: 15px; font-size: 0.9rem; color: #d6336c; margin-bottom: 20px; border: 2px dashed #d6336c; text-align: left; }
+    .auth-alert { background: var(--yellow); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #d6336c; margin-bottom: 20px; border: 1px solid #d6336c; text-align: left; }
 
     /* --- LAYOUT --- */
     #app { display: none; height: 100vh; overflow: hidden; }
@@ -86,13 +86,8 @@
     .tab-btn { background: var(--yellow); border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; color: var(--text); box-shadow: var(--shadow); transition: 0.2s; }
     .tab-btn.active { background: #ffb3c6; color: white; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
 
-    /* List Item Cards (Vocab & Grammar) */
-    .list-item-card { background: var(--white); padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--pink); margin-bottom: 10px; }
-    .list-item-card .hz { font-size: 1.8rem; color: #d6336c; font-weight: bold; }
-    .list-item-card .py { color: var(--text-light); font-weight: bold; }
-
     /* Flip Cards */
-    .fc-container { perspective: 1000px; width: 100%; max-width: 400px; height: 450px; margin: 0 auto 30px; cursor: pointer; }
+    .fc-container { perspective: 1000px; width: 100%; max-width: 400px; height: 450px; margin: 0 auto 20px; cursor: pointer; }
     .fc-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
     .fc-container.flipped .fc-inner { transform: rotateY(180deg); }
     .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); border: 4px solid var(--white); }
@@ -105,8 +100,8 @@
     /* Quizzes */
     .quiz-box { text-align: center; padding: 30px; background: var(--white); border-radius: var(--radius); border: 2px dashed var(--pink); }
     .quiz-opt { padding: 15px; border-radius: 15px; background: var(--yellow); border: 2px solid transparent; cursor: pointer; font-size: 1.2rem; font-weight: 600; transition: 0.2s; }
-    .quiz-opt.correct { background: #d8f3dc !important; border-color: #4ade80 !important; color: #065f46 !important; }
-    .quiz-opt.wrong { background: #ffe4e6 !important; border-color: #f87171 !important; color: #991b1b !important; }
+    .quiz-opt.correct { background: #d8f3dc !important; border-color: #4ade80 !important; color: #065f46 !important; pointer-events: none; }
+    .quiz-opt.wrong { background: #ffe4e6 !important; border-color: #f87171 !important; color: #991b1b !important; pointer-events: none; }
     .quiz-opt.disabled { pointer-events: none; }
 
     /* --- VIDEO HUB --- */
@@ -168,7 +163,7 @@
         <h1>🎀 Sanrio Academy</h1>
         <div class="auth-alert">
             <strong>DEVELOPER NOTE:</strong><br>
-            Cần thiết lập Firebase Config trong mã nguồn. Hệ thống đã sử dụng cơ chế Username Login và tự động đồng bộ hóa.
+            Cần thiết lập Firebase Config trong mã nguồn. Hệ thống sử dụng Username Login và tự động đồng bộ hóa.
         </div>
         <p style="margin-bottom: 20px; color: var(--text-light);">Đăng nhập bằng Tên đăng nhập (Username). Dữ liệu sẽ đồng bộ đám mây.</p>
         <input type="text" id="auth-user" placeholder="Tên đăng nhập (Chữ & số)">
@@ -235,21 +230,16 @@
             
             <div id="vocab-workspace" style="display:none;">
                 <div class="workspace-header">
-                    <h2>🍓 HSK <span id="v-lvl-title"></span> Vocabulary</h2>
+                    <h2>🍓 HSK <span id="v-lvl-title"></span> Workspace</h2>
                     <button class="btn btn-pink" onclick="window.closeLevel('vocab')">🔙 Back</button>
                 </div>
                 <div class="flex-center" style="margin-bottom:20px;">
-                    <button class="tab-btn active" id="tab-v-list" onclick="window.switchMode('v', 'list')">Word List</button>
-                    <button class="tab-btn" id="tab-v-study" onclick="window.switchMode('v', 'study')">Study Cards</button>
-                    <button class="tab-btn" id="tab-v-quiz" onclick="window.switchMode('v', 'quiz')">Quiz</button>
+                    <button class="tab-btn active" id="tab-v-study" onclick="window.switchMode('v', 'study')">Study Mode</button>
+                    <button class="tab-btn" id="tab-v-quiz" onclick="window.switchMode('v', 'quiz')">Quiz Mode</button>
                     <button class="tab-btn" id="tab-v-add" onclick="window.switchMode('v', 'add')">Add Word</button>
                 </div>
-
-                <div id="v-list" style="display:block;">
-                    <div id="v-list-container" class="grid-fluid"></div>
-                </div>
                 
-                <div id="v-study" style="display:none;">
+                <div id="v-study">
                     <div class="fc-container" onclick="this.classList.toggle('flipped')">
                         <div class="fc-inner">
                             <div class="fc-face fc-front">
@@ -268,10 +258,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-center">
-                        <button class="btn" onclick="window.prevCard()">⬅️</button>
+                    <div class="flex-center" id="fc-controls">
+                        <button class="btn btn-danger" onclick="window.markNotLearned(event)">❌ Chưa thuộc</button>
                         <span id="v-fc-count" style="font-weight:bold; font-size:1.2rem;"></span>
-                        <button class="btn" onclick="window.nextCard()">➡️</button>
+                        <button class="btn btn-mint" onclick="window.markWordLearned(event)">✅ Đã thuộc</button>
                     </div>
                 </div>
 
@@ -299,12 +289,12 @@
             <div id="grammar-home">
                 <h2>📚 Grammar Levels</h2>
                 <div class="hsk-grid">
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 1)"><h3>HSK 1</h3></div>
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 2)"><h3>HSK 2</h3></div>
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 3)"><h3>HSK 3</h3></div>
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 4)"><h3>HSK 4</h3></div>
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 5)"><h3>HSK 5</h3></div>
-                    <div class="hsk-block" onclick="window.openLevel('grammar', 6)"><h3>HSK 6</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 1)"><h3>HSK 1</h3><p>Base + Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 2)"><h3>HSK 2</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 3)"><h3>HSK 3</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 4)"><h3>HSK 4</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 5)"><h3>HSK 5</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 6)"><h3>HSK 6</h3><p>Custom Data</p></div>
                 </div>
             </div>
             
@@ -314,13 +304,13 @@
                     <button class="btn btn-pink" onclick="window.closeLevel('grammar')">🔙 Back</button>
                 </div>
                 <div class="flex-center" style="margin-bottom:20px;">
-                    <button class="tab-btn active" id="tab-g-list" onclick="window.switchMode('g', 'list')">Reference</button>
+                    <button class="tab-btn active" id="tab-g-study" onclick="window.switchMode('g', 'study')">Reference</button>
                     <button class="tab-btn" id="tab-g-quiz" onclick="window.switchMode('g', 'quiz')">Quiz</button>
                     <button class="tab-btn" id="tab-g-add" onclick="window.switchMode('g', 'add')">Add Grammar</button>
                 </div>
 
-                <div id="g-list" style="display:block;">
-                    <div id="g-list-container" style="display:flex; flex-direction:column; gap:15px;"></div>
+                <div id="g-study">
+                    <div id="g-list" style="display:flex; flex-direction:column; gap:15px;"></div>
                 </div>
 
                 <div id="g-quiz" style="display:none;">
@@ -351,7 +341,7 @@
                             <label style="font-weight:bold; cursor:pointer;">
                                 <input type="checkbox" id="auto-pause-toggle"> ⏸️ Tự động dừng từng câu
                             </label>
-                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="window.resumeVideo()">▶️ Tiếp tục</button>
+                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="window.resumeVideo()">▶️ Tiếp tục (Space)</button>
                         </div>
                     </div>
                     <div class="card" style="margin-bottom:0;">
@@ -465,7 +455,7 @@ try {
 }
 
 /* ==========================================================================
-   COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes)
+   COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes) - EXACTLY 150 ITEMS
 ========================================================================== */
 const rawHSK1 = [
     ["爱","ài","yêu, thích","Động từ","Ái","我爱你。"],["八","bā","tám","Số từ","Bát","八个人。"],["爸爸","bàba","bố, cha","Danh từ","Ba ba","我爸爸是医生。"],["杯子","bēizi","cái cốc","Danh từ","Bôi tử","杯子里有水。"],["北京","Běijīng","Bắc Kinh","Danh từ","Bắc Kinh","我去北京。"],
@@ -605,6 +595,10 @@ async function loadCloudData() {
         if(local) userData = { ...userData, ...local };
     }
     
+    // Ensure arrays exist
+    if(!Array.isArray(userData.vocab)) userData.vocab = [];
+    if(!Array.isArray(userData.grammar)) userData.grammar = [];
+    
     const today = new Date().toLocaleDateString();
     if (userData.daily.date !== today) {
         let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
@@ -676,12 +670,12 @@ window.openLevel = function(module, level) {
     if(module === 'vocab') {
         document.getElementById('v-lvl-title').innerText = level;
         document.getElementById('v-add-lvl').innerText = level;
-        window.switchMode('v', 'list');
+        window.switchMode('v', 'study');
     } else if (module === 'grammar') {
         document.getElementById('g-lvl-title').innerText = level;
         let gAddLvl = document.getElementById('g-add-lvl');
         if(gAddLvl) gAddLvl.innerText = level;
-        window.switchMode('g', 'list');
+        window.switchMode('g', 'study');
     }
 };
 
@@ -691,7 +685,7 @@ window.closeLevel = function(module) {
 };
 
 window.switchMode = function(prefix, mode) {
-    ['list', 'study', 'quiz', 'add'].forEach(m => {
+    ['study', 'quiz', 'add'].forEach(m => {
         let btn = document.getElementById(`tab-${prefix}-${m}`);
         let view = document.getElementById(`${prefix}-${m}`);
         if(btn) btn.classList.toggle('active', mode === m);
@@ -699,14 +693,13 @@ window.switchMode = function(prefix, mode) {
     });
     
     if(prefix === 'v') {
-        if(mode === 'list') window.renderVocabList();
         if(mode === 'study') window.initFC();
         if(mode === 'quiz') {
             document.getElementById('v-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="window.startVocabQuiz()">🚀 Start Quiz</button>`;
         }
     }
     if(prefix === 'g') {
-        if(mode === 'list') window.renderGrammar();
+        if(mode === 'study') window.renderGrammar();
         if(mode === 'quiz') {
             document.getElementById('g-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="window.startGrammarQuiz()">🚀 Start Quiz</button>`;
         }
@@ -722,63 +715,65 @@ window.speak = function(text) {
 };
 
 /* ==========================================================================
-   VOCABULARY MODULE (Strict Level Filtering & Lists)
+   VOCABULARY MODULE (Strict Level Filtering & Study Pool)
    ========================================================================== */
 let fcIndex = 0;
 let levelVocab = [];
+let studyPool = [];
 
 function getLevelVocab() {
-    let arr = userData.vocab.filter(v => v.level === currentLevel);
+    let arr = Array.isArray(userData.vocab) ? userData.vocab.filter(v => v.level === currentLevel) : [];
     if(currentLevel === 1) arr = [...baseVocab, ...arr];
     return arr;
 }
 
-window.renderVocabList = function() {
-    let arr = getLevelVocab();
-    const cont = document.getElementById('v-list-container');
-    if(!arr.length) {
-        cont.innerHTML = `<p style="grid-column: 1 / -1; text-align:center;">No words in HSK ${currentLevel}. Add some!</p>`;
-        return;
-    }
-    cont.innerHTML = arr.map((v, i) => `
-        <div class="list-item-card">
-            <div>
-                <div class="hz">${v.h}</div>
-                <div class="py">${v.p}</div>
-                <div style="font-size:0.9rem;">${v.m}</div>
-            </div>
-            <button class="btn btn-pink" style="padding:10px; border-radius:50%;" onclick="window.speak('${v.h}')">🔊</button>
-        </div>
-    `).join('');
-};
-
 window.initFC = function() {
     levelVocab = getLevelVocab();
-    if(!levelVocab.length) {
+    studyPool = [...levelVocab];
+    
+    if(!studyPool.length) {
         document.querySelector('.fc-container').style.display = 'none';
+        document.getElementById('fc-controls').style.display = 'none';
         return alert(`No words in HSK ${currentLevel} yet!`);
     }
     document.querySelector('.fc-container').style.display = 'block';
-    if(fcIndex >= levelVocab.length) fcIndex = 0;
+    document.getElementById('fc-controls').style.display = 'flex';
+    fcIndex = 0;
     window.renderFC();
 };
 
 window.renderFC = function() {
-    if(!levelVocab.length) return;
-    const c = levelVocab[fcIndex];
+    if(!studyPool.length) return;
+    const c = studyPool[fcIndex];
     document.getElementById('v-fc-h').innerText = c.h;
     document.getElementById('v-fc-p').innerText = c.p;
     document.getElementById('v-fc-m').innerText = c.m;
     document.getElementById('v-fc-pos').innerText = c.pos || 'N/A';
     document.getElementById('v-fc-hv').innerText = c.hv || 'N/A';
     document.getElementById('v-fc-e').innerText = c.e || '';
-    document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${levelVocab.length}`;
+    document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${studyPool.length}`;
     document.querySelector('.fc-container').classList.remove('flipped');
 };
 
-window.nextCard = function() { fcIndex = (fcIndex + 1) % levelVocab.length; window.renderFC(); };
-window.prevCard = function() { fcIndex = (fcIndex - 1 + levelVocab.length) % levelVocab.length; window.renderFC(); };
-window.markWordLearned = function() { updateDailyProgress('word'); window.nextCard(); };
+window.markNotLearned = function(e) {
+    if(e) e.stopPropagation();
+    fcIndex = (fcIndex + 1) % studyPool.length;
+    window.renderFC();
+};
+
+window.markWordLearned = function(e) {
+    if(e) e.stopPropagation();
+    updateDailyProgress('word');
+    studyPool.splice(fcIndex, 1);
+    
+    if(studyPool.length === 0) {
+        alert("Chúc mừng! Bạn đã ôn xong toàn bộ từ vựng cấp độ này!");
+        window.initFC(); // Reset pool
+    } else {
+        if(fcIndex >= studyPool.length) fcIndex = 0;
+        window.renderFC();
+    }
+};
 
 window.addVocab = function() {
     const h = document.getElementById('v-add-h').value.trim();
@@ -787,8 +782,10 @@ window.addVocab = function() {
     const pos = document.getElementById('v-add-pos').value.trim();
     const hv = document.getElementById('v-add-hv').value.trim();
     const e = document.getElementById('v-add-e').value.trim();
+    
     if(h && p && m) {
-        userData.vocab.push({h,p,m,pos,hv,e, level: currentLevel});
+        if(!Array.isArray(userData.vocab)) userData.vocab = [];
+        userData.vocab.push({h, p, m, pos, hv, e, level: currentLevel});
         syncToCloud();
         buildDictionary();
         alert(`Saved to Cloud HSK ${currentLevel}!`);
@@ -796,10 +793,12 @@ window.addVocab = function() {
     }
 };
 
+// Vocab Quiz
 let vQuizState = { qIdx: 0, score: 0, qs: [] };
 window.startVocabQuiz = function() {
     let pool = getLevelVocab();
-    if(pool.length < 4) return alert("Need at least 4 words in this level!");
+    if(pool.length < 4) return alert("Cần ít nhất 4 từ vựng để tạo bài kiểm tra!");
+    
     let qs = [];
     for(let i=0; i<10; i++) {
         let correct = pool[Math.floor(Math.random()*pool.length)];
@@ -840,8 +839,10 @@ window.renderVQuiz = function() {
 window.ansVQuiz = function(sel, id) {
     const q = vQuizState.qs[vQuizState.qIdx];
     document.querySelectorAll('#v-quiz-container .quiz-opt').forEach(b=>b.classList.add('disabled'));
-    if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
-    else {
+    if(sel === q.a) { 
+        document.getElementById(id).classList.add('correct'); 
+        vQuizState.score++; 
+    } else {
         document.getElementById(id).classList.add('wrong');
         document.querySelectorAll('#v-quiz-container .quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
     }
@@ -857,14 +858,14 @@ window.nextVocabQuestion = function() {
    GRAMMAR MODULE
    ========================================================================== */
 function getLevelGrammar() {
-    let arr = userData.grammar.filter(g => g.level === currentLevel);
+    let arr = Array.isArray(userData.grammar) ? userData.grammar.filter(g => g.level === currentLevel) : [];
     if(currentLevel === 1) arr = [...baseGrammar, ...arr];
     return arr;
 }
 
 window.renderGrammar = function() {
     let arr = getLevelGrammar();
-    document.getElementById('g-list-container').innerHTML = arr.map(g => `
+    document.getElementById('g-list').innerHTML = arr.map(g => `
         <div class="card" style="margin-bottom:0; background:var(--white);">
             <h4 style="font-size:1.3rem;">${g.t}</h4><p style="white-space:pre-line; line-height:1.6;">${g.d}</p>
         </div>`).join('');
@@ -874,6 +875,7 @@ window.addGrammar = function() {
     const t = document.getElementById('g-add-t').value.trim();
     const d = document.getElementById('g-add-d').value.trim();
     if(t && d) {
+        if(!Array.isArray(userData.grammar)) userData.grammar = [];
         userData.grammar.push({t, d, level: currentLevel});
         syncToCloud();
         window.renderGrammar();
