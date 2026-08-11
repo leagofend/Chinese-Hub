@@ -533,31 +533,46 @@ let globalVocabDict = [];
 
 // Strict Auth Converter
 window.login = async () => {
-    const user = document.getElementById('auth-user').value.trim();
+    let user = document.getElementById('auth-user').value;
     const pass = document.getElementById('auth-pass').value.trim();
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
     
-    const virtualEmail = user.toLowerCase() + "@sanrioapp.com";
+    // Tự động xóa mọi khoảng trắng và ký tự đặc biệt, chỉ giữ lại chữ cái và số
+    user = user.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const virtualEmail = user + "@sanrioapp.com";
+    
     try {
         if(auth) await signInWithEmailAndPassword(auth, virtualEmail, pass);
         else bypassAuth(user); 
     } catch(err) {
-        document.getElementById('auth-error').innerText = "Đăng nhập thất bại: " + err.message;
+        let msg = "Lỗi hệ thống: " + err.message;
+        if(err.code === 'auth/invalid-credential') msg = "Tên đăng nhập hoặc mật khẩu không đúng!";
+        if(err.code === 'auth/invalid-email') msg = "Tên đăng nhập không hợp lệ!";
+        
+        document.getElementById('auth-error').innerText = msg;
         document.getElementById('auth-error').style.display = 'block';
     }
 }
 
 window.register = async () => {
-    const user = document.getElementById('auth-user').value.trim();
+    let user = document.getElementById('auth-user').value;
     const pass = document.getElementById('auth-pass').value.trim();
+    
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
+    if(pass.length < 6) return alert("Mật khẩu bảo mật phải có ít nhất 6 ký tự!");
 
-    const virtualEmail = user.toLowerCase() + "@sanrioapp.com";
+    // Tự động xóa mọi khoảng trắng và ký tự đặc biệt
+    user = user.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const virtualEmail = user + "@sanrioapp.com";
+    
     try {
         if(auth) await createUserWithEmailAndPassword(auth, virtualEmail, pass);
         else bypassAuth(user);
     } catch(err) {
-        document.getElementById('auth-error').innerText = "Đăng ký thất bại: " + err.message;
+        let msg = "Lỗi hệ thống: " + err.message;
+        if(err.code === 'auth/email-already-in-use') msg = "Tên đăng nhập này đã có người sử dụng!";
+        
+        document.getElementById('auth-error').innerText = msg;
         document.getElementById('auth-error').style.display = 'block';
     }
 }
