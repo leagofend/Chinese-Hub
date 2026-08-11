@@ -27,10 +27,12 @@
     /* --- AUTH PORTAL --- */
     #auth-portal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--pink); display: flex; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
     .auth-card { background: var(--white); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); width: 90%; max-width: 400px; text-align: center; }
-    .auth-card h1 { color: #d6336c; margin-bottom: 20px; }
-    .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; }
+    .auth-card h1 { color: #d6336c; margin-bottom: 10px; }
+    .auth-card p { margin-bottom: 20px; color: var(--text-light); }
+    .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; outline: none; }
+    .auth-card input:focus { border-color: var(--mint); }
     .auth-card .btn { width: 100%; margin-bottom: 10px; }
-    .auth-alert { background: var(--yellow); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #d6336c; margin-bottom: 20px; border: 1px solid #d6336c; }
+    .auth-alert { background: var(--yellow); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #d6336c; margin-bottom: 20px; border: 1px solid #d6336c; text-align: left; }
 
     /* --- LAYOUT --- */
     #app { display: none; height: 100vh; overflow: hidden; }
@@ -50,7 +52,7 @@
     h2 { color: #d6336c; margin-bottom: 20px; font-size: 2rem; display: flex; align-items: center; gap: 10px; }
     h3 { color: #d6336c; margin-bottom: 15px; }
 
-    .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 2px solid transparent; }
     .card-pink { background: var(--pink); }
     .card-mint { background: var(--mint); }
     .card-yellow { background: var(--yellow); }
@@ -111,7 +113,7 @@
     video { width: 100%; max-height: 100%; outline: none; border-radius: var(--radius); }
     
     .sub-list { flex: 1; overflow-y: auto; padding: 15px; background: var(--yellow); }
-    .sub-line { padding: 15px; border-bottom: 2px dashed #ffccd5; border-radius: 15px; margin-bottom: 10px; background: var(--white); cursor: pointer; transition: 0.2s; }
+    .sub-line { padding: 15px; border-bottom: 2px dashed #ffccd5; border-radius: 15px; margin-bottom: 10px; background: var(--white); cursor: pointer; transition: 0.2s; position: relative; }
     .sub-line:hover { box-shadow: var(--shadow); }
     .sub-line.active { background: #ffb3c6; color: white; transform: scale(1.02); }
     .sub-time { font-size: 0.85rem; background: #d6336c; color: white; padding: 2px 8px; border-radius: 8px; display: inline-block; margin-bottom: 5px; }
@@ -120,10 +122,10 @@
     .dict-word { cursor: pointer; border-bottom: 2px dotted #d6336c; transition: 0.2s; }
     .dict-word:hover { background: var(--yellow); color: var(--text); }
     
-    .dictation-mode .sub-zh, .dictation-mode .sub-py { display: none; }
-    .dictation-input-area { display: none; margin-top: 10px; }
-    .dictation-mode .dictation-input-area { display: flex; gap: 10px; flex-direction: column; }
-    .dic-res { font-weight: bold; padding: 10px; border-radius: 10px; display: none; }
+    .dictation-mode .sub-normal { display: none; }
+    .dictation-input-area { display: none; margin-top: 10px; flex-direction: column; gap: 10px; }
+    .dictation-mode .dictation-input-area { display: flex; }
+    .dic-res { font-weight: bold; padding: 10px; border-radius: 10px; display: none; text-align: center; }
     .dic-res.correct { display: block; background: #d8f3dc; color: #065f46; }
     .dic-res.wrong { display: block; background: #ffe4e6; color: #991b1b; }
 
@@ -153,17 +155,17 @@
 </head>
 <body>
 
-<!-- FIREBASE AUTH PORTAL -->
+<!-- FIREBASE AUTH PORTAL (USERNAME LOGIN) -->
 <div id="auth-portal">
     <div class="auth-card">
         <h1>🎀 Sanrio Academy Cloud</h1>
         <div class="auth-alert">
             <strong>DEVELOPER NOTE:</strong><br>
-            Please insert your Firebase configuration in the script block below to enable Multi-Device Cloud Sync.
+            Please insert your Firebase configuration in the script block below to enable Multi-Device Cloud Sync. Username-based login active.
         </div>
-        <p style="margin-bottom: 20px; color: var(--text-light);">Log in to sync your progress across Desktop, iPad, and Mobile!</p>
-        <input type="email" id="auth-email" placeholder="Email Address">
-        <input type="password" id="auth-pass" placeholder="Password">
+        <p style="margin-bottom: 20px; color: var(--text-light);">Đăng nhập tài khoản cá nhân (Syncs across Desktop/Mobile)</p>
+        <input type="text" id="auth-user" placeholder="Tên đăng nhập (Username)">
+        <input type="password" id="auth-pass" placeholder="Mật khẩu (Password)">
         <button class="btn btn-pink" onclick="window.login()">Đăng nhập (Login)</button>
         <button class="btn" onclick="window.register()">Đăng ký (Register)</button>
         <p id="auth-error" style="color:red; margin-top:10px; font-size:0.9rem; display:none;"></p>
@@ -180,7 +182,7 @@
         <button class="nav-btn" onclick="window.nav('video')">📺 Video</button>
         <button class="nav-btn" onclick="window.nav('reading')">📖 Read</button>
         <button class="nav-btn" onclick="window.nav('notebook')">📓 Book</button>
-        <button class="nav-btn" style="background:#ff99a8; color:white; margin-top:auto;" onclick="window.logout()">Log Out</button>
+        <button class="nav-btn" style="background:#ff99a8; color:white; margin-top:auto;" onclick="window.logout()">Đăng xuất</button>
     </nav>
 
     <main id="main-content">
@@ -321,7 +323,7 @@
             </div>
         </div>
 
-        <!-- 4. VIDEO HUB (SPLIT SCREEN) -->
+        <!-- 4. VIDEO HUB (SPLIT SCREEN & DICTATION) -->
         <div id="video" class="section">
             <h2>📺 Split-Screen Video Hub</h2>
             <div class="video-hub">
@@ -377,7 +379,7 @@
         </div>
 
         <div id="notebook" class="section">
-            <h2>📓 Cloud Vocab Book</h2>
+            <h2>📓 Personal Cloud Vocab Book</h2>
             <div class="grid-fluid" id="notebook-list"></div>
         </div>
     </main>
@@ -416,8 +418,8 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, on
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 // ==========================================
-// ⚠️ FIREBASE CONFIGURATION PLACEHOLDER
-// Replace these values with your Firebase Project settings!
+// ⚠️ FIREBASE CONFIGURATION OBJECT
+// Keep this exact schema structure
 // ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyAakSHB5eBDHSAAYknaeQ8lqspvjqM_N30",
@@ -429,14 +431,14 @@ const firebaseConfig = {
     measurementId: "G-T9884M528E"
 };
 
-// Initialize Firebase (Wrapped in try-catch for standalone testing without real keys)
+// Initialize Firebase (Wrapped in try-catch for standalone fallback)
 let app, auth, db;
 try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
 } catch (e) {
-    console.error("Firebase not configured correctly. Using mock local state for demonstration.", e);
+    console.warn("Firebase not configured properly. Using local fallback.");
 }
 
 /* ==========================================================================
@@ -516,28 +518,33 @@ let userData = {
 
 let currentLevel = 1;
 let vocabDictMap = []; 
+const domainSuffix = "@sanrioacademy.local";
 
 // Auth Logic
 window.login = async () => {
-    const e = document.getElementById('auth-email').value;
-    const p = document.getElementById('auth-pass').value;
+    const user = document.getElementById('auth-user').value.trim();
+    const pass = document.getElementById('auth-pass').value.trim();
+    if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
+    
     try {
-        if(auth) await signInWithEmailAndPassword(auth, e, p);
-        else bypassAuth(); // Fallback if no firebase config
+        if(auth) await signInWithEmailAndPassword(auth, user + domainSuffix, pass);
+        else bypassAuth(user); // Fallback
     } catch(err) {
-        document.getElementById('auth-error').innerText = err.message;
+        document.getElementById('auth-error').innerText = "Đăng nhập thất bại: " + err.message;
         document.getElementById('auth-error').style.display = 'block';
     }
 }
 
 window.register = async () => {
-    const e = document.getElementById('auth-email').value;
-    const p = document.getElementById('auth-pass').value;
+    const user = document.getElementById('auth-user').value.trim();
+    const pass = document.getElementById('auth-pass').value.trim();
+    if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
+
     try {
-        if(auth) await createUserWithEmailAndPassword(auth, e, p);
-        else bypassAuth();
+        if(auth) await createUserWithEmailAndPassword(auth, user + domainSuffix, pass);
+        else bypassAuth(user);
     } catch(err) {
-        document.getElementById('auth-error').innerText = err.message;
+        document.getElementById('auth-error').innerText = "Đăng ký thất bại: " + err.message;
         document.getElementById('auth-error').style.display = 'block';
     }
 }
@@ -548,9 +555,8 @@ window.logout = async () => {
     document.getElementById('auth-portal').style.display = 'flex';
 }
 
-function bypassAuth() {
-    // Local mock auth for when Firebase config is missing
-    currentUser = { uid: 'mock_local_user' };
+function bypassAuth(user) {
+    currentUser = { uid: 'mock_' + user };
     handleAuthSuccess();
 }
 
@@ -581,12 +587,10 @@ async function loadCloudData() {
             }
         } catch(e) { console.error("Cloud load error", e); }
     } else {
-        // Mock load from localStorage
-        const local = JSON.parse(localStorage.getItem('mock_cloud_' + currentUser.uid));
+        const local = JSON.parse(localStorage.getItem('sanrio_data_' + currentUser.uid));
         if(local) userData = { ...userData, ...local };
     }
     
-    // Check Daily Tracker
     const today = new Date().toLocaleDateString();
     if (userData.daily.date !== today) {
         let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
@@ -611,7 +615,7 @@ async function syncToCloud() {
             await setDoc(doc(db, "users", currentUser.uid), userData, {merge: true});
         } catch(e) { console.error("Cloud sync error", e); }
     } else {
-        localStorage.setItem('mock_cloud_' + currentUser.uid, JSON.stringify(userData));
+        localStorage.setItem('sanrio_data_' + currentUser.uid, JSON.stringify(userData));
     }
     updateDashboardUI();
 }
@@ -626,12 +630,10 @@ function updateDashboardUI() {
     document.getElementById('streak-counter').innerText = userData.daily.streak;
     document.getElementById('words-today').innerText = userData.daily.words;
     
-    // Target: 10 words, 1 quiz = 100%
     let progress = Math.min(100, Math.round(((userData.daily.words/10) + (userData.daily.quizzes/1))*50));
     document.getElementById('goal-progress-bar').style.width = progress + '%';
     document.getElementById('goal-text').innerText = progress;
     
-    // Total words = Base + User Vocab level 1
     let total = baseVocab.length + (userData.vocab['1'] ? userData.vocab['1'].length : 0);
     document.getElementById('total-words').innerText = total;
 }
@@ -905,7 +907,7 @@ window.renderSubtitles = function() {
                         <div class="sub-text">${wrapChinese(s.zh)}</div>
                         <div style="font-size:0.95rem; color:var(--text-light); margin-top:5px;">${s.py} | ${s.en}</div>
                     </div>
-                    <div class="dictation-input-area" id="sd-${i}" style="display:none; margin-top:10px;">
+                    <div class="dictation-input-area" id="sd-${i}">
                         <input type="text" id="dic-in-${i}" placeholder="Gõ chữ Hán bạn nghe được..." onclick="event.stopPropagation()">
                         <div style="display:flex; gap:10px; margin-top:5px;">
                             <button class="btn" style="padding:5px 15px;" onclick="window.checkDic(${i}, '${s.zh}'); event.stopPropagation()">Kiểm tra</button>
@@ -956,29 +958,43 @@ window.saveSub = function() {
     
     if(zh && !isNaN(start) && !isNaN(end)) {
         if(!userData.subs) userData.subs = [];
-        // Note: We only allow editing/deleting custom subs in this demo to avoid modifying base array length mismatches
-        userData.subs.push({start, end, zh, py, en});
+        if (idx > -1) {
+            if(idx < baseSubs.length) return alert("Cannot edit base subs.");
+            userData.subs[idx - baseSubs.length] = {start, end, zh, py, en};
+        } else {
+            userData.subs.push({start, end, zh, py, en});
+        }
         syncToCloud();
         window.cancelSub(); window.renderSubtitles();
     }
 };
 
-window.editSub = function(e, i) { e.stopPropagation(); alert("To maintain base data integrity in demo, editing is locked. Please add a new line."); };
+window.editSub = function(e, i) { 
+    e.stopPropagation(); 
+    if(i < baseSubs.length) return alert("Cannot edit base subtitles in demo. Please add a new one."); 
+    const s = userData.subs[i - baseSubs.length];
+    document.getElementById('sub-idx').value = i;
+    document.getElementById('sub-s').value = s.start;
+    document.getElementById('sub-e').value = s.end;
+    document.getElementById('sub-zh').value = s.zh;
+    document.getElementById('sub-py').value = s.py;
+    document.getElementById('sub-trans').value = s.en;
+    document.getElementById('sub-cancel-btn').style.display='block';
+};
 window.cancelSub = function() {
     document.getElementById('sub-idx').value = "-1"; document.getElementById('sub-cancel-btn').style.display='none';
     ['sub-s','sub-e','sub-zh','sub-py','sub-trans'].forEach(id=>document.getElementById(id).value='');
 };
 window.delSub = function(e, i) {
     e.stopPropagation();
-    let subsCount = [...baseSubs, ...(userData.subs || [])].length;
     if(i < baseSubs.length) return alert("Cannot delete base subtitles!");
     userData.subs.splice(i - baseSubs.length, 1);
     syncToCloud(); window.renderSubtitles();
 };
 
 window.toggleDic = function(idx, show) {
-    document.getElementById(`sn-${idx}`).style.display = show ? 'none' : 'block';
-    document.getElementById(`sd-${idx}`).style.display = show ? 'flex' : 'none';
+    const row = document.getElementById(`sub-row-${idx}`);
+    if(show) row.classList.add('dictation-mode'); else row.classList.remove('dictation-mode');
     if(show) {
         document.getElementById(`dic-in-${idx}`).value = '';
         document.getElementById(`dic-res-${idx}`).className = 'dic-res';
