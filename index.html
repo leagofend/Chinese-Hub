@@ -36,6 +36,7 @@
     
     h2 { color: #d6336c; margin-bottom: 20px; font-size: 2rem; display: flex; align-items: center; gap: 10px; }
     h3 { margin-bottom: 15px; color: #d6336c; }
+    h4 { color: #d6336c; }
     
     .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--clay-shadow); margin-bottom: 20px; }
     .btn { background: var(--mint); border: none; padding: 10px 20px; border-radius: var(--radius); font-weight: 700; cursor: pointer; box-shadow: 4px 4px 10px #c2dbd0, -4px -4px 10px #eeffe8; color: var(--text); transition: 0.2s; }
@@ -76,12 +77,14 @@
     .vocab-info h4 { font-size: 1.5rem; color: #d6336c; margin-bottom: 5px; }
     
     /* Video Hub */
-    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); box-shadow: var(--clay-shadow); margin-bottom: 20px; }
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); box-shadow: var(--clay-shadow); margin-bottom: 20px; background: #000; }
     .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    .subtitles-container { background: var(--yellow); padding: 20px; border-radius: var(--radius); box-shadow: var(--clay-inset); max-height: 300px; overflow-y: auto; }
-    .sub-line { padding: 10px; border-bottom: 2px dashed var(--pink); cursor: pointer; transition: 0.2s; }
-    .sub-line:hover { background: var(--white); border-radius: 10px; }
-    .sub-time { color: #d6336c; font-weight: bold; margin-right: 10px; }
+    .subtitles-container { background: var(--yellow); padding: 15px; border-radius: var(--radius); box-shadow: var(--clay-inset); max-height: 350px; overflow-y: auto; }
+    .sub-line { padding: 12px; border-bottom: 2px dashed var(--pink); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .sub-line:hover { background: var(--white); border-radius: 10px; border-bottom: 2px solid transparent; box-shadow: var(--clay-shadow); }
+    .sub-time { color: #ffffff; background: #d6336c; padding: 4px 8px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; min-width: 55px; text-align: center; }
+    .sub-content { flex: 1; }
+    .sub-actions { display: flex; gap: 5px; }
     
     /* Listening & Speaking */
     .speech-box { text-align: center; padding: 40px; }
@@ -141,8 +144,8 @@
             </div>
             <div class="card">
                 <h3>Recent Activity & Progress</h3>
-                <p>Welcome back! You have full access to the complete HSK 1 curriculum. Keep practicing to maintain your streak!</p>
-                <button class="btn btn-pink mt" style="margin-top:15px;" onclick="nav('flashcards')">Start Reviewing</button>
+                <p>Welcome back! You have full access to the complete HSK 1 curriculum. Check out the new <strong>Video Hub</strong> to learn with interactive subtitles!</p>
+                <button class="btn btn-pink mt" style="margin-top:15px;" onclick="nav('video')">Explore Videos</button>
             </div>
         </div>
 
@@ -236,32 +239,37 @@
             <div class="grid-2">
                 <div>
                     <select id="video-selector" onchange="loadSelectedVideo()" style="margin-bottom: 15px;"></select>
-                    <div class="video-wrapper">
-                        <div id="yt-player"></div>
+                    <div class="video-wrapper" id="yt-player-container">
+                        <!-- Iframe injected here dynamically -->
                     </div>
                     <div class="card">
-                        <h3>➕ Add / Edit Video</h3>
+                        <h3>➕ Add Video</h3>
+                        <p style="font-size:0.85rem; color:#777; margin-bottom:10px;">Accepts YouTube URL (any format) or Video ID.</p>
                         <input type="text" id="vid-title" placeholder="Video Title (e.g., Peppa Pig Chinese)">
-                        <input type="text" id="vid-id" placeholder="YouTube Video ID (e.g., dQw4w9WgXcQ)">
+                        <input type="text" id="vid-id" placeholder="YouTube URL or ID">
                         <button class="btn btn-pink" onclick="saveVideo()">Save Video</button>
                     </div>
                 </div>
                 <div>
                     <h3>Interactive Subtitles</h3>
-                    <p style="font-size: 0.9rem; margin-bottom:10px;">Click a line to jump to that timestamp.</p>
+                    <p style="font-size: 0.9rem; margin-bottom:10px;">Click any subtitle row to jump to that timestamp.</p>
                     <div class="subtitles-container" id="subs-container"></div>
                     
                     <div class="card" style="margin-top:20px;">
-                        <h4>Add Subtitle Line</h4>
+                        <h4 id="sub-form-title">Add Subtitle Line</h4>
+                        <input type="hidden" id="edit-sub-idx" value="-1">
                         <div class="grid-2">
-                            <input type="number" id="sub-time" placeholder="Time in seconds (e.g. 12)">
+                            <input type="text" id="sub-time" placeholder="Time (e.g. 1:30 or 90)">
                             <input type="text" id="sub-zh" placeholder="Chinese (e.g. 你好)">
                         </div>
                         <div class="grid-2">
                             <input type="text" id="sub-py" placeholder="Pinyin (e.g. nǐ hǎo)">
                             <input type="text" id="sub-en" placeholder="Translation (e.g. Hello)">
                         </div>
-                        <button class="btn" onclick="addSubtitle()">Add Line</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="flex:1;" onclick="saveSubtitle()">Save Line</button>
+                            <button class="btn btn-danger" style="display:none;" id="cancel-edit-btn" onclick="cancelEditSub()">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -315,7 +323,6 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 // --- FULL HSK 1 CURRICULUM DATA ---
-// 150 Words generated systematically to save vertical space. Format: [Hanzi, Pinyin, Meaning, Example]
 const rawWords = [
     ["爱","ài","love","我爱你。"],["八","bā","eight","他有八个苹果。"],["爸爸","bàba","father","我爸爸是医生。"],["杯子","bēizi","cup/glass","杯子里有水。"],["北京","Běijīng","Beijing","我在北京住。"],
     ["本","běn","measure word (books)","这是一本书。"],["不","bù","not/no","我不是学生。"],["客气","kèqi","polite","不客气。"],["菜","cài","vegetable/dish","我喜欢吃中国菜。"],["茶","chá","tea","请喝茶。"],
@@ -354,40 +361,32 @@ const seedGrammar = [
     {t:"是...的 (shì...de)", d:"Emphasizes time, place, or manner of a past action.\nEx: 我是昨天来的。 (I came yesterday.)"},
     {t:"了 (le)", d:"Indicates a completed action or change of state.\nEx: 下雨了。 (It has started raining.)"},
     {t:"太...了 (tài...le)", d:"Means 'too' or 'extremely'.\nEx: 太好了！ (That's great!)"},
-    {t:"吗 (ma)", d:"Added to end of statement to make yes/no question.\nEx: 你是学生吗？ (Are you a student?)"},
-    {t:"呢 (ne)", d:"Used for contextual questions.\nEx: 我很好，你呢？ (I'm fine, and you?)"}
+    {t:"吗 (ma)", d:"Added to end of statement to make yes/no question.\nEx: 你是学生吗？ (Are you a student?)"}
 ];
 
 const seedDialogues = [
     {t:"Greeting (问候)", c:"A: 你好！\nB: 你好！\nA: 你叫什么名字？\nB: 我叫大卫。"},
-    {t:"Shopping (购物)", c:"A: 这个多少钱？\nB: 这个十块钱。\nA: 我买一个。谢谢！\nB: 不客气。"},
-    {t:"Dining (吃饭)", c:"A: 你想吃什么？\nB: 我想吃中国菜。\nA: 你喝茶吗？\nB: 好的，谢谢。"},
-    {t:"Asking Time (时间)", c:"A: 现在几点？\nB: 现在上午十点。\nA: 你什么时候去学校？\nB: 我八点去学校。"},
-    {t:"Family (家庭)", c:"A: 你家有几口人？\nB: 我家有三口人。爸爸、妈妈和我。\nA: 你爸爸做什么工作？\nB: 他是医生。"}
+    {t:"Shopping (购物)", c:"A: 这个多少钱？\nB: 这个十块钱。\nA: 我买一个。谢谢！\nB: 不客气。"}
 ];
 
 const seedStories = [
     {t:"My Family (我的家)", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
-    {t:"A Day at School (学校的一天)", c:"今天星期一，我去学校。上午我有汉语课。我的汉语老师很好。中午，我和同学在饭店吃饭。下午我回家。"},
-    {t:"Buying Apples (买苹果)", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”。我买了十个苹果。我很高兴。"},
-    {t:"The Weather (天气)", c:"昨天天气很热。今天下雨了，天气很冷。明天天气怎么样？明天天气很好。"},
-    {t:"Going to Hospital (去医院)", c:"我不高兴。今天我很冷。我妈妈说：“我们去医院。” 医生说我喝多一点水。"}
+    {t:"A Day at School (学校的一天)", c:"今天星期一，我去学校。上午我有汉语课。我的汉语老师很好。中午，我和同学在饭店吃饭。下午我回家。"}
 ];
 
 const seedListen = [
     {t:"Script 1: Introductions", c:"大家好，我叫玛丽。我是美国人。认识你们很高兴。"},
-    {t:"Script 2: Transportation", c:"明天我不去学校。我要坐飞机去北京看朋友。"},
-    {t:"Script 3: Shopping", c:"这个杯子很漂亮。多少钱？五十块？太贵了！"},
-    {t:"Script 4: Food", c:"今天中午我想吃中国菜，喝一点儿茶。"},
-    {t:"Script 5: Weather", c:"今天天气不太好，下雨了，很冷。我们在家看电影吧。"}
+    {t:"Script 2: Transportation", c:"明天我不去学校。我要坐飞机去北京看朋友。"}
 ];
 
 const seedVideos = [
     {
-        id: '1', title: 'Peppa Pig (Demo)', ytId: 'b7Z_aEa4zEM', 
+        id: '1', title: 'Peppa Pig Chinese (Demo)', ytId: 'b7Z_aEa4zEM', 
         subs: [
             { t: 0, zh: "我是佩奇。", py: "wǒ shì pèi qí.", en: "I am Peppa." },
-            { t: 3, zh: "这是我的弟弟乔治。", py: "zhè shì wǒ de dìdi qiáozhì.", en: "This is my little brother George." }
+            { t: 3, zh: "这是我的弟弟乔治。", py: "zhè shì wǒ de dìdi qiáozhì.", en: "This is my little brother George." },
+            { t: 6, zh: "这是妈妈。", py: "zhè shì māma.", en: "This is Mummy Pig." },
+            { t: 9, zh: "这是爸爸。", py: "zhè shì bàba.", en: "This is Daddy Pig." }
         ]
     }
 ];
@@ -399,10 +398,9 @@ function initData() {
     if(!localStorage.getItem('hsk_convos')) localStorage.setItem('hsk_convos', JSON.stringify(seedDialogues));
     if(!localStorage.getItem('hsk_stories')) localStorage.setItem('hsk_stories', JSON.stringify(seedStories));
     if(!localStorage.getItem('hsk_listen')) localStorage.setItem('hsk_listen', JSON.stringify(seedListen));
-    if(!localStorage.getItem('hsk_videos')) localStorage.setItem('hsk_videos', JSON.stringify(seedVideos));
+    if(!localStorage.getItem('sanrio_academy_videos')) localStorage.setItem('sanrio_academy_videos', JSON.stringify(seedVideos));
     if(!localStorage.getItem('hsk_vocab_book')) localStorage.setItem('hsk_vocab_book', JSON.stringify([]));
     
-    // Streak logic
     let lastLogin = localStorage.getItem('last_login');
     let streak = parseInt(localStorage.getItem('streak') || 0);
     let today = new Date().toDateString();
@@ -414,7 +412,7 @@ function initData() {
 }
 initData();
 
-function getData(key) { return JSON.parse(localStorage.getItem(key)); }
+function getData(key) { return JSON.parse(localStorage.getItem(key)) || []; }
 function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
 // --- UI NAVIGATION ---
@@ -459,10 +457,10 @@ function renderFC() {
 function nextCard() { fcIndex = (fcIndex + 1) % fcData.length; renderFC(); }
 function prevCard() { fcIndex = (fcIndex - 1 + fcData.length) % fcData.length; renderFC(); }
 function addCard() {
-    const h = document.getElementById('add-fc-h').value;
-    const p = document.getElementById('add-fc-p').value;
-    const m = document.getElementById('add-fc-m').value;
-    const e = document.getElementById('add-fc-e').value;
+    const h = document.getElementById('add-fc-h').value.trim();
+    const p = document.getElementById('add-fc-p').value.trim();
+    const m = document.getElementById('add-fc-m').value.trim();
+    const e = document.getElementById('add-fc-e').value.trim();
     if(h && p && m) {
         fcData.push({h, p, m, e});
         setData('hsk_words', fcData);
@@ -488,8 +486,8 @@ function renderGrammarAndConvos() {
         </div>`).join('');
 }
 function addGrammar() {
-    const t = document.getElementById('add-g-title').value;
-    const d = document.getElementById('add-g-desc').value;
+    const t = document.getElementById('add-g-title').value.trim();
+    const d = document.getElementById('add-g-desc').value.trim();
     if(t && d) {
         const g = getData('hsk_grammar'); g.push({t, d}); setData('hsk_grammar', g);
         renderGrammarAndConvos();
@@ -497,8 +495,8 @@ function addGrammar() {
     }
 }
 function addConvo() {
-    const t = document.getElementById('add-c-title').value;
-    const c = document.getElementById('add-c-content').value;
+    const t = document.getElementById('add-c-title').value.trim();
+    const c = document.getElementById('add-c-content').value.trim();
     if(t && c) {
         const arr = getData('hsk_convos'); arr.push({t, c}); setData('hsk_convos', arr);
         renderGrammarAndConvos();
@@ -515,8 +513,8 @@ function renderStories() {
         </div>`).join('');
 }
 function addStory() {
-    const t = document.getElementById('add-s-title').value;
-    const c = document.getElementById('add-s-content').value;
+    const t = document.getElementById('add-s-title').value.trim();
+    const c = document.getElementById('add-s-content').value.trim();
     if(t && c) {
         const arr = getData('hsk_stories'); arr.push({t, c}); setData('hsk_stories', arr);
         renderStories();
@@ -531,8 +529,6 @@ function handleTextSelection(e) {
     
     if (text.length > 0 && /[\u4e00-\u9fa5]/.test(text)) {
         document.getElementById('tt-word').innerText = text;
-        
-        // Auto-lookup
         const found = getData('hsk_words').find(w => w.h === text);
         document.getElementById('tt-pinyin').value = found ? found.p : '';
         document.getElementById('tt-meaning').value = found ? found.m : '';
@@ -550,22 +546,15 @@ function handleTextSelection(e) {
     }
 }
 
-function closeTooltip() {
-    document.getElementById('tooltip').style.display = 'none';
-}
-
-// Hide tooltip on outside click
+function closeTooltip() { document.getElementById('tooltip').style.display = 'none'; }
 document.addEventListener('mousedown', (e) => {
     const tt = document.getElementById('tooltip');
-    if(!tt.contains(e.target) && !e.target.classList.contains('story-text')){
-        closeTooltip();
-    }
+    if(!tt.contains(e.target) && !e.target.classList.contains('story-text')) closeTooltip();
 });
 
 function saveVocabFromTooltip() {
     const word = document.getElementById('tt-word').innerText;
     const note = `${document.getElementById('tt-pinyin').value} | ${document.getElementById('tt-meaning').value}\nEx: ${document.getElementById('tt-example').value}`;
-    
     const vocab = getData('hsk_vocab_book');
     vocab.push({ word, note });
     setData('hsk_vocab_book', vocab);
@@ -599,53 +588,25 @@ function deleteVocab(i) {
     renderVocabBook();
 }
 
-// --- YOUTUBE VIDEO HUB ---
+// --- YOUTUBE VIDEO HUB (ROBUST IMPLEMENTATION) ---
 let ytPlayer = null;
 let currentVideoId = null;
 
-function initVideoSection() {
-    const videos = getData('hsk_videos');
-    const sel = document.getElementById('video-selector');
-    sel.innerHTML = videos.map(v => `<option value="${v.id}">${v.title}</option>`).join('');
-    if(videos.length > 0) loadSelectedVideo();
+function extractYouTubeID(url) {
+    if (!url) return null;
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/);
+    return match ? match[1] : null;
 }
 
-function loadSelectedVideo() {
-    const vidId = document.getElementById('video-selector').value;
-    const videos = getData('hsk_videos');
-    const video = videos.find(v => v.id === vidId);
-    currentVideoId = vidId;
-    
-    if (ytPlayer) {
-        ytPlayer.loadVideoById(video.ytId);
-    } else {
-        ytPlayer = new YT.Player('yt-player', {
-            height: '390', width: '640', videoId: video.ytId,
-            playerVars: { 'playsinline': 1 }
-        });
+function parseTime(input) {
+    if(typeof input === 'number') return input;
+    if(!input) return 0;
+    if(input.includes(':')) {
+        const parts = input.split(':');
+        return parseInt(parts[0])*60 + parseInt(parts[1]);
     }
-    renderSubtitles();
-}
-
-function renderSubtitles() {
-    const video = getData('hsk_videos').find(v => v.id === currentVideoId);
-    const container = document.getElementById('subs-container');
-    if(!video || !video.subs.length) {
-        container.innerHTML = "<p>No subtitles available. Add some below!</p>"; return;
-    }
-    
-    container.innerHTML = video.subs.map((s, i) => `
-        <div class="sub-line" onclick="ytPlayer.seekTo(${s.t})">
-            <div style="display:flex; justify-content:space-between;">
-                <div>
-                    <span class="sub-time">[${formatTime(s.t)}]</span>
-                    <strong style="font-size:1.2rem;">${s.zh}</strong> 
-                    <span style="color:#777; margin-left:10px;">${s.py}</span>
-                    <p style="margin-left:55px; font-style:italic; margin-top:5px;">${s.en}</p>
-                </div>
-                <button class="btn btn-danger" style="padding:5px 10px; border:none; border-radius:5px; align-self:flex-start;" onclick="deleteSub(event, ${i})">X</button>
-            </div>
-        </div>`).join('');
+    return parseInt(input) || 0;
 }
 
 function formatTime(secs) {
@@ -654,43 +615,159 @@ function formatTime(secs) {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-function saveVideo() {
-    const title = document.getElementById('vid-title').value;
-    const ytId = document.getElementById('vid-id').value;
-    if(title && ytId) {
-        const vids = getData('hsk_videos');
-        vids.push({ id: Date.now().toString(), title, ytId, subs: [] });
-        setData('hsk_videos', vids);
-        initVideoSection();
-        document.getElementById('vid-title').value = ''; document.getElementById('vid-id').value = '';
+function initVideoSection() {
+    const videos = getData('sanrio_academy_videos');
+    const sel = document.getElementById('video-selector');
+    sel.innerHTML = videos.map(v => `<option value="${v.id}">${v.title}</option>`).join('');
+    if(videos.length > 0) {
+        if(currentVideoId !== sel.value) loadSelectedVideo();
+    } else {
+        document.getElementById('yt-player-container').innerHTML = '';
+        document.getElementById('subs-container').innerHTML = '<p>No videos added yet.</p>';
     }
 }
 
-function addSubtitle() {
+function loadSelectedVideo() {
+    const vidId = document.getElementById('video-selector').value;
+    const videos = getData('sanrio_academy_videos');
+    const video = videos.find(v => v.id === vidId);
+    if(!video) return;
+    
+    currentVideoId = vidId;
+    
+    // Privacy-enhanced URL injection with robust iframe parameters
+    const origin = window.location.origin || window.location.protocol + '//' + window.location.host;
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${video.ytId}?rel=0&enablejsapi=1&origin=${origin}`;
+    
+    const iframeHtml = `<iframe id="yt-player-iframe" width="100%" height="100%" src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+    
+    document.getElementById('yt-player-container').innerHTML = iframeHtml;
+    
+    // Bind YouTube Iframe API
+    if(window.YT && window.YT.Player) {
+        ytPlayer = new YT.Player('yt-player-iframe');
+    } else {
+        // Fallback if API hasn't loaded yet
+        window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new YT.Player('yt-player-iframe');
+        };
+    }
+    
+    cancelEditSub();
+    renderSubtitles();
+}
+
+function renderSubtitles() {
+    const video = getData('sanrio_academy_videos').find(v => v.id === currentVideoId);
+    const container = document.getElementById('subs-container');
+    if(!video || !video.subs || !video.subs.length) {
+        container.innerHTML = "<p style='color:#777'>No subtitles available. Add some below!</p>"; return;
+    }
+    
+    container.innerHTML = video.subs.map((s, i) => `
+        <div class="sub-line" onclick="seekVideo(${s.t})">
+            <div class="sub-time">${formatTime(s.t)}</div>
+            <div class="sub-content">
+                <strong style="font-size:1.1rem; color:var(--text);">${s.zh}</strong> 
+                <span style="color:#777; margin-left:10px;">${s.py}</span>
+                <div style="font-style:italic; font-size:0.95rem; margin-top:3px;">${s.en}</div>
+            </div>
+            <div class="sub-actions">
+                <button class="btn btn-pink" style="padding:5px 10px; font-size:0.8rem;" onclick="editSub(event, ${i})">Edit</button>
+                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem; border:none; border-radius:10px; cursor:pointer;" onclick="deleteSub(event, ${i})">X</button>
+            </div>
+        </div>`).join('');
+}
+
+function seekVideo(seconds) {
+    if(ytPlayer && typeof ytPlayer.seekTo === 'function') {
+        ytPlayer.seekTo(seconds, true);
+        ytPlayer.playVideo();
+    } else {
+        // Fallback reload iframe with start parameter if API fails
+        const origin = window.location.origin || window.location.protocol + '//' + window.location.host;
+        const video = getData('sanrio_academy_videos').find(v => v.id === currentVideoId);
+        const embedUrl = `https://www.youtube-nocookie.com/embed/${video.ytId}?start=${seconds}&rel=0&enablejsapi=1&origin=${origin}&autoplay=1`;
+        document.getElementById('yt-player-iframe').src = embedUrl;
+    }
+}
+
+function saveVideo() {
+    const title = document.getElementById('vid-title').value.trim();
+    const inputUrl = document.getElementById('vid-id').value.trim();
+    const ytId = extractYouTubeID(inputUrl);
+    
+    if(title && ytId) {
+        const vids = getData('sanrio_academy_videos');
+        vids.push({ id: Date.now().toString(), title, ytId, subs: [] });
+        setData('sanrio_academy_videos', vids);
+        initVideoSection();
+        document.getElementById('vid-title').value = '';
+        document.getElementById('vid-id').value = '';
+        alert("Video added successfully!");
+    } else {
+        alert("Please enter a valid Title and YouTube Link/ID.");
+    }
+}
+
+function saveSubtitle() {
     if(!currentVideoId) return alert("Select a video first!");
-    const t = parseInt(document.getElementById('sub-time').value) || 0;
-    const zh = document.getElementById('sub-zh').value;
-    const py = document.getElementById('sub-py').value;
-    const en = document.getElementById('sub-en').value;
+    const t = parseTime(document.getElementById('sub-time').value);
+    const zh = document.getElementById('sub-zh').value.trim();
+    const py = document.getElementById('sub-py').value.trim();
+    const en = document.getElementById('sub-en').value.trim();
+    const editIdx = parseInt(document.getElementById('edit-sub-idx').value);
     
     if(zh) {
-        const vids = getData('hsk_videos');
+        const vids = getData('sanrio_academy_videos');
         const vIndex = vids.findIndex(v => v.id === currentVideoId);
-        vids[vIndex].subs.push({ t, zh, py, en });
+        
+        if (editIdx > -1) {
+            vids[vIndex].subs[editIdx] = { t, zh, py, en };
+        } else {
+            vids[vIndex].subs.push({ t, zh, py, en });
+        }
+        
+        // Sort chronologically
         vids[vIndex].subs.sort((a,b) => a.t - b.t);
-        setData('hsk_videos', vids);
+        setData('sanrio_academy_videos', vids);
+        
+        cancelEditSub();
         renderSubtitles();
-        ['sub-time','sub-zh','sub-py','sub-en'].forEach(id => document.getElementById(id).value = '');
     }
+}
+
+function editSub(e, idx) {
+    e.stopPropagation();
+    const video = getData('sanrio_academy_videos').find(v => v.id === currentVideoId);
+    const sub = video.subs[idx];
+    document.getElementById('edit-sub-idx').value = idx;
+    document.getElementById('sub-time').value = formatTime(sub.t);
+    document.getElementById('sub-zh').value = sub.zh;
+    document.getElementById('sub-py').value = sub.py;
+    document.getElementById('sub-en').value = sub.en;
+    
+    document.getElementById('sub-form-title').innerText = "Edit Subtitle Line";
+    document.getElementById('cancel-edit-btn').style.display = "block";
+}
+
+function cancelEditSub() {
+    document.getElementById('edit-sub-idx').value = "-1";
+    document.getElementById('sub-form-title').innerText = "Add Subtitle Line";
+    document.getElementById('cancel-edit-btn').style.display = "none";
+    ['sub-time','sub-zh','sub-py','sub-en'].forEach(id => document.getElementById(id).value = '');
 }
 
 function deleteSub(e, idx) {
     e.stopPropagation();
-    const vids = getData('hsk_videos');
-    const vIndex = vids.findIndex(v => v.id === currentVideoId);
-    vids[vIndex].subs.splice(idx, 1);
-    setData('hsk_videos', vids);
-    renderSubtitles();
+    if(confirm("Delete this subtitle line?")) {
+        const vids = getData('sanrio_academy_videos');
+        const vIndex = vids.findIndex(v => v.id === currentVideoId);
+        vids[vIndex].subs.splice(idx, 1);
+        setData('sanrio_academy_videos', vids);
+        cancelEditSub();
+        renderSubtitles();
+    }
 }
 
 // --- LISTENING & SPEAKING ---
@@ -698,16 +775,18 @@ function renderListening() {
     document.getElementById('listening-list').innerHTML = getData('hsk_listen').map(l => `
         <div class="card">
             <h4>${l.t}</h4>
-            <p style="white-space: pre-line; display:none; background:var(--yellow); padding:10px; border-radius:10px; margin:10px 0;" id="l-text-${l.t.replace(/\s/g,'')}">${l.c}</p>
-            <button class="btn btn-pink mt" onclick="playAudio('${l.c}')">🔊 Play Audio</button>
-            <button class="btn mt" onclick="document.getElementById('l-text-${l.t.replace(/\s/g,'')}').style.display='block'">👁️ Show Transcript</button>
+            <p style="white-space: pre-line; display:none; background:var(--yellow); padding:15px; border-radius:10px; margin:10px 0; font-size:1.1rem;" id="l-text-${l.t.replace(/\s/g,'')}">${l.c}</p>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn btn-pink" onclick="playAudio('${l.c}')">🔊 Play Audio</button>
+                <button class="btn" onclick="document.getElementById('l-text-${l.t.replace(/\s/g,'')}').style.display='block'">👁️ Show Script</button>
+            </div>
         </div>`).join('');
     generateRandomSpeak();
 }
 
 function addListen() {
-    const t = document.getElementById('add-l-title').value;
-    const c = document.getElementById('add-l-text').value;
+    const t = document.getElementById('add-l-title').value.trim();
+    const c = document.getElementById('add-l-text').value.trim();
     if(t && c) {
         const arr = getData('hsk_listen'); arr.push({t, c}); setData('hsk_listen', arr);
         renderListening();
@@ -737,7 +816,7 @@ function startSpeechRec() {
     const btn = document.getElementById('mic-btn');
     
     if(!('webkitSpeechRecognition' in window)) {
-        resElem.innerText = "Speech Recognition not supported. Try Chrome!";
+        resElem.innerText = "Speech Recognition not supported. Try Google Chrome!";
         return;
     }
     
@@ -765,7 +844,7 @@ function startSpeechRec() {
     recognition.start();
 }
 
-// Init view
+// Init Dashboard
 updateDashboard();
 </script>
 </body>
