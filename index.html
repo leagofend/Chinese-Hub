@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanrio Chinese Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --pink: #ffccd5;
+        --mint: #d8f3dc;
+        --yellow: #fefae0;
+        --white: #ffffff;
+        --text: #594a4e;
+        --shadow-light: #ffffff;
+        --shadow-dark: #e6b8c0;
+        --radius: 20px;
+        --clay-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+        --clay-inset: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+    body { background-color: var(--pink); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+    
+    /* Layout */
+    #app { display: flex; width: 100%; height: 100%; }
+    nav { background: var(--pink); width: 250px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: 4px 0 10px rgba(0,0,0,0.05); z-index: 10; }
+    nav h1 { font-size: 1.5rem; text-align: center; margin-bottom: 20px; color: #d6336c; }
+    .nav-btn { background: var(--pink); border: none; padding: 15px; border-radius: var(--radius); font-weight: 700; color: var(--text); cursor: pointer; box-shadow: var(--clay-shadow); transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+    .nav-btn:active, .nav-btn.active { box-shadow: var(--clay-inset); color: #d6336c; }
+    main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; position: relative; }
+    
+    /* Components */
+    .section { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    h2 { color: #d6336c; margin-bottom: 20px; font-size: 2rem; }
+    h3 { margin-bottom: 15px; color: #d6336c; }
+    
+    .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--clay-shadow); margin-bottom: 20px; }
+    .btn { background: var(--mint); border: none; padding: 10px 20px; border-radius: var(--radius); font-weight: 700; cursor: pointer; box-shadow: 4px 4px 10px #c2dbd0, -4px -4px 10px #eeffe8; color: var(--text); transition: 0.2s; }
+    .btn:active { box-shadow: inset 4px 4px 10px #c2dbd0, inset -4px -4px 10px #eeffe8; }
+    .btn-pink { background: var(--pink); box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light); }
+    .btn-pink:active { box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light); }
+    
+    input, textarea { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--yellow); box-shadow: inset 2px 2px 5px #e5e1ca, inset -2px -2px 5px #ffffff; margin-bottom: 10px; outline: none; color: var(--text); font-weight: 600; }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    
+    /* Dashboard */
+    .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+    .stat-box { flex: 1; background: var(--yellow); padding: 20px; border-radius: var(--radius); text-align: center; box-shadow: var(--clay-shadow); }
+    .stat-box h3 { font-size: 2.5rem; margin: 10px 0; }
+    
+    /* Flashcards */
+    .fc-container { perspective: 1000px; width: 300px; height: 350px; margin: 0 auto 30px; cursor: pointer; }
+    .fc-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+    .fc-container.flipped .fc-inner { transform: rotateY(180deg); }
+    .fc-front, .fc-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius); padding: 20px; box-shadow: var(--clay-shadow); }
+    .fc-front { background: var(--yellow); }
+    .fc-back { background: var(--mint); transform: rotateY(180deg); }
+    .fc-hanzi { font-size: 5rem; font-weight: 700; color: #d6336c; }
+    .fc-pinyin { font-size: 1.5rem; color: #777; margin-bottom: 10px; }
+    .fc-controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
+    
+    /* Interactive Reading & Tooltip */
+    .story-text { font-size: 1.2rem; line-height: 2; cursor: text; padding: 20px; background: var(--yellow); border-radius: var(--radius); box-shadow: var(--clay-inset); }
+    #tooltip { position: absolute; display: none; background: var(--white); padding: 15px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 100; border: 2px solid var(--pink); }
+    #tooltip::after { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-width: 0 10px 10px 10px; border-style: solid; border-color: transparent transparent var(--pink) transparent; }
+    
+    /* Vocab Book */
+    .vocab-list { display: flex; flex-direction: column; gap: 10px; }
+    .vocab-item { display: flex; justify-content: space-between; align-items: center; background: var(--mint); padding: 15px; border-radius: 15px; }
+    
+    /* Canvas Pad */
+    .canvas-container { position: relative; width: 300px; height: 300px; margin: 0 auto 20px; }
+    canvas { background: var(--yellow); border-radius: 10px; box-shadow: var(--clay-shadow); cursor: crosshair; }
+    .grid-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-image: linear-gradient(rgba(214,51,108,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(214,51,108,0.2) 1px, transparent 1px), linear-gradient(45deg, rgba(214,51,108,0.2) 1px, transparent 1px), linear-gradient(-45deg, rgba(214,51,108,0.2) 1px, transparent 1px); background-size: 50% 50%, 50% 50%, 100% 100%, 100% 100%; background-position: center; border: 2px solid #d6336c; border-radius: 10px; }
+    .char-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .char-chip { padding: 8px 15px; background: var(--pink); border-radius: 10px; cursor: pointer; font-weight: bold; }
+    
+    /* Mobile */
+    @media (max-width: 768px) {
+        body { flex-direction: column; }
+        nav { width: 100%; order: 2; flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: space-around; border-radius: 30px 30px 0 0; }
+        nav h1 { display: none; }
+        .nav-btn { padding: 10px; font-size: 0.9rem; flex: 1 1 30%; justify-content: center; }
+        main { border-radius: 0 0 30px 30px; order: 1; padding: 20px; }
+        .grid-2 { grid-template-columns: 1fr; }
+        .stats { flex-direction: column; }
+    }
+</style>
+</head>
+<body>
+
+<div id="app">
+    <nav>
+        <h1>🎀 Sanrio Academy</h1>
+        <button class="nav-btn active" onclick="nav('dashboard')">🏠 Home</button>
+        <button class="nav-btn" onclick="nav('flashcards')">🎴 Flashcards</button>
+        <button class="nav-btn" onclick="nav('grammar')">📚 Grammar & Convos</button>
+        <button class="nav-btn" onclick="nav('reading')">📖 Reading</button>
+        <button class="nav-btn" onclick="nav('vocab')">📓 Vocab Book</button>
+        <button class="nav-btn" onclick="nav('listening')">🎧 Listen & Speak</button>
+        <button class="nav-btn" onclick="nav('writing')">✍️ Writing Pad</button>
+    </nav>
+
+    <main>
+        <!-- Dashboard -->
+        <div id="dashboard" class="section active">
+            <h2>Welcome to Sanrio Chinese Academy! 🌸</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <p>Daily Streak</p>
+                    <h3 id="streak">0</h3>
+                    <p>Days ☁️</p>
+                </div>
+                <div class="stat-box">
+                    <p>Words Mastered</p>
+                    <h3 id="words-mastered">0</h3>
+                    <p>/ 150 🍓</p>
+                </div>
+                <div class="stat-box">
+                    <p>Vocab Saved</p>
+                    <h3 id="vocab-count">0</h3>
+                    <p>Words 🎀</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Recent Activity</h3>
+                <p>You have full access to the complete HSK 1 curriculum!</p>
+                <button class="btn mt" onclick="nav('flashcards')">Start Learning</button>
+            </div>
+        </div>
+
+        <!-- Flashcards -->
+        <div id="flashcards" class="section">
+            <h2>🎴 Flashcard Hub (HSK 1)</h2>
+            <div class="fc-container" onclick="this.classList.toggle('flipped')">
+                <div class="fc-inner">
+                    <div class="fc-front">
+                        <div class="fc-hanzi" id="fc-h"></div>
+                        <div class="fc-pinyin" id="fc-p"></div>
+                        <p style="font-size:0.9rem; color:#aaa;">Click to flip 🔄</p>
+                    </div>
+                    <div class="fc-back">
+                        <h3 id="fc-m" style="font-size:1.8rem;"></h3>
+                        <p id="fc-e" style="margin-top:15px; font-style:italic; font-size:1.1rem;"></p>
+                        <button class="btn-pink" style="margin-top:20px; padding:8px 15px; border:none; border-radius:10px; cursor:pointer;" onclick="playAudio(document.getElementById('fc-h').innerText); event.stopPropagation();">🔊 Listen</button>
+                    </div>
+                </div>
+            </div>
+            <div class="fc-controls">
+                <button class="btn" onclick="prevCard()">⬅️ Prev</button>
+                <span id="fc-counter" style="line-height:40px; font-weight:bold;"></span>
+                <button class="btn" onclick="nextCard()">Next ➡️</button>
+            </div>
+            
+            <div class="card">
+                <h3>➕ Add Custom Flashcard</h3>
+                <input type="text" id="add-fc-h" placeholder="Hanzi (e.g., 苹果)">
+                <input type="text" id="add-fc-p" placeholder="Pinyin (e.g., píngguǒ)">
+                <input type="text" id="add-fc-m" placeholder="Meaning (e.g., Apple)">
+                <input type="text" id="add-fc-e" placeholder="Example Sentence">
+                <button class="btn" onclick="addCard()">Add Word</button>
+            </div>
+        </div>
+
+        <!-- Grammar & Conversations -->
+        <div id="grammar" class="section">
+            <h2>📚 Grammar & Conversations</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>✨ Core HSK 1 Grammar</h3>
+                    <div id="grammar-list"></div>
+                    <div class="card" style="margin-top:20px;">
+                        <h4>Add Grammar Point</h4>
+                        <input type="text" id="add-g-title" placeholder="Structure (e.g., Subj + 很 + Adj)">
+                        <textarea id="add-g-desc" placeholder="Explanation & Example"></textarea>
+                        <button class="btn" onclick="addGrammar()">Add Grammar</button>
+                    </div>
+                </div>
+                <div>
+                    <h3>💬 Themed Conversations</h3>
+                    <div id="convo-list"></div>
+                    <div class="card" style="margin-top:20px;">
+                        <h4>Add Conversation</h4>
+                        <input type="text" id="add-c-title" placeholder="Theme (e.g., At the Park)">
+                        <textarea id="add-c-content" placeholder="A: 你好! \nB: 你好!"></textarea>
+                        <button class="btn" onclick="addConvo()">Add Convo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Reading -->
+        <div id="reading" class="section">
+            <h2>📖 Interactive Reading</h2>
+            <p>Highlight any Chinese text to save it to your Personal Vocab Book! 🖍️</p>
+            <div id="story-list"></div>
+            
+            <div class="card" style="margin-top:20px;">
+                <h3>➕ Add a Story</h3>
+                <input type="text" id="add-s-title" placeholder="Story Title">
+                <textarea id="add-s-content" rows="4" placeholder="Paste Chinese text here..."></textarea>
+                <button class="btn" onclick="addStory()">Add Story</button>
+            </div>
+        </div>
+
+        <!-- Personal Vocab Book -->
+        <div id="vocab" class="section">
+            <h2>📓 Personal Vocab Book</h2>
+            <div class="vocab-list" id="personal-vocab-list"></div>
+        </div>
+
+        <!-- Listening & Speaking -->
+        <div id="listening" class="section">
+            <h2>🎧 Listen & Speak</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Listening Dialogues</h3>
+                    <div id="listening-list"></div>
+                    <div class="card" style="margin-top:20px;">
+                        <h4>Add Listening Script</h4>
+                        <input type="text" id="add-l-title" placeholder="Title">
+                        <textarea id="add-l-text" placeholder="Chinese script for text-to-speech..."></textarea>
+                        <button class="btn" onclick="addListen()">Add Script</button>
+                    </div>
+                </div>
+                <div>
+                    <h3>🗣️ Pronunciation Check</h3>
+                    <div class="card">
+                        <p>Target Phrase:</p>
+                        <h3 id="speak-target">我爱学习汉语。</h3>
+                        <button class="btn-pink" onclick="generateRandomSpeak()">Shuffle Target</button>
+                        <br><br>
+                        <button class="btn" id="mic-btn" onclick="startSpeechRec()">🎤 Start Speaking</button>
+                        <p id="speech-result" style="margin-top:15px; font-weight:bold;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Writing Pad -->
+        <div id="writing" class="section">
+            <h2>✍️ Character Writing Pad</h2>
+            <div class="canvas-container">
+                <canvas id="write-pad" width="300" height="300"></canvas>
+                <div class="grid-bg"></div>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <input type="color" id="pen-color" value="#594a4e" style="width:50px; height:40px; padding:0; border-radius:5px;">
+                <input type="range" id="pen-width" min="2" max="20" value="8" style="width:100px; vertical-align:top; margin:10px;">
+                <button class="btn-pink" onclick="clearCanvas()">🧹 Clear Pad</button>
+            </div>
+            <h3>Core Characters (Click to preview in TTS)</h3>
+            <div class="char-list" id="char-list"></div>
+            <div class="card" style="margin-top:20px;">
+                <h4>Add Character to Practice</h4>
+                <input type="text" id="add-char-input" placeholder="Enter one character (e.g., 梦)">
+                <button class="btn" onclick="addChar()">Add</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Global Tooltip for Reading -->
+    <div id="tooltip">
+        <strong id="tt-word" style="color:#d6336c; font-size:1.2rem;"></strong>
+        <input type="text" id="tt-note" placeholder="Pinyin / Meaning" style="margin:10px 0; padding:8px;">
+        <button class="btn btn-pink" style="width:100%" onclick="saveVocabFromTooltip()">Save 🎀</button>
+    </div>
+</div>
+
+<script>
+// --- INITIAL DATA SEEDING (FULL HSK 1 CURRICULUM NO PLACEHOLDERS) ---
+const seedWords = [
+    {h:"爱", p:"ài", m:"to love", e:"我妈妈爱我。"},{h:"八", p:"bā", m:"eight", e:"他有八个苹果。"},{h:"爸爸", p:"bàba", m:"father", e:"我爸爸是医生。"},{h:"杯子", p:"bēizi", m:"cup/glass", e:"杯子里有水。"},{h:"北京", p:"Běijīng", m:"Beijing", e:"我在北京住。"},
+    {h:"本", p:"běn", m:"measure word for books", e:"这是一本书。"},{h:"不", p:"bù", m:"not/no", e:"我不是学生。"},{h:"客气", p:"kèqi", m:"polite", e:"不客气。"},{h:"菜", p:"cài", m:"vegetable/dish", e:"我喜欢吃中国菜。"},{h:"茶", p:"chá", m:"tea", e:"请喝茶。"},
+    {h:"吃", p:"chī", m:"to eat", e:"你吃饭了吗？"},{h:"出租车", p:"chūzūchē", m:"taxi", e:"我们坐出租车去。"},{h:"打电话", p:"dǎ diànhuà", m:"make a phone call", e:"他在打电话。"},{h:"大", p:"dà", m:"big", e:"这个苹果很大。"},{h:"的", p:"de", m:"possessive particle", e:"这是我的书。"},
+    {h:"点", p:"diǎn", m:"o'clock", e:"现在是十点。"},{h:"电脑", p:"diànnǎo", m:"computer", e:"我买了一个电脑。"},{h:"电视", p:"diànshì", m:"TV", e:"妈妈在看电视。"},{h:"电影", p:"diànyǐng", m:"movie", e:"我们去看电影。"},{h:"东西", p:"dōngxi", m:"thing/stuff", e:"我在商店买东西。"},
+    {h:"都", p:"dōu", m:"all/both", e:"我们都是学生。"},{h:"读", p:"dú", m:"to read", e:"我喜欢读书。"},{h:"对不起", p:"duìbuqǐ", m:"sorry", e:"对不起，我迟到了。"},{h:"多", p:"duō", m:"many/much", e:"这里有很多人。"},{h:"多少", p:"duōshao", m:"how many/how much", e:"这个多少钱？"},
+    {h:"儿子", p:"érzi", m:"son", e:"我儿子三岁了。"},{h:"二", p:"èr", m:"two", e:"我有两个苹果。"},{h:"饭店", p:"fàndiàn", m:"restaurant", e:"我们在饭店吃饭。"},{h:"飞机", p:"fēijī", m:"airplane", e:"我坐飞机去北京。"},{h:"分钟", p:"fēnzhōng", m:"minute", e:"请等我十分钟。"},
+    {h:"高兴", p:"gāoxìng", m:"happy", e:"认识你很高兴。"},{h:"个", p:"gè", m:"measure word", e:"我是一个学生。"},{h:"工作", p:"gōngzuò", m:"job/to work", e:"我很喜欢我的工作。"},{h:"狗", p:"gǒu", m:"dog", e:"我的狗很可爱。"},{h:"汉语", p:"Hànyǔ", m:"Chinese language", e:"他在学习汉语。"},
+    {h:"好", p:"hǎo", m:"good", e:"今天天气很好。"},{h:"号", p:"hào", m:"date/number", e:"今天是八月一号。"},{h:"喝", p:"hē", m:"to drink", e:"我想喝水。"},{h:"和", p:"hé", m:"and", e:"爸爸和妈妈。"},{h:"很", p:"hěn", m:"very", e:"她很漂亮。"},
+    {h:"后面", p:"hòumiàn", m:"behind", e:"商店在学校后面。"},{h:"回", p:"huí", m:"to return", e:"我回家了。"},{h:"会", p:"huì", m:"can/know how to", e:"我会说汉语。"},{h:"几", p:"jǐ", m:"how many/a few", e:"你有几个苹果？"},{h:"家", p:"jiā", m:"family/home", e:"我家有三口人。"},
+    {h:"叫", p:"jiào", m:"to be called", e:"我叫大卫。"},{h:"今天", p:"jīntiān", m:"today", e:"今天星期一。"},{h:"九", p:"jiǔ", m:"nine", e:"他九岁了。"},{h:"开", p:"kāi", m:"to open/drive", e:"我会开车。"},{h:"看", p:"kàn", m:"to look/read", e:"我在看书。"},
+    {h:"看见", p:"kànjiàn", m:"to see", e:"我没看见他。"},{h:"块", p:"kuài", m:"piece/RMB yuan", e:"这本书十块钱。"},{h:"来", p:"lái", m:"to come", e:"他来我家了。"},{h:"老师", p:"lǎoshī", m:"teacher", e:"她是我的老师。"},{h:"了", p:"le", m:"particle (completed action)", e:"下雨了。"},
+    {h:"冷", p:"lěng", m:"cold", e:"今天很冷。"},{h:"里", p:"lǐ", m:"inside", e:"书在桌子里。"},{h:"零", p:"líng", m:"zero", e:"二零二三年。"},{h:"六", p:"liù", m:"six", e:"现在六点。"},{h:"妈妈", p:"māma", m:"mother", e:"我妈妈在医院工作。"},
+    {h:"吗", p:"ma", m:"question particle", e:"你是中国人吗？"},{h:"买", p:"mǎi", m:"to buy", e:"我买了一些水果。"},{h:"猫", p:"māo", m:"cat", e:"这只猫很漂亮。"},{h:"没", p:"méi", m:"not have", e:"我没钱。"},{h:"没关系", p:"méi guānxi", m:"it doesn't matter", e:"对不起。没关系。"},
+    {h:"明天", p:"míngtiān", m:"tomorrow", e:"明天见。"},{h:"名字", p:"míngzi", m:"name", e:"你叫什么名字？"},{h:"哪", p:"nǎ", m:"which", e:"你是哪国人？"},{h:"哪儿", p:"nǎr", m:"where", e:"你去哪儿？"},{h:"那", p:"nà", m:"that", e:"那是一个杯子。"},
+    {h:"那儿", p:"nàr", m:"there", e:"我的书在那儿。"},{h:"呢", p:"ne", m:"question particle", e:"我很好，你呢？"},{h:"能", p:"néng", m:"can/be able to", e:"你能来吗？"},{h:"你", p:"nǐ", m:"you", e:"你好！"},{h:"年", p:"nián", m:"year", e:"今年是一年。"},
+    {h:"女儿", p:"nǚ'ér", m:"daughter", e:"这是我的女儿。"},{h:"朋友", p:"péngyou", m:"friend", e:"他是我的朋友。"},{h:"漂亮", p:"piàoliang", m:"beautiful", e:"她的衣服很漂亮。"},{h:"苹果", p:"píngguǒ", m:"apple", e:"我喜欢吃苹果。"},{h:"七", p:"qī", m:"seven", e:"今天是星期七(天)。"},
+    {h:"钱", p:"qián", m:"money", e:"这个多少钱？"},{h:"前面", p:"qiánmiàn", m:"front", e:"他在我前面。"},{h:"请", p:"qǐng", m:"please", e:"请坐。"},{h:"去", p:"qù", m:"to go", e:"我去学校。"},{h:"热", p:"rè", m:"hot", e:"今天天气很热。"},
+    {h:"人", p:"rén", m:"person", e:"商店里有很多人。"},{h:"认识", p:"rènshi", m:"to know", e:"我不认识他。"},{h:"三", p:"sān", m:"three", e:"我有三本书。"},{h:"商店", p:"shāngdiàn", m:"store", e:"我去商店买东西。"},{h:"上", p:"shàng", m:"up/above", e:"猫在桌子上。"},
+    {h:"上午", p:"shàngwǔ", m:"morning", e:"现在是上午十点。"},{h:"少", p:"shǎo", m:"few/little", e:"这里的人很少。"},{h:"谁", p:"shéi", m:"who", e:"那个人是谁？"},{h:"什么", p:"shénme", m:"what", e:"这是什么？"},{h:"十", p:"shí", m:"ten", e:"我买了十个苹果。"},
+    {h:"时候", p:"shíhou", m:"time/moment", e:"你什么时候来？"},{h:"是", p:"shì", m:"is/am/are", e:"我是医生。"},{h:"书", p:"shū", m:"book", e:"我在看书。"},{h:"水", p:"shuǐ", m:"water", e:"我想喝水。"},{h:"水果", p:"shuǐguǒ", m:"fruit", e:"我爱吃水果。"},
+    {h:"睡觉", p:"shuìjiào", m:"to sleep", e:"我要去睡觉了。"},{h:"说话", p:"shuōhuà", m:"to speak", e:"他们在说话。"},{h:"四", p:"sì", m:"four", e:"我家有四口人。"},{h:"岁", p:"suì", m:"years old", e:"我儿子五岁。"},{h:"他", p:"tā", m:"he/him", e:"他是我的老师。"},
+    {h:"她", p:"tā", m:"she/her", e:"她是我的同学。"},{h:"太", p:"tài", m:"too", e:"这个太大了。"},{h:"天气", p:"tiānqì", m:"weather", e:"今天天气很好。"},{h:"听", p:"tīng", m:"to listen", e:"请听我说。"},{h:"同学", p:"tóngxué", m:"classmate", e:"他们是我的同学。"},
+    {h:"喂", p:"wèi", m:"hello (phone)", e:"喂，请问大卫在吗？"},{h:"我", p:"wǒ", m:"I/me", e:"我是一个学生。"},{h:"我们", p:"wǒmen", m:"we/us", e:"我们去吃饭。"},{h:"五", p:"wǔ", m:"five", e:"我有五个朋友。"},{h:"喜欢", p:"xǐhuan", m:"to like", e:"我喜欢学汉语。"},
+    {h:"下", p:"xià", m:"down/below", e:"狗在桌子下。"},{h:"下午", p:"xiàwǔ", m:"afternoon", e:"我下午去商店。"},{h:"下雨", p:"xiàyǔ", m:"to rain", e:"昨天小雨了。"},{h:"先生", p:"xiānsheng", m:"Mr./Sir", e:"王先生你好。"},{h:"现在", p:"xiànzài", m:"now", e:"现在几点？"},
+    {h:"想", p:"xiǎng", m:"to want/think", e:"我想买一个电脑。"},{h:"小", p:"xiǎo", m:"small", e:"这个杯子太小了。"},{h:"小姐", p:"xiǎojie", m:"Miss", e:"李小姐在吗？"},{h:"些", p:"xiē", m:"some", e:"我买了一些水果。"},{h:"写", p:"xiě", m:"to write", e:"他在写字。"},
+    {h:"谢谢", p:"xièxie", m:"thank you", e:"谢谢你的书。"},{h:"星期", p:"xīngqī", m:"week", e:"今天星期五。"},{h:"学生", p:"xuésheng", m:"student", e:"我们都是学生。"},{h:"学习", p:"xuéxí", m:"to study", e:"我在学习汉语。"},{h:"学校", p:"xuéxiào", m:"school", e:"我去学校。"},
+    {h:"一", p:"yī", m:"one", e:"我有一个苹果。"},{h:"一点儿", p:"yīdiǎnr", m:"a little", e:"我会说一点儿汉语。"},{h:"衣服", p:"yīfu", m:"clothes", e:"这件衣服很漂亮。"},{h:"医生", p:"yīshēng", m:"doctor", e:"爸爸是医生。"},{h:"医院", p:"yīyuàn", m:"hospital", e:"他在医院工作。"},
+    {h:"椅子", p:"yǐzi", m:"chair", e:"狗在椅子下面。"},{h:"有", p:"yǒu", m:"to have", e:"我有一个电脑。"},{h:"月", p:"yuè", m:"month", e:"今天是八月。"},{h:"再见", p:"zàijiàn", m:"goodbye", e:"老师，再见。"},{h:"在", p:"zài", m:"at/in/on", e:"我在家。"},
+    {h:"怎么", p:"zěnme", m:"how", e:"这个字怎么读？"},{h:"怎么样", p:"zěnmeyàng", m:"how about", e:"今天天气怎么样？"},{h:"这", p:"zhè", m:"this", e:"这是我的书。"},{h:"这儿", p:"zhèr", m:"here", e:"我在这儿。"},{h:"中国", p:"Zhōngguó", m:"China", e:"我去过中国。"},
+    {h:"中午", p:"zhōngwǔ", m:"noon", e:"我们中午吃饭。"},{h:"住", p:"zhù", m:"to live", e:"你住在哪里？"},{h:"桌子", p:"zhuōzi", m:"table", e:"电脑在桌子上。"},{h:"字", p:"zì", m:"character", e:"这个字很大。"},{h:"昨天", p:"zuótiān", m:"yesterday", e:"昨天是星期天。"}
+];
+
+const seedGrammar = [
+    {t:"是...的 (shì...de)", d:"Used to emphasize time, place, or manner of a past action.\nEx: 我是昨天来的。 (I came yesterday.)"},
+    {t:"了 (le)", d:"Indicates a completed action or change of state.\nEx: 下雨了。 (It has started raining.)"},
+    {t:"太...了 (tài...le)", d:"Means 'too' or 'extremely'.\nEx: 太好了！ (That's great!)"},
+    {t:"吗 (ma)", d:"Added to the end of a statement to make it a yes/no question.\nEx: 你是学生吗？ (Are you a student?)"},
+    {t:"呢 (ne)", d:"Used for contextual questions (How about...?).\nEx: 我很好，你呢？ (I'm fine, and you?)"}
+];
+
+const seedDialogues = [
+    {t:"Greeting", c:"A: 你好！\nB: 你好！\nA: 你叫什么名字？\nB: 我叫大卫。"},
+    {t:"Shopping", c:"A: 这个多少钱？\nB: 这个十块钱。\nA: 我买一个。谢谢！\nB: 不客气。"},
+    {t:"Dining", c:"A: 你想吃什么？\nB: 我想吃中国菜。\nA: 你喝茶吗？\nB: 好的，谢谢。"},
+    {t:"Asking Time", c:"A: 现在几点？\nB: 现在上午十点。\nA: 你什么时候去学校？\nB: 我八点去学校。"},
+    {t:"Family", c:"A: 你家有几口人？\nB: 我家有三口人。爸爸、妈妈和我。\nA: 你爸爸做什么工作？\nB: 他是医生。"}
+];
+
+const seedStories = [
+    {t:"My Family", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
+    {t:"A Day at School", c:"今天星期一，我去学校。上午我有汉语课。我的汉语老师很好。中午，我和同学在饭店吃饭。下午我回家。"},
+    {t:"Buying Apples", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”。我买了十个苹果。我很高兴。"},
+    {t:"The Weather", c:"昨天天气很热。今天下雨了，天气很冷。明天天气怎么样？明天天气很好。"},
+    {t:"Going to the Hospital", c:"我不高兴。今天我很冷。我妈妈说：“我们去医院。” 医生说我喝多一点水。"}
+];
+
+const seedChars = "一二三四五六七八九十人口日月水火木金土女子大中小上下左右来去出入坐立走飞看听说读写门车马牛羊鸟虫鱼犬".split('');
+
+// --- STATE MANAGEMENT ---
+function initData() {
+    if(!localStorage.getItem('hsk_words')) localStorage.setItem('hsk_words', JSON.stringify(seedWords));
+    if(!localStorage.getItem('hsk_grammar')) localStorage.setItem('hsk_grammar', JSON.stringify(seedGrammar));
+    if(!localStorage.getItem('hsk_convos')) localStorage.setItem('hsk_convos', JSON.stringify(seedDialogues));
+    if(!localStorage.getItem('hsk_stories')) localStorage.setItem('hsk_stories', JSON.stringify(seedStories));
+    if(!localStorage.getItem('hsk_listen')) localStorage.setItem('hsk_listen', JSON.stringify(seedDialogues));
+    if(!localStorage.getItem('hsk_chars')) localStorage.setItem('hsk_chars', JSON.stringify(seedChars));
+    if(!localStorage.getItem('hsk_vocab_book')) localStorage.setItem('hsk_vocab_book', JSON.stringify([]));
+    
+    // Streak logic
+    let lastLogin = localStorage.getItem('last_login');
+    let streak = parseInt(localStorage.getItem('streak') || 0);
+    let today = new Date().toDateString();
+    if(lastLogin !== today) {
+        if(lastLogin === new Date(Date.now() - 86400000).toDateString()) { streak++; } else { streak = 1; }
+        localStorage.setItem('last_login', today);
+        localStorage.setItem('streak', streak);
+    }
+}
+initData();
+
+function getData(key) { return JSON.parse(localStorage.getItem(key)); }
+function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+// --- UI NAVIGATION ---
+function nav(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    
+    if(id === 'dashboard') updateDashboard();
+    if(id === 'flashcards') initFC();
+    if(id === 'grammar') renderGrammarAndConvos();
+    if(id === 'reading') renderStories();
+    if(id === 'vocab') renderVocabBook();
+    if(id === 'listening') renderListening();
+    if(id === 'writing') renderChars();
+}
+
+function updateDashboard() {
+    document.getElementById('streak').innerText = localStorage.getItem('streak');
+    document.getElementById('words-mastered').innerText = getData('hsk_words').length;
+    document.getElementById('vocab-count').innerText = getData('hsk_vocab_book').length;
+}
+
+// --- FLASHCARDS LOGIC ---
+let fcIndex = 0;
+let fcData = [];
+function initFC() {
+    fcData = getData('hsk_words');
+    renderFC();
+}
+function renderFC() {
+    if(!fcData.length) return;
+    const c = fcData[fcIndex];
+    document.getElementById('fc-h').innerText = c.h;
+    document.getElementById('fc-p').innerText = c.p;
+    document.getElementById('fc-m').innerText = c.m;
+    document.getElementById('fc-e').innerText = c.e;
+    document.getElementById('fc-counter').innerText = `${fcIndex + 1} / ${fcData.length}`;
+    document.querySelector('.fc-container').classList.remove('flipped');
+}
+function nextCard() { fcIndex = (fcIndex + 1) % fcData.length; renderFC(); }
+function prevCard() { fcIndex = (fcIndex - 1 + fcData.length) % fcData.length; renderFC(); }
+function addCard() {
+    const h = document.getElementById('add-fc-h').value;
+    const p = document.getElementById('add-fc-p').value;
+    const m = document.getElementById('add-fc-m').value;
+    const e = document.getElementById('add-fc-e').value;
+    if(h && p && m) {
+        fcData.push({h, p, m, e});
+        setData('hsk_words', fcData);
+        alert('Word added successfully! 🌸');
+        ['add-fc-h','add-fc-p','add-fc-m','add-fc-e'].forEach(id => document.getElementById(id).value = '');
+        initFC();
+    }
+}
+
+// --- GRAMMAR & CONVERSATIONS ---
+function renderGrammarAndConvos() {
+    const gList = getData('hsk_grammar');
+    const cList = getData('hsk_convos');
+    
+    document.getElementById('grammar-list').innerHTML = gList.map(g => `
+        <div class="card">
+            <h4 style="color:#d6336c">${g.t}</h4>
+            <p style="white-space: pre-line; line-height:1.6;">${g.d}</p>
+        </div>`).join('');
+        
+    document.getElementById('convo-list').innerHTML = cList.map(c => `
+        <div class="card">
+            <h4 style="color:#d6336c">${c.t}</h4>
+            <p style="white-space: pre-line; line-height:1.6; background:var(--yellow); padding:10px; border-radius:10px;">${c.c}</p>
+        </div>`).join('');
+}
+function addGrammar() {
+    const t = document.getElementById('add-g-title').value;
+    const d = document.getElementById('add-g-desc').value;
+    if(t && d) {
+        const g = getData('hsk_grammar'); g.push({t, d}); setData('hsk_grammar', g);
+        renderGrammarAndConvos();
+        document.getElementById('add-g-title').value = ''; document.getElementById('add-g-desc').value = '';
+    }
+}
+function addConvo() {
+    const t = document.getElementById('add-c-title').value;
+    const c = document.getElementById('add-c-content').value;
+    if(t && c) {
+        const arr = getData('hsk_convos'); arr.push({t, c}); setData('hsk_convos', arr);
+        renderGrammarAndConvos();
+        document.getElementById('add-c-title').value = ''; document.getElementById('add-c-content').value = '';
+    }
+}
+
+// --- READING & TEXT HIGHLIGHT TOOLTIP ---
+function renderStories() {
+    const sList = getData('hsk_stories');
+    document.getElementById('story-list').innerHTML = sList.map(s => `
+        <div class="card">
+            <h3>${s.t}</h3>
+            <div class="story-text" onmouseup="showTooltip(event)">${s.c}</div>
+        </div>`).join('');
+}
+function addStory() {
+    const t = document.getElementById('add-s-title').value;
+    const c = document.getElementById('add-s-content').value;
+    if(t && c) {
+        const arr = getData('hsk_stories'); arr.push({t, c}); setData('hsk_stories', arr);
+        renderStories();
+        document.getElementById('add-s-title').value = ''; document.getElementById('add-s-content').value = '';
+    }
+}
+
+let selectedText = "";
+function showTooltip(e) {
+    const selection = window.getSelection();
+    selectedText = selection.toString().trim();
+    const tooltip = document.getElementById('tooltip');
+    
+    if (selectedText.length > 0 && /[\u4e00-\u9fa5]/.test(selectedText)) {
+        document.getElementById('tt-word').innerText = selectedText;
+        document.getElementById('tt-note').value = '';
+        tooltip.style.display = 'block';
+        tooltip.style.left = e.pageX - 100 + 'px';
+        tooltip.style.top = e.pageY + 20 + 'px';
+    } else {
+        tooltip.style.display = 'none';
+    }
+}
+document.addEventListener('mousedown', (e) => {
+    if(!document.getElementById('tooltip').contains(e.target) && !e.target.classList.contains('story-text')){
+        document.getElementById('tooltip').style.display = 'none';
+    }
+});
+function saveVocabFromTooltip() {
+    const note = document.getElementById('tt-note').value;
+    const vocab = getData('hsk_vocab_book');
+    vocab.push({ word: selectedText, note: note });
+    setData('hsk_vocab_book', vocab);
+    document.getElementById('tooltip').style.display = 'none';
+    window.getSelection().removeAllRanges();
+    alert('Saved to Vocab Book! 🎀');
+}
+
+// --- PERSONAL VOCAB BOOK ---
+function renderVocabBook() {
+    const vocab = getData('hsk_vocab_book');
+    const container = document.getElementById('personal-vocab-list');
+    if(!vocab.length) { container.innerHTML = '<p>No words saved yet! Go to the Reading section to highlight and save words.</p>'; return; }
+    
+    container.innerHTML = vocab.map((v, i) => `
+        <div class="vocab-item">
+            <div>
+                <strong style="font-size:1.5rem; color:#d6336c;">${v.word}</strong>
+                <p>${v.note}</p>
+            </div>
+            <div>
+                <button class="btn btn-pink" onclick="playAudio('${v.word}')">🔊</button>
+                <button class="btn" onclick="deleteVocab(${i})">🗑️</button>
+            </div>
+        </div>`).join('');
+}
+function deleteVocab(i) {
+    const vocab = getData('hsk_vocab_book');
+    vocab.splice(i, 1);
+    setData('hsk_vocab_book', vocab);
+    renderVocabBook();
+}
+
+// --- LISTENING & SPEAKING ---
+function renderListening() {
+    const lList = getData('hsk_listen');
+    document.getElementById('listening-list').innerHTML = lList.map(l => `
+        <div class="card">
+            <h4>${l.t}</h4>
+            <p style="white-space: pre-line; display:none;" id="l-text-${l.t}">${l.c}</p>
+            <button class="btn btn-pink mt" onclick="playAudio(document.getElementById('l-text-${l.t}').innerText)">🔊 Play Audio</button>
+            <button class="btn mt" onclick="document.getElementById('l-text-${l.t}').style.display='block'">👁️ Show Script</button>
+        </div>`).join('');
+    generateRandomSpeak();
+}
+function addListen() {
+    const t = document.getElementById('add-l-title').value;
+    const c = document.getElementById('add-l-text').value;
+    if(t && c) {
+        const arr = getData('hsk_listen'); arr.push({t, c}); setData('hsk_listen', arr);
+        renderListening();
+        document.getElementById('add-l-title').value=''; document.getElementById('add-l-text').value='';
+    }
+}
+
+// TTS & STT API
+function playAudio(text) {
+    if('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'zh-CN';
+        window.speechSynthesis.speak(msg);
+    } else { alert("Sorry, your browser doesn't support Text-to-Speech."); }
+}
+
+function generateRandomSpeak() {
+    const fc = getData('hsk_words');
+    const randomE = fc[Math.floor(Math.random() * fc.length)].e;
+    document.getElementById('speak-target').innerText = randomE;
+    document.getElementById('speech-result').innerText = "";
+}
+
+function startSpeechRec() {
+    const target = document.getElementById('speak-target').innerText.replace(/[^\u4e00-\u9fa5]/g, '');
+    const resElem = document.getElementById('speech-result');
+    
+    if(!('webkitSpeechRecognition' in window)) {
+        resElem.innerText = "Speech Recognition not supported in this browser. Try Chrome!";
+        return;
+    }
+    
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'zh-CN';
+    recognition.start();
+    resElem.innerText = "Listening... 🎀";
+    
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.replace(/[^\u4e00-\u9fa5]/g, '');
+        let matchCount = 0;
+        for(let i=0; i<Math.min(target.length, transcript.length); i++) {
+            if(target.includes(transcript[i])) matchCount++;
+        }
+        let percent = target.length === 0 ? 0 : Math.round((matchCount / target.length) * 100);
+        resElem.innerHTML = `You said: ${transcript}<br>Accuracy: <span style="color:${percent>70?'#4ade80':'#f87171'}">${percent}%</span>`;
+    };
+    recognition.onerror = () => resElem.innerText = "Error recognizing speech. Try again!";
+}
+
+// --- WRITING PAD (CANVAS) ---
+const canvas = document.getElementById('write-pad');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+
+// Set up touch and mouse
+function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+function startDraw(e) {
+    e.preventDefault(); drawing = true;
+    const pos = getPos(e);
+    ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+}
+function draw(e) {
+    if(!drawing) return; e.preventDefault();
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.lineWidth = document.getElementById('pen-width').value;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = document.getElementById('pen-color').value;
+    ctx.stroke();
+}
+function stopDraw() { drawing = false; }
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDraw);
+canvas.addEventListener('mouseout', stopDraw);
+canvas.addEventListener('touchstart', startDraw, {passive: false});
+canvas.addEventListener('touchmove', draw, {passive: false});
+canvas.addEventListener('touchend', stopDraw);
+
+function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+function renderChars() {
+    const chars = getData('hsk_chars');
+    document.getElementById('char-list').innerHTML = chars.map(c => 
+        `<div class="char-chip" onclick="playAudio('${c}')">${c}</div>`
+    ).join('');
+}
+function addChar() {
+    const val = document.getElementById('add-char-input').value.trim();
+    if(val && val.length === 1) {
+        const chars = getData('hsk_chars'); chars.push(val); setData('hsk_chars', chars);
+        renderChars();
+        document.getElementById('add-char-input').value = '';
+    }
+}
+
+// Initialize Dashboard
+updateDashboard();
+</script>
+</body>
+</html>
