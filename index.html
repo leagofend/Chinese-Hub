@@ -29,19 +29,17 @@
     .auth-card { background: var(--white); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); width: 90%; max-width: 400px; text-align: center; }
     .auth-card h1 { color: #d6336c; margin-bottom: 10px; }
     .auth-card p { margin-bottom: 20px; color: var(--text-light); }
-    .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; outline: none; }
+    .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; outline: none; transition: 0.2s; }
     .auth-card input:focus { border-color: var(--mint); }
     .auth-card .btn { width: 100%; margin-bottom: 10px; }
     .auth-alert { background: var(--yellow); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #d6336c; margin-bottom: 20px; border: 1px solid #d6336c; text-align: left; }
 
     /* --- LAYOUT --- */
     #app { display: none; height: 100vh; overflow: hidden; }
-    
     nav { background: var(--pink); width: var(--sidebar-width); display: flex; flex-direction: column; padding: 20px; gap: 15px; z-index: 1000; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.05); }
     nav h1 { font-size: 1.5rem; text-align: center; color: #d6336c; margin-bottom: 20px; line-height: 1.3; }
     .nav-btn { background: var(--pink); border: none; padding: 15px; border-radius: var(--radius); font-weight: 700; color: var(--text); cursor: pointer; box-shadow: var(--clay); transition: var(--transition); display: flex; align-items: center; justify-content: flex-start; font-size: 1rem; gap: 10px; }
     .nav-btn.active, .nav-btn:active { box-shadow: inset 4px 4px 8px #e6b8c0, inset -4px -4px 8px #ffffff; color: #d6336c; }
-    
     main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; scroll-behavior: smooth; position: relative; }
 
     /* --- UI COMPONENTS --- */
@@ -63,7 +61,7 @@
     .btn-pink { background: #ffb3c6; color: white; box-shadow: 0 4px 10px rgba(255, 179, 198, 0.6); }
     .btn-danger { background: #ff99a8; color: white; }
 
-    input, textarea, select { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; background: var(--white); margin-bottom: 15px; outline: none; color: var(--text); font-weight: 600; font-family: 'Quicksand'; transition: 0.2s; }
+    input, textarea, select { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; background: var(--white); margin-bottom: 15px; outline: none; color: var(--text); font-weight: 600; transition: 0.2s; }
     input:focus, textarea:focus { border-color: var(--mint); }
 
     .grid-fluid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
@@ -115,22 +113,21 @@
     .sub-list { flex: 1; overflow-y: auto; padding: 15px; background: var(--yellow); }
     .sub-line { padding: 15px; border-bottom: 2px dashed #ffccd5; border-radius: 15px; margin-bottom: 10px; background: var(--white); cursor: pointer; transition: 0.2s; position: relative; }
     .sub-line:hover { box-shadow: var(--shadow); }
-    .sub-line.active { background: #ffb3c6; color: white; transform: scale(1.02); }
+    .sub-line.active { background: #ffb3c6; color: white; transform: scale(1.02); border-color: transparent;}
     .sub-time { font-size: 0.85rem; background: #d6336c; color: white; padding: 2px 8px; border-radius: 8px; display: inline-block; margin-bottom: 5px; }
     .sub-text { font-size: 1.3rem; font-weight: bold; margin: 5px 0; }
     
     .dict-word { cursor: pointer; border-bottom: 2px dotted #d6336c; transition: 0.2s; }
     .dict-word:hover { background: var(--yellow); color: var(--text); }
     
-    .dictation-mode .sub-normal { display: none; }
-    .dictation-input-area { display: none; margin-top: 10px; flex-direction: column; gap: 10px; }
-    .dictation-mode .dictation-input-area { display: flex; }
-    .dic-res { font-weight: bold; padding: 10px; border-radius: 10px; display: none; text-align: center; }
-    .dic-res.correct { display: block; background: #d8f3dc; color: #065f46; }
-    .dic-res.wrong { display: block; background: #ffe4e6; color: #991b1b; }
+    /* Dictation Mode Logic */
+    .dictation-mode-active .sub-normal { display: none; }
+    .dictation-mode-active .sub-dictation { display: flex; }
+    .sub-dictation { display: none; flex-direction: column; gap: 10px; margin-top: 10px; }
+    .dic-res { padding: 10px; border-radius: 10px; display: none; text-align: center; font-size: 1.2rem; background: var(--white); border: 2px dashed var(--pink); letter-spacing: 2px;}
 
     /* Tooltips */
-    .tooltip-float { position: fixed; display: none; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 2000; border: 3px solid var(--pink); max-width: 300px; transform: translate(-50%, -100%); margin-top: -10px; }
+    .tooltip-float { position: fixed; display: none; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 2000; border: 3px solid var(--pink); max-width: 320px; transform: translate(-50%, -100%); margin-top: -10px; }
     
     /* Reading */
     .story-content { font-size: 1.5rem; line-height: 2.2; padding: 25px; background: var(--yellow); border-radius: var(--radius); cursor: text; }
@@ -149,7 +146,8 @@
         .video-hub { flex-direction: column; height: auto; }
         .vh-left, .vh-right { flex: 1; width: 100%; }
         .vh-right { min-height: 400px; }
-        .tooltip-float { width: 90vw; left: 50vw !important; top: 50vh !important; transform: translate(-50%, -50%); position: fixed; }
+        .tooltip-float { width: 90vw; left: 50vw !important; top: 50vh !important; transform: translate(-50%, -50%); position: fixed; margin-top:0; }
+        .tooltip-float::after { display: none; }
     }
 </style>
 </head>
@@ -163,9 +161,9 @@
             <strong>DEVELOPER NOTE:</strong><br>
             Please insert your Firebase configuration in the script block below to enable Multi-Device Cloud Sync. Username-based login active.
         </div>
-        <p style="margin-bottom: 20px; color: var(--text-light);">Đăng nhập tài khoản cá nhân (Syncs across Desktop/Mobile)</p>
-        <input type="text" id="auth-user" placeholder="Tên đăng nhập (Username)">
-        <input type="password" id="auth-pass" placeholder="Mật khẩu (Password)">
+        <p style="margin-bottom: 20px; color: var(--text-light);">Đăng nhập bằng Tên đăng nhập (Username). Dữ liệu sẽ được đồng bộ qua Cloud!</p>
+        <input type="text" id="auth-user" placeholder="Tên đăng nhập (VD: vu123)">
+        <input type="password" id="auth-pass" placeholder="Mật khẩu">
         <button class="btn btn-pink" onclick="window.login()">Đăng nhập (Login)</button>
         <button class="btn" onclick="window.register()">Đăng ký (Register)</button>
         <p id="auth-error" style="color:red; margin-top:10px; font-size:0.9rem; display:none;"></p>
@@ -206,8 +204,8 @@
                     <h3 id="words-today">0</h3>
                 </div>
                 <div class="card card-pink stat-box" style="color:white;">
-                    <p style="font-weight:bold;">Total Words Mastered</p>
-                    <h3 id="total-words" style="color:white;">0</h3>
+                    <p style="font-weight:bold;">Words in Personal Notebook</p>
+                    <h3 id="notebook-count" style="color:white;">0</h3>
                 </div>
             </div>
         </div>
@@ -218,11 +216,11 @@
                 <h2>🍓 Vocabulary Levels</h2>
                 <div class="hsk-grid">
                     <div class="hsk-block" onclick="window.openLevel('vocab', 1)"><h3>HSK 1</h3><p>Base + Custom</p></div>
-                    <div class="hsk-block" onclick="window.openLevel('vocab', 2)"><h3>HSK 2</h3><p>Custom</p></div>
-                    <div class="hsk-block" onclick="window.openLevel('vocab', 3)"><h3>HSK 3</h3><p>Custom</p></div>
-                    <div class="hsk-block" onclick="window.openLevel('vocab', 4)"><h3>HSK 4</h3><p>Custom</p></div>
-                    <div class="hsk-block" onclick="window.openLevel('vocab', 5)"><h3>HSK 5</h3><p>Custom</p></div>
-                    <div class="hsk-block" onclick="window.openLevel('vocab', 6)"><h3>HSK 6</h3><p>Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 2)"><h3>HSK 2</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 3)"><h3>HSK 3</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 4)"><h3>HSK 4</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 5)"><h3>HSK 5</h3><p>Custom Data</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 6)"><h3>HSK 6</h3><p>Custom Data</p></div>
                 </div>
             </div>
             
@@ -305,20 +303,22 @@
                 <div class="flex-center" style="margin-bottom:20px;">
                     <button class="tab-btn active" id="tab-g-study" onclick="window.switchMode('g', 'study')">Reference</button>
                     <button class="tab-btn" id="tab-g-quiz" onclick="window.switchMode('g', 'quiz')">Quiz</button>
+                    <button class="tab-btn" id="tab-g-add" onclick="window.switchMode('g', 'add')">Add Grammar</button>
                 </div>
 
                 <div id="g-study">
                     <div id="g-list" style="display:flex; flex-direction:column; gap:15px;"></div>
-                    <div class="card card-mint" style="margin-top:20px;">
-                        <h4>➕ Add Grammar to Cloud</h4>
-                        <input type="text" id="g-add-t" placeholder="Structure (e.g. Subj + 很 + Adj)">
-                        <textarea id="g-add-d" rows="3" placeholder="Explanation & Example..."></textarea>
-                        <button class="btn btn-pink" onclick="window.addGrammar()">Save</button>
-                    </div>
                 </div>
 
                 <div id="g-quiz" style="display:none;">
                     <div class="quiz-box" id="g-quiz-container"></div>
+                </div>
+
+                <div id="g-add" style="display:none;" class="card card-mint">
+                    <h4>➕ Add Grammar to Cloud</h4>
+                    <input type="text" id="g-add-t" placeholder="Structure (e.g. Subj + 很 + Adj)">
+                    <textarea id="g-add-d" rows="3" placeholder="Explanation & Example..."></textarea>
+                    <button class="btn btn-pink" onclick="window.addGrammar()">Save</button>
                 </div>
             </div>
         </div>
@@ -338,7 +338,7 @@
                             <label style="font-weight:bold; cursor:pointer;">
                                 <input type="checkbox" id="auto-pause-toggle"> ⏸️ Tự động dừng từng câu
                             </label>
-                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="window.resumeVideo()">▶️ Tiếp tục (Space)</button>
+                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="window.resumeVideo()">▶️ Tiếp tục</button>
                         </div>
                     </div>
                     <div class="card" style="margin-bottom:0;">
@@ -360,7 +360,13 @@
 
                 <!-- Right: Subtitles Panel -->
                 <div class="vh-right">
-                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center;">Phụ đề (Subtitles)</div>
+                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center; display:flex; justify-content:space-between; align-items:center;">
+                        <span>Phụ đề</span>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn" style="padding:5px 10px; font-size:0.8rem; background:var(--white);" onclick="window.setDictationMode(false)">Học</button>
+                            <button class="btn btn-pink" style="padding:5px 10px; font-size:0.8rem;" onclick="window.setDictationMode(true)">Chép chính tả</button>
+                        </div>
+                    </div>
                     <div class="sub-list" id="sub-list-container"></div>
                 </div>
             </div>
@@ -384,7 +390,7 @@
         </div>
     </main>
 
-    <!-- Global Hover Dictionary Tooltip -->
+    <!-- Global Hover Dictionary Tooltip for Video Subs -->
     <div id="dict-tooltip" class="tooltip-float">
         <div style="display:flex; justify-content:space-between;">
             <div class="hz-text" style="font-size:2rem;" id="dt-h"></div>
@@ -399,12 +405,21 @@
         <div style="font-style:italic; font-size:0.9rem; color:var(--text-light);" id="dt-e"></div>
     </div>
 
-    <!-- Action Tooltip for Text Selection -->
-    <div id="action-tooltip" class="tooltip-float" style="padding:15px;">
-        <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap;">
-            <strong id="at-word" style="font-size:1.5rem; color:#d6336c;"></strong>
+    <!-- Action Tooltip for Text Selection in Reading -->
+    <div id="action-tooltip" class="tooltip-float" style="padding:15px; border-color:var(--mint); width:320px;">
+        <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+            <strong id="at-word" style="font-size:1.8rem; color:#d6336c;"></strong>
             <button class="btn" style="padding: 8px 12px;" onclick="window.speak(document.getElementById('at-word').innerText)">🔊</button>
-            <button class="btn btn-pink" style="padding: 8px 12px;" onclick="window.saveToNotebook(document.getElementById('at-word').innerText)">Save 🎀</button>
+            <button class="btn btn-pink" style="padding: 8px 12px;" onclick="window.saveToNotebook()">Save 🎀</button>
+        </div>
+        <div id="at-known-data" style="display:none; font-size:1rem; color:var(--text-light);">
+            <p id="at-py"></p>
+            <p id="at-m" style="font-weight:bold; color:var(--text);"></p>
+        </div>
+        <div id="at-unknown-data" style="display:none; flex-direction:column; gap:5px;">
+            <p style="font-size:0.8rem; color:var(--text-light);">Từ mới. Nhập nghĩa để lưu:</p>
+            <input type="text" id="at-in-py" placeholder="Pinyin" style="padding:8px; margin:0;">
+            <input type="text" id="at-in-m" placeholder="Nghĩa" style="padding:8px; margin:0;">
         </div>
     </div>
 </div>
@@ -419,7 +434,6 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 
 // ==========================================
 // ⚠️ FIREBASE CONFIGURATION OBJECT
-// Keep this exact schema structure
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAakSHB5eBDHSaAYknaeQ8lqspvjqM_N30",
@@ -431,7 +445,6 @@ const firebaseConfig = {
   measurementId: "G-T9884M528E"
 };
 
-// Initialize Firebase (Wrapped in try-catch for standalone fallback)
 let app, auth, db;
 try {
     app = initializeApp(firebaseConfig);
@@ -443,7 +456,6 @@ try {
 
 /* ==========================================================================
    COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes)
-   Format: [Hanzi, Pinyin, Meaning, Part of Speech, Âm Hán Việt, Example]
 ========================================================================== */
 const rawHSK1 = [
     ["爱","ài","yêu, thích","Động từ","Ái","我爱你。"],["八","bā","tám","Số từ","Bát","八个人。"],["爸爸","bàba","bố, cha","Danh từ","Ba ba","我爸爸是医生。"],["杯子","bēizi","cái cốc","Danh từ","Bôi tử","杯子里有水。"],["北京","Běijīng","Bắc Kinh","Danh từ","Bắc Kinh","我去北京。"],
@@ -477,14 +489,14 @@ const rawHSK1 = [
     ["怎么","zěnme","như thế nào","Đại từ","Chẩm ma","怎么去？"],["怎么样","zěnmeyàng","thế nào","Đại từ","Chẩm ma dạng","天气怎么样？"],["这","zhè","này, đây","Đại từ","Giá","这个。"],["这儿","zhèr","chỗ này","Đại từ","Giá nhi","在这儿。"],["中国","Zhōngguó","Trung Quốc","Danh từ","Trung Quốc","去中国。"],
     ["中午","zhōngwǔ","buổi trưa","Danh từ","Trung ngọ","中午好。"],["住","zhù","sống, ở","Động từ","Trụ","住在哪儿？"],["桌子","zhuōzi","cái bàn","Danh từ","Trác tử","一张桌子。"],["字","zì","chữ","Danh từ","Tự","写字。"],["昨天","zuótiān","hôm qua","Danh từ","Tạc thiên","昨天很冷。"]
 ];
-const baseVocab = rawHSK1.map(w => ({h:w[0], p:w[1], m:w[2], pos:w[3], hv:w[4], e:w[5]}));
+const baseVocab = rawHSK1.map(w => ({h:w[0], p:w[1], m:w[2], pos:w[3], hv:w[4], e:w[5], level: 1}));
 
 const baseGrammar = [
-    {t:"是...的 (shì...de)", d:"Nhấn mạnh thời gian, địa điểm, mục đích, cách thức trong quá khứ.\nVD: 我是昨天来的。"},
-    {t:"了 (le)", d:"Hành động đã hoàn thành / thay đổi trạng thái.\nVD: 下雨了。"},
-    {t:"太...了 (tài...le)", d:"Biểu thị mức độ cao (quá, lắm).\nVD: 太好了！"},
-    {t:"吗 (ma)", d:"Câu hỏi Có/Không.\nVD: 你是学生吗？"},
-    {t:"呢 (ne)", d:"Hỏi ngược lại (còn... thì sao).\nVD: 我很好，你呢？"}
+    {t:"是...的 (shì...de)", d:"Nhấn mạnh thời gian, địa điểm, mục đích, cách thức trong quá khứ.\nVD: 我是昨天来的。", level: 1},
+    {t:"了 (le)", d:"Hành động đã hoàn thành / thay đổi trạng thái.\nVD: 下雨了。", level: 1},
+    {t:"太...了 (tài...le)", d:"Biểu thị mức độ cao (quá, lắm).\nVD: 太好了！", level: 1},
+    {t:"吗 (ma)", d:"Câu hỏi Có/Không.\nVD: 你是学生吗？", level: 1},
+    {t:"呢 (ne)", d:"Hỏi ngược lại (còn... thì sao).\nVD: 我很好，你呢？", level: 1}
 ];
 
 const baseStories = [
@@ -497,19 +509,14 @@ const baseSubs = [
     {start:4, end:7, zh:"欢迎来到这里。", py:"huānyíng lái dào zhèlǐ.", en:"Chào mừng."}
 ];
 
-const baseGrammarQuiz = [
-    { q: "我 ___ 昨天来的。", opts: ["是", "了", "吗", "呢"], a: "是" },
-    { q: "外面下雨 ___。", opts: ["吗", "了", "和", "太"], a: "了" },
-    { q: "这个苹果 ___ 大了！", opts: ["很", "太", "不", "都"], a: "太" }
-];
-
 /* ==========================================================================
-   STATE MANAGEMENT (Firebase Sync)
+   STATE MANAGEMENT (Firebase Sync & Multi-Level Filtering)
    ========================================================================== */
 let currentUser = null;
+const virtualDomain = "@sanrio.local";
 let userData = {
-    vocab: { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] },
-    grammar: { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] },
+    vocab: [],
+    grammar: [],
     stories: [],
     notebook: [],
     subs: [],
@@ -517,8 +524,7 @@ let userData = {
 };
 
 let currentLevel = 1;
-let vocabDictMap = []; 
-const domainSuffix = "@sanrioacademy.local";
+let globalVocabDict = []; 
 
 // Auth Logic
 window.login = async () => {
@@ -527,8 +533,8 @@ window.login = async () => {
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
     
     try {
-        if(auth) await signInWithEmailAndPassword(auth, user + domainSuffix, pass);
-        else bypassAuth(user); // Fallback
+        if(auth) await signInWithEmailAndPassword(auth, user + virtualDomain, pass);
+        else bypassAuth(user); 
     } catch(err) {
         document.getElementById('auth-error').innerText = "Đăng nhập thất bại: " + err.message;
         document.getElementById('auth-error').style.display = 'block';
@@ -541,7 +547,7 @@ window.register = async () => {
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
 
     try {
-        if(auth) await createUserWithEmailAndPassword(auth, user + domainSuffix, pass);
+        if(auth) await createUserWithEmailAndPassword(auth, user + virtualDomain, pass);
         else bypassAuth(user);
     } catch(err) {
         document.getElementById('auth-error').innerText = "Đăng ký thất bại: " + err.message;
@@ -582,9 +588,7 @@ async function loadCloudData() {
         try {
             const docRef = doc(db, "users", currentUser.uid);
             const snap = await getDoc(docRef);
-            if(snap.exists()) {
-                userData = { ...userData, ...snap.data() };
-            }
+            if(snap.exists()) userData = { ...userData, ...snap.data() };
         } catch(e) { console.error("Cloud load error", e); }
     } else {
         const local = JSON.parse(localStorage.getItem('sanrio_data_' + currentUser.uid));
@@ -605,15 +609,14 @@ async function loadCloudData() {
         syncToCloud();
     }
     
-    buildTokenizerMap();
+    buildDictionary();
     updateDashboardUI();
 }
 
 async function syncToCloud() {
     if(db && currentUser) {
-        try {
-            await setDoc(doc(db, "users", currentUser.uid), userData, {merge: true});
-        } catch(e) { console.error("Cloud sync error", e); }
+        try { await setDoc(doc(db, "users", currentUser.uid), userData, {merge: true}); } 
+        catch(e) { console.error("Cloud sync error", e); }
     } else {
         localStorage.setItem('sanrio_data_' + currentUser.uid, JSON.stringify(userData));
     }
@@ -634,14 +637,13 @@ function updateDashboardUI() {
     document.getElementById('goal-progress-bar').style.width = progress + '%';
     document.getElementById('goal-text').innerText = progress;
     
-    let total = baseVocab.length + (userData.vocab['1'] ? userData.vocab['1'].length : 0);
-    document.getElementById('total-words').innerText = total;
+    document.getElementById('notebook-count').innerText = userData.notebook ? userData.notebook.length : 0;
 }
 
-function buildTokenizerMap() {
-    let combined = [...baseVocab];
-    for(let lvl in userData.vocab) combined = combined.concat(userData.vocab[lvl]);
-    vocabDictMap = combined.sort((a,b) => b.h.length - a.h.length);
+function buildDictionary() {
+    // Combine base HSK 1 and user's custom vocab for global dictionary lookups
+    let combined = [...baseVocab, ...(userData.vocab || [])];
+    globalVocabDict = combined.sort((a,b) => b.h.length - a.h.length);
 }
 
 // Global UI Navigation
@@ -704,35 +706,43 @@ window.speak = function(text) {
 };
 
 /* ==========================================================================
-   VOCABULARY MODULE
+   VOCABULARY MODULE (Strict Level Filtering)
    ========================================================================== */
 let fcIndex = 0;
-let curVocab = [];
+let levelVocab = [];
+
+function getLevelVocab() {
+    let arr = userData.vocab.filter(v => v.level === currentLevel);
+    if(currentLevel === 1) arr = [...baseVocab, ...arr];
+    return arr;
+}
 
 window.initFC = function() {
-    curVocab = [...(userData.vocab[currentLevel] || [])];
-    if(currentLevel === 1) curVocab = [...baseVocab, ...curVocab];
-    
-    if(!curVocab.length) return alert(`No words in HSK ${currentLevel} yet!`);
-    if(fcIndex >= curVocab.length) fcIndex = 0;
+    levelVocab = getLevelVocab();
+    if(!levelVocab.length) {
+        document.querySelector('.fc-container').style.display = 'none';
+        return alert(`No words in HSK ${currentLevel} yet!`);
+    }
+    document.querySelector('.fc-container').style.display = 'block';
+    if(fcIndex >= levelVocab.length) fcIndex = 0;
     window.renderFC();
 };
 
 window.renderFC = function() {
-    if(!curVocab.length) return;
-    const c = curVocab[fcIndex];
+    if(!levelVocab.length) return;
+    const c = levelVocab[fcIndex];
     document.getElementById('v-fc-h').innerText = c.h;
     document.getElementById('v-fc-p').innerText = c.p;
     document.getElementById('v-fc-m').innerText = c.m;
     document.getElementById('v-fc-pos').innerText = c.pos || 'N/A';
     document.getElementById('v-fc-hv').innerText = c.hv || 'N/A';
     document.getElementById('v-fc-e').innerText = c.e || '';
-    document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${curVocab.length}`;
+    document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${levelVocab.length}`;
     document.querySelector('.fc-container').classList.remove('flipped');
 };
 
-window.nextCard = function() { fcIndex = (fcIndex + 1) % curVocab.length; window.renderFC(); };
-window.prevCard = function() { fcIndex = (fcIndex - 1 + curVocab.length) % curVocab.length; window.renderFC(); };
+window.nextCard = function() { fcIndex = (fcIndex + 1) % levelVocab.length; window.renderFC(); };
+window.prevCard = function() { fcIndex = (fcIndex - 1 + levelVocab.length) % levelVocab.length; window.renderFC(); };
 window.markWordLearned = function() { updateDailyProgress('word'); window.nextCard(); };
 
 window.addVocab = function() {
@@ -743,10 +753,9 @@ window.addVocab = function() {
     const hv = document.getElementById('v-add-hv').value.trim();
     const e = document.getElementById('v-add-e').value.trim();
     if(h && p && m) {
-        if(!userData.vocab[currentLevel]) userData.vocab[currentLevel] = [];
-        userData.vocab[currentLevel].push({h,p,m,pos,hv,e});
+        userData.vocab.push({h,p,m,pos,hv,e, level: currentLevel});
         syncToCloud();
-        buildTokenizerMap();
+        buildDictionary();
         alert(`Saved to Cloud HSK ${currentLevel}!`);
         ['v-add-h','v-add-p','v-add-m','v-add-pos','v-add-hv','v-add-e'].forEach(id=>document.getElementById(id).value='');
     }
@@ -754,10 +763,8 @@ window.addVocab = function() {
 
 let vQuizState = { qIdx: 0, score: 0, qs: [] };
 window.startVocabQuiz = function() {
-    let pool = [...(userData.vocab[currentLevel] || [])];
-    if(currentLevel === 1) pool = [...baseVocab, ...pool];
-    
-    if(pool.length < 4) return alert("Need at least 4 words!");
+    let pool = getLevelVocab();
+    if(pool.length < 4) return alert("Need at least 4 words in this level!");
     let qs = [];
     for(let i=0; i<10; i++) {
         let correct = pool[Math.floor(Math.random()*pool.length)];
@@ -784,34 +791,44 @@ window.renderVQuiz = function() {
         return;
     }
     const q = vQuizState.qs[vQuizState.qIdx];
+    // Create fresh HTML to automatically clear old classes
     box.innerHTML = `
         <div style="color:var(--text-light); margin-bottom:10px;">Question ${vQuizState.qIdx + 1}/10</div>
         <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
         <div class="grid-2">
             ${q.opts.map((opt, i)=>`<button class="quiz-opt" id="vqo-${i}" onclick="window.ansVQuiz('${opt.replace(/'/g,"\\'")}', 'vqo-${i}')">${opt}</button>`).join('')}
         </div>
-        <button id="vq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; window.renderVQuiz();">Next ➡️</button>
+        <button id="vq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="window.nextVocabQuestion()">Next ➡️</button>
     `;
 };
 
 window.ansVQuiz = function(sel, id) {
     const q = vQuizState.qs[vQuizState.qIdx];
-    document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
+    document.querySelectorAll('#v-quiz-container .quiz-opt').forEach(b=>b.style.pointerEvents='none');
     if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
     else {
         document.getElementById(id).classList.add('wrong');
-        document.querySelectorAll('.quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
+        document.querySelectorAll('#v-quiz-container .quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
     }
     document.getElementById('vq-next').style.display='block';
 };
 
+window.nextVocabQuestion = function() {
+    vQuizState.qIdx++;
+    window.renderVQuiz();
+}
+
 /* ==========================================================================
    GRAMMAR MODULE
    ========================================================================== */
-window.renderGrammar = function() {
-    let arr = [...(userData.grammar[currentLevel] || [])];
+function getLevelGrammar() {
+    let arr = userData.grammar.filter(g => g.level === currentLevel);
     if(currentLevel === 1) arr = [...baseGrammar, ...arr];
-    
+    return arr;
+}
+
+window.renderGrammar = function() {
+    let arr = getLevelGrammar();
     document.getElementById('g-list').innerHTML = arr.map(g => `
         <div class="card" style="margin-bottom:0; background:var(--white);">
             <h4 style="font-size:1.3rem;">${g.t}</h4><p style="white-space:pre-line; line-height:1.6;">${g.d}</p>
@@ -822,49 +839,59 @@ window.addGrammar = function() {
     const t = document.getElementById('g-add-t').value.trim();
     const d = document.getElementById('g-add-d').value.trim();
     if(t && d) {
-        if(!userData.grammar[currentLevel]) userData.grammar[currentLevel] = [];
-        userData.grammar[currentLevel].push({t,d});
+        userData.grammar.push({t, d, level: currentLevel});
         syncToCloud();
         window.renderGrammar();
         document.getElementById('g-add-t').value=''; document.getElementById('g-add-d').value='';
     }
 };
 
+let gQuizState = { qIdx: 0, score: 0, qs: [] };
 window.startGrammarQuiz = function() {
-    if(currentLevel !== 1) return alert("Grammar Quiz only available in HSK 1 Demo.");
-    vQuizState = {qIdx:0, score:0, qs:[...baseGrammarQuiz].sort(()=>Math.random()-0.5)};
+    if(currentLevel !== 1) return alert("Grammar Quiz demo is only available in HSK 1.");
+    gQuizState = {qIdx:0, score:0, qs:[...baseGrammarQuiz].sort(()=>Math.random()-0.5)};
     window.renderGQuiz();
 };
 
 window.renderGQuiz = function() {
     const box = document.getElementById('g-quiz-container');
-    if(vQuizState.qIdx >= vQuizState.qs.length) {
-        if(vQuizState.score > 0) updateDailyProgress('quiz');
-        box.innerHTML = `<h3>Complete! 🎀</h3><p>Score: ${vQuizState.score} / ${vQuizState.qs.length}</p><button class="btn btn-pink" onclick="window.startGrammarQuiz()">Try Again</button>`;
+    if(gQuizState.qIdx >= gQuizState.qs.length) {
+        if(gQuizState.score > 0) updateDailyProgress('quiz');
+        box.innerHTML = `<h3>Complete! 🎀</h3><p style="font-size:1.5rem;color:#d6336c;margin:15px 0;">Score: ${gQuizState.score} / ${gQuizState.qs.length}</p><button class="btn btn-pink" onclick="window.startGrammarQuiz()">Try Again</button>`;
         return;
     }
-    const q = vQuizState.qs[vQuizState.qIdx];
+    const q = gQuizState.qs[gQuizState.qIdx];
     box.innerHTML = `
+        <div style="color:var(--text-light); margin-bottom:10px;">Question ${gQuizState.qIdx + 1}/${gQuizState.qs.length}</div>
         <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
         <div class="grid-2">${q.opts.map((opt, i)=>`<button class="quiz-opt" id="gqo-${i}" onclick="window.ansGQuiz('${opt}', 'gqo-${i}')">${opt}</button>`).join('')}</div>
-        <button id="gq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; window.renderGQuiz();">Next ➡️</button>
+        <button id="gq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="window.nextGrammarQuestion()">Next ➡️</button>
     `;
 };
 
 window.ansGQuiz = function(sel, id) {
-    const q = vQuizState.qs[vQuizState.qIdx];
-    document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
-    if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
-    else { document.getElementById(id).classList.add('wrong'); }
+    const q = gQuizState.qs[gQuizState.qIdx];
+    document.querySelectorAll('#g-quiz-container .quiz-opt').forEach(b=>b.style.pointerEvents='none');
+    if(sel === q.a) { document.getElementById(id).classList.add('correct'); gQuizState.score++; }
+    else { 
+        document.getElementById(id).classList.add('wrong');
+        document.querySelectorAll('#g-quiz-container .quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
+    }
     document.getElementById('gq-next').style.display='block';
 };
 
+window.nextGrammarQuestion = function() {
+    gQuizState.qIdx++;
+    window.renderGQuiz();
+}
+
 /* ==========================================================================
-   VIDEO HUB (Auto-Pause, Dictation, Tooltip)
+   VIDEO HUB (Auto-Pause, Advanced Dictation Engine, Tooltip)
    ========================================================================== */
 const vid = document.getElementById('vid-player');
 let isAutoPause = false;
 let pausedSubIdx = -1;
+let isDictationMode = false;
 
 window.loadVideo = function(e) {
     const file = e.target.files[0];
@@ -882,7 +909,7 @@ function wrapChinese(text) {
     let res = ''; let i = 0;
     while(i < text.length) {
         let matched = false;
-        for(let v of vocabDictMap) {
+        for(let v of globalVocabDict) {
             let len = v.h.length;
             if(text.substring(i, i+len) === v.h) {
                 const safeV = encodeURIComponent(JSON.stringify(v));
@@ -899,28 +926,29 @@ window.renderSubtitles = function() {
     let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
     const cont = document.getElementById('sub-list-container');
     cont.innerHTML = subs.map((s, i) => `
-        <div class="sub-line" id="sub-row-${i}">
+        <div class="sub-line ${isDictationMode ? 'dictation-mode-active' : ''}" id="sub-row-${i}">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div style="flex:1;" onclick="window.seekVid(${s.start})">
                     <span class="sub-time">${s.start}s - ${s.end}s</span>
+                    
                     <div class="sub-normal" id="sn-${i}">
                         <div class="sub-text">${wrapChinese(s.zh)}</div>
                         <div style="font-size:0.95rem; color:var(--text-light); margin-top:5px;">${s.py} | ${s.en}</div>
                     </div>
-                    <div class="dictation-input-area" id="sd-${i}">
-                        <input type="text" id="dic-in-${i}" placeholder="Gõ chữ Hán bạn nghe được..." onclick="event.stopPropagation()">
-                        <div style="display:flex; gap:10px; margin-top:5px;">
+                    
+                    <div class="sub-dictation" id="sd-${i}">
+                        <input type="text" id="dic-in-${i}" placeholder="Nghe và gõ chữ Hán vào đây..." onclick="event.stopPropagation()" onkeypress="if(event.key==='Enter') window.checkDic(${i}, '${s.zh}')">
+                        <div style="display:flex; gap:10px;">
                             <button class="btn" style="padding:5px 15px;" onclick="window.checkDic(${i}, '${s.zh}'); event.stopPropagation()">Kiểm tra</button>
-                            <button class="btn btn-danger" style="padding:5px 15px;" onclick="window.toggleDic(${i}, false); event.stopPropagation()">Hủy</button>
                         </div>
                         <div class="dic-res" id="dic-res-${i}"></div>
                     </div>
                 </div>
+                ${!isDictationMode ? `
                 <div style="display:flex; flex-direction:column; gap:5px; margin-left:10px;">
-                    <button class="btn" style="padding:5px;" onclick="window.toggleDic(${i}, true)">✍️</button>
                     <button class="btn" style="padding:5px;" onclick="window.editSub(event, ${i})">✏️</button>
                     <button class="btn btn-danger" style="padding:5px;" onclick="window.delSub(event, ${i})">X</button>
-                </div>
+                </div>` : ''}
             </div>
         </div>`).join('');
 };
@@ -957,15 +985,13 @@ window.saveSub = function() {
     const idx = parseInt(document.getElementById('sub-idx').value);
     
     if(zh && !isNaN(start) && !isNaN(end)) {
-        if(!userData.subs) userData.subs = [];
         if (idx > -1) {
-            if(idx < baseSubs.length) return alert("Cannot edit base subs.");
+            if(idx < baseSubs.length) return alert("Cannot edit base subs in demo.");
             userData.subs[idx - baseSubs.length] = {start, end, zh, py, en};
         } else {
             userData.subs.push({start, end, zh, py, en});
         }
-        syncToCloud();
-        window.cancelSub(); window.renderSubtitles();
+        syncToCloud(); window.cancelSub(); window.renderSubtitles();
     }
 };
 
@@ -992,25 +1018,41 @@ window.delSub = function(e, i) {
     syncToCloud(); window.renderSubtitles();
 };
 
-window.toggleDic = function(idx, show) {
-    const row = document.getElementById(`sub-row-${idx}`);
-    if(show) row.classList.add('dictation-mode'); else row.classList.remove('dictation-mode');
-    if(show) {
-        document.getElementById(`dic-in-${idx}`).value = '';
-        document.getElementById(`dic-res-${idx}`).className = 'dic-res';
-        let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
-        window.seekVid(subs[idx].start);
-    }
+window.setDictationMode = function(isDict) {
+    isDictationMode = isDict;
+    window.renderSubtitles();
 };
 
-window.checkDic = function(idx, trueText) {
-    const inVal = document.getElementById(`dic-in-${idx}`).value.trim();
+window.checkDic = function(idx, correctText) {
+    event.stopPropagation();
+    const userIn = document.getElementById(`dic-in-${idx}`).value.trim();
     const res = document.getElementById(`dic-res-${idx}`);
-    if(inVal === trueText) {
-        res.innerText = 'Correct 🎉'; res.className = 'dic-res correct';
+    
+    // Character by character matching algorithm
+    let feedbackHTML = "";
+    let isPerfect = (userIn === correctText);
+    
+    let maxLen = Math.max(correctText.length, userIn.length);
+    for(let i=0; i<maxLen; i++) {
+        if(i < correctText.length) {
+            if (userIn[i] === correctText[i]) {
+                feedbackHTML += `<span style="color: #065f46; font-weight: bold;">${correctText[i]}</span>`;
+            } else {
+                feedbackHTML += `<span style="color: #991b1b; font-weight: bold;">*</span>`;
+            }
+        } else {
+            // User typed extra characters
+            feedbackHTML += `<span style="color: #991b1b; text-decoration: line-through;">${userIn[i]}</span>`;
+        }
+    }
+    
+    res.innerHTML = feedbackHTML;
+    res.style.display = 'block';
+    if(isPerfect) {
+        res.style.background = '#d8f3dc'; res.style.borderColor = '#4ade80';
         updateDailyProgress('quiz');
     } else {
-        res.innerText = 'Wrong - Try again ❌'; res.className = 'dic-res wrong';
+        res.style.background = '#ffe4e6'; res.style.borderColor = '#f87171';
     }
 };
 
@@ -1026,7 +1068,7 @@ window.showDict = function(e) {
 window.hideDict = function() { dictTT.style.display = 'none'; };
 
 /* ==========================================================================
-   READING & NOTEBOOK
+   READING & NOTEBOOK (With Upgraded Selection Tooltip)
    ========================================================================== */
 window.renderStories = function() {
     let arr = [...baseStories, ...(userData.stories || [])];
@@ -1040,18 +1082,36 @@ window.addStory = function() {
     const t = document.getElementById('s-add-t').value.trim();
     const c = document.getElementById('s-add-c').value.trim();
     if(t && c) {
-        if(!userData.stories) userData.stories = [];
         userData.stories.push({t, c}); syncToCloud();
         window.renderStories(); document.getElementById('s-add-t').value=''; document.getElementById('s-add-c').value='';
     }
 };
 
 const actionTT = document.getElementById('action-tooltip');
+let pendingSaveWord = {};
+
 window.handleSelect = function() {
     setTimeout(() => { 
         const sel = window.getSelection(); const text = sel.toString().trim();
         if (text.length > 0 && /[\u4e00-\u9fa5]/.test(text)) {
             document.getElementById('at-word').innerText = text;
+            
+            // Dynamic Lookup
+            let found = globalVocabDict.find(v => v.h === text);
+            if(found) {
+                document.getElementById('at-known-data').style.display = 'block';
+                document.getElementById('at-unknown-data').style.display = 'none';
+                document.getElementById('at-py').innerText = found.p;
+                document.getElementById('at-m').innerText = found.m;
+                pendingSaveWord = { hanzi: found.h, pinyin: found.p, meaning: found.m, timestamp: Date.now() };
+            } else {
+                document.getElementById('at-known-data').style.display = 'none';
+                document.getElementById('at-unknown-data').style.display = 'flex';
+                document.getElementById('at-in-py').value = '';
+                document.getElementById('at-in-m').value = '';
+                pendingSaveWord = { hanzi: text, pinyin: '', meaning: '', timestamp: Date.now() };
+            }
+            
             const r = sel.getRangeAt(0).getBoundingClientRect();
             actionTT.style.display = 'block';
             actionTT.style.left = (r.left + r.width/2) + 'px'; actionTT.style.top = r.bottom + 'px';
@@ -1060,21 +1120,33 @@ window.handleSelect = function() {
 };
 document.addEventListener('mousedown', (e) => { if(!actionTT.contains(e.target) && !e.target.classList.contains('story-content')) actionTT.style.display = 'none'; });
 
-window.saveToNotebook = function(word) {
-    if(!userData.notebook) userData.notebook = [];
-    if(!userData.notebook.includes(word)) { userData.notebook.push(word); syncToCloud(); updateDailyProgress('word'); }
+window.saveToNotebook = function() {
+    if(document.getElementById('at-unknown-data').style.display === 'flex') {
+        pendingSaveWord.pinyin = document.getElementById('at-in-py').value;
+        pendingSaveWord.meaning = document.getElementById('at-in-m').value;
+    }
+    
+    // Check if already in notebook
+    let exists = userData.notebook.find(n => n.hanzi === pendingSaveWord.hanzi);
+    if(!exists) { 
+        userData.notebook.push(pendingSaveWord); 
+        syncToCloud(); 
+        updateDailyProgress('word'); 
+        alert('Saved to Vocab Book! 🎀');
+    } else {
+        alert('Word is already in your notebook!');
+    }
     actionTT.style.display = 'none'; window.getSelection().removeAllRanges();
 };
 
 window.renderNotebook = function() {
     const nb = userData.notebook || [];
-    document.getElementById('notebook-list').innerHTML = nb.map((word, i) => {
-        const found = vocabDictMap.find(v => v.h === word) || { p: 'Custom', m: 'Added from reading.' };
+    document.getElementById('notebook-list').innerHTML = nb.map((obj, i) => {
         return `
         <div class="card card-mint" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
-            <div><h4 style="font-size:1.8rem; margin-bottom:5px;">${word}</h4><p style="font-weight:bold;">${found.p} | ${found.m}</p></div>
+            <div><h4 style="font-size:1.8rem; margin-bottom:5px;">${obj.hanzi}</h4><p style="font-weight:bold;">${obj.pinyin} | ${obj.meaning}</p></div>
             <div style="display:flex; flex-direction:column; gap:5px;">
-                <button class="btn btn-pink" onclick="window.speak('${word}')">🔊</button>
+                <button class="btn btn-pink" onclick="window.speak('${obj.hanzi}')">🔊</button>
                 <button class="btn btn-danger" style="padding:10px; border-radius:10px;" onclick="window.delNb(${i})">🗑️</button>
             </div>
         </div>`;
