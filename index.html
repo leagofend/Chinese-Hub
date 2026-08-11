@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sanrio Chinese Academy 🎀</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sanrio Chinese Learning Academy</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -11,456 +11,571 @@
         --mint: #d8f3dc;
         --yellow: #fefae0;
         --white: #ffffff;
-        --text: #594a4e;
-        --shadow-light: #ffffff;
-        --shadow-dark: #e6b8c0;
+        --text: #5c4d53;
+        --text-light: #8e7f84;
+        --shadow: 0 8px 24px rgba(255, 204, 213, 0.4);
+        --clay: 6px 6px 12px #e6b8c0, -6px -6px 12px #ffffff;
         --radius: 20px;
-        --clay-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-        --clay-inset: inset 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        --nav-height: 80px;
+        --sidebar-width: 260px;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--pink); color: var(--text); overflow-x: hidden; }
+
+    /* --- LAYOUT --- */
+    #app { display: flex; height: 100vh; overflow: hidden; }
     
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
-    body { background-color: var(--pink); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+    nav { background: var(--pink); width: var(--sidebar-width); display: flex; flex-direction: column; padding: 20px; gap: 15px; z-index: 1000; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.05); }
+    nav h1 { font-size: 1.5rem; text-align: center; color: #d6336c; margin-bottom: 20px; line-height: 1.3; }
+    .nav-btn { background: var(--pink); border: none; padding: 15px; border-radius: var(--radius); font-weight: 700; color: var(--text); cursor: pointer; box-shadow: var(--clay); transition: var(--transition); display: flex; align-items: center; justify-content: flex-start; font-size: 1rem; gap: 10px; }
+    .nav-btn.active, .nav-btn:active { box-shadow: inset 4px 4px 8px #e6b8c0, inset -4px -4px 8px #ffffff; color: #d6336c; }
     
-    /* Layout */
-    #app { display: flex; width: 100%; height: 100%; }
-    nav { background: var(--pink); width: 260px; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: 4px 0 10px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; }
-    nav h1 { font-size: 1.5rem; text-align: center; margin-bottom: 20px; color: #d6336c; }
-    .nav-btn { background: var(--pink); border: none; padding: 15px; border-radius: var(--radius); font-weight: 700; color: var(--text); cursor: pointer; box-shadow: var(--clay-shadow); transition: all 0.2s; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
-    .nav-btn:active, .nav-btn.active { box-shadow: var(--clay-inset); color: #d6336c; }
-    main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
-    
-    /* Global Components */
-    .section { display: none; animation: fadeIn 0.3s ease-in-out; }
+    main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; scroll-behavior: smooth; }
+
+    /* --- UI COMPONENTS --- */
+    .section { display: none; animation: fadeIn 0.4s ease; }
     .section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
+
     h2 { color: #d6336c; margin-bottom: 20px; font-size: 2rem; display: flex; align-items: center; gap: 10px; }
-    h3 { margin-bottom: 15px; color: #d6336c; }
-    h4 { color: #d6336c; margin-bottom: 10px; }
-    
-    .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--clay-shadow); margin-bottom: 20px; }
-    .btn { background: var(--mint); border: none; padding: 10px 20px; border-radius: var(--radius); font-weight: 700; cursor: pointer; box-shadow: 4px 4px 10px #c2dbd0, -4px -4px 10px #eeffe8; color: var(--text); transition: 0.2s; }
-    .btn:active { box-shadow: inset 4px 4px 10px #c2dbd0, inset -4px -4px 10px #eeffe8; }
-    .btn-pink { background: var(--pink); box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light); }
-    .btn-pink:active { box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light); }
+    h3 { color: #d6336c; margin-bottom: 15px; }
+
+    .card { background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .card-pink { background: var(--pink); }
+    .card-mint { background: var(--mint); }
+    .card-yellow { background: var(--yellow); }
+
+    .btn { background: var(--mint); border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 700; cursor: pointer; color: var(--text); transition: var(--transition); font-size: 1rem; box-shadow: 0 4px 10px rgba(216, 243, 220, 0.8); }
+    .btn:hover { filter: brightness(1.05); transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .btn-pink { background: #ffb3c6; color: white; box-shadow: 0 4px 10px rgba(255, 179, 198, 0.6); }
     .btn-danger { background: #ff99a8; color: white; }
-    .btn-tab { background: var(--yellow); padding: 10px 20px; border-radius: 15px; border: none; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: var(--clay-shadow); transition: 0.2s;}
-    .btn-tab.active { box-shadow: var(--clay-inset); color: #d6336c; }
-    
-    input, textarea, select { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--yellow); box-shadow: inset 2px 2px 5px #e5e1ca, inset -2px -2px 5px #ffffff; margin-bottom: 10px; outline: none; color: var(--text); font-weight: 600; font-family: 'Quicksand'; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .tabs-container { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; }
-    
-    /* Study & Quiz Modes */
-    .fc-container { perspective: 1000px; width: 320px; height: 380px; margin: 0 auto 30px; cursor: pointer; }
+
+    input, textarea, select { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; background: var(--white); margin-bottom: 15px; outline: none; color: var(--text); font-weight: 600; font-family: 'Quicksand'; transition: 0.2s; }
+    input:focus, textarea:focus { border-color: var(--mint); }
+
+    .grid-fluid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .flex-center { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+    /* --- DASHBOARD --- */
+    .banner { background: linear-gradient(135deg, var(--pink), var(--yellow)); padding: 40px; border-radius: var(--radius); text-align: center; margin-bottom: 30px; position: relative; }
+    .stat-box { text-align: center; padding: 25px; border-radius: var(--radius); }
+    .stat-box h3 { font-size: 3rem; margin: 10px 0; color: var(--text); }
+    .progress-track { width: 100%; height: 20px; background: rgba(255,255,255,0.5); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: #d6336c; width: 0%; transition: width 1s ease; border-radius: 10px; }
+
+    /* --- HSK BLOCKS --- */
+    .hsk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+    .hsk-block { background: var(--yellow); padding: 30px 20px; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); box-shadow: var(--clay); border: 2px solid transparent; }
+    .hsk-block:hover { transform: translateY(-5px); border-color: var(--pink); }
+    .hsk-block h3 { font-size: 2rem; margin: 0; color: #d6336c; }
+
+    /* --- STUDY / QUIZ HUB --- */
+    .workspace-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .tab-btn { background: var(--yellow); border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; color: var(--text); box-shadow: var(--shadow); transition: 0.2s; }
+    .tab-btn.active { background: #ffb3c6; color: white; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
+
+    /* Flip Cards */
+    .fc-container { perspective: 1000px; width: 100%; max-width: 400px; height: 450px; margin: 0 auto 30px; cursor: pointer; }
     .fc-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
     .fc-container.flipped .fc-inner { transform: rotateY(180deg); }
-    .fc-front, .fc-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius); padding: 20px; box-shadow: var(--clay-shadow); }
+    .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); border: 4px solid var(--white); }
     .fc-front { background: var(--yellow); }
     .fc-back { background: var(--mint); transform: rotateY(180deg); }
-    .fc-hanzi { font-size: 6rem; font-weight: 700; color: #d6336c; }
-    .fc-pinyin { font-size: 1.8rem; color: #777; margin-bottom: 10px; }
-    .fc-controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; align-items: center; }
+    .hz-text { font-size: 5rem; font-weight: 700; color: #d6336c; }
+    .py-text { font-size: 2rem; color: var(--text-light); }
+    .tag { display: inline-block; background: var(--white); padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; margin: 2px; }
 
-    .quiz-container { text-align: center; padding: 20px; background: var(--yellow); border-radius: var(--radius); box-shadow: var(--clay-inset); margin-top: 20px; }
-    .quiz-question { font-size: 2.5rem; color: #d6336c; font-weight: 700; margin: 20px 0; }
-    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    .quiz-option { padding: 15px; border-radius: 15px; background: var(--white); border: 2px solid transparent; cursor: pointer; font-size: 1.2rem; font-weight: 600; box-shadow: var(--clay-shadow); transition: 0.2s; }
-    .quiz-option:hover { transform: translateY(-2px); }
-    .quiz-option.correct { background: #d8f3dc; border-color: #4ade80; color: #065f46; }
-    .quiz-option.wrong { background: #ffe4e6; border-color: #f87171; color: #991b1b; }
-    .quiz-score { font-size: 1.5rem; color: #d6336c; margin-top: 15px; }
+    /* Quizzes */
+    .quiz-box { text-align: center; padding: 30px; background: var(--white); border-radius: var(--radius); border: 2px dashed var(--pink); }
+    .quiz-opt { padding: 15px; border-radius: 15px; background: var(--yellow); border: 2px solid transparent; cursor: pointer; font-size: 1.2rem; font-weight: 600; transition: 0.2s; }
+    .quiz-opt.correct { background: #d8f3dc; border-color: #4ade80; color: #065f46; }
+    .quiz-opt.wrong { background: #ffe4e6; border-color: #f87171; color: #991b1b; }
 
-    /* Native Video Hub */
-    .video-wrapper { width: 100%; border-radius: var(--radius); overflow: hidden; box-shadow: var(--clay-shadow); margin-bottom: 20px; background: #000; display:flex; justify-content:center; }
-    video { width: 100%; max-height: 450px; display: block; outline: none; }
-    .subtitles-container { background: var(--yellow); padding: 15px; border-radius: var(--radius); box-shadow: var(--clay-inset); max-height: 400px; overflow-y: auto; }
-    .sub-line { padding: 12px; border-bottom: 2px dashed var(--pink); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .sub-line:hover { background: var(--white); border-radius: 10px; border-bottom: 2px solid transparent; box-shadow: var(--clay-shadow); }
-    .sub-line.active-sub { background: #ffccd5; border-radius: 10px; border-bottom: 2px solid transparent; box-shadow: var(--clay-shadow); }
-    .sub-time { color: #ffffff; background: #d6336c; padding: 4px 8px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; min-width: 55px; text-align: center; }
+    /* --- VIDEO HUB (SPLIT SCREEN) --- */
+    .video-hub { display: flex; gap: 20px; height: calc(100vh - 150px); min-height: 600px; }
+    .vh-left { flex: 0.65; display: flex; flex-direction: column; gap: 15px; }
+    .vh-right { flex: 0.35; display: flex; flex-direction: column; background: var(--white); border-radius: var(--radius); border: 2px solid var(--pink); overflow: hidden; }
+    .video-wrapper { background: #000; border-radius: var(--radius); width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; position: relative; }
+    video { width: 100%; max-height: 100%; outline: none; border-radius: var(--radius); }
     
-    /* Interactive Reading */
-    .story-text { font-size: 1.3rem; line-height: 2.2; cursor: text; padding: 25px; background: var(--yellow); border-radius: var(--radius); box-shadow: var(--clay-inset); }
-    ::selection { background: #ff99a8; color: white; }
-    #tooltip { position: absolute; display: none; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 15px 35px rgba(214,51,108,0.2); z-index: 100; border: 3px solid var(--pink); width: 300px; transform: translateX(-50%); }
-    #tooltip::after { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); border-width: 0 12px 12px 12px; border-style: solid; border-color: transparent transparent var(--pink) transparent; }
+    .sub-list { flex: 1; overflow-y: auto; padding: 15px; background: var(--yellow); }
+    .sub-line { padding: 15px; border-bottom: 2px dashed #ffccd5; border-radius: 15px; margin-bottom: 10px; background: var(--white); cursor: pointer; transition: 0.2s; }
+    .sub-line:hover { box-shadow: var(--shadow); }
+    .sub-line.active { background: #ffb3c6; color: white; transform: scale(1.02); }
+    .sub-time { font-size: 0.85rem; background: #d6336c; color: white; padding: 2px 8px; border-radius: 8px; display: inline-block; margin-bottom: 5px; }
+    .sub-text { font-size: 1.3rem; font-weight: bold; margin: 5px 0; }
     
-    /* Mic */
-    .mic-btn { font-size: 3rem; background: var(--pink); width: 100px; height: 100px; border-radius: 50%; border: none; cursor: pointer; box-shadow: var(--clay-shadow); transition: 0.3s; margin: 20px auto; display: flex; justify-content: center; align-items: center; }
-    .mic-btn.listening { animation: pulse 1.5s infinite; background: #ff99a8; }
-    @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,51,108,0.4); } 70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(214,51,108,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,51,108,0); } }
+    .dict-word { cursor: pointer; border-bottom: 2px dotted #d6336c; transition: 0.2s; }
+    .dict-word:hover { background: var(--yellow); color: var(--text); }
+    
+    .dictation-mode .sub-zh, .dictation-mode .sub-py { display: none; }
+    .dictation-input-area { display: none; margin-top: 10px; }
+    .dictation-mode .dictation-input-area { display: flex; gap: 10px; flex-direction: column; }
+    .dic-res { font-weight: bold; padding: 10px; border-radius: 10px; display: none; }
+    .dic-res.correct { display: block; background: #d8f3dc; color: #065f46; }
+    .dic-res.wrong { display: block; background: #ffe4e6; color: #991b1b; }
 
-    @media (max-width: 768px) {
+    /* Tooltips */
+    .tooltip-float { position: fixed; display: none; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 2000; border: 3px solid var(--pink); max-width: 300px; transform: translate(-50%, -100%); margin-top: -10px; }
+    
+    /* Reading */
+    .story-content { font-size: 1.5rem; line-height: 2.2; padding: 25px; background: var(--yellow); border-radius: var(--radius); cursor: text; }
+    ::selection { background: #ffb3c6; color: #fff; }
+
+    /* --- MOBILE RESPONSIVENESS --- */
+    @media (max-width: 1024px) {
         body { flex-direction: column; }
-        nav { width: 100%; order: 2; flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: space-around; border-radius: 30px 30px 0 0; }
+        #app { flex-direction: column; }
+        
+        nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); 
+            flex-direction: row; padding: 10px; justify-content: space-around; align-items: center; 
+            border-radius: 25px 25px 0 0; z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); 
+            overflow-x: auto; white-space: nowrap; gap: 5px;
+        }
+        nav::-webkit-scrollbar { display: none; }
         nav h1 { display: none; }
-        .nav-btn { padding: 10px; font-size: 0.85rem; flex: 1 1 30%; justify-content: center; box-shadow: none; border: 2px solid transparent; }
-        .nav-btn.active { background: var(--white); border-color: var(--pink); }
-        main { border-radius: 0 0 30px 30px; order: 1; padding: 20px; }
-        .grid-2, .quiz-options { grid-template-columns: 1fr; }
-        #tooltip { width: 90vw; left: 5vw !important; transform: none; }
-        #tooltip::after { display: none; }
+        .nav-btn { min-width: 60px; min-height: 48px; padding: 10px 15px; flex: 1; justify-content: center; font-size: 0.9rem; box-shadow: none; border-radius: 15px; }
+        .nav-btn.active { background: var(--white); }
+        
+        main { border-radius: 0; padding: 15px; margin-bottom: var(--nav-height); height: calc(100vh - var(--nav-height)); }
+        
+        .video-hub { flex-direction: column; height: auto; }
+        .vh-left, .vh-right { flex: 1; width: 100%; }
+        .vh-right { min-height: 400px; }
+        
+        .tooltip-float { width: 90vw; left: 50vw !important; top: 50vh !important; transform: translate(-50%, -50%); position: fixed; }
     }
 </style>
 </head>
 <body>
-
 <div id="app">
+    <!-- SIDEBAR / BOTTOM NAV -->
     <nav>
         <h1>🎀 Sanrio Academy</h1>
-        <button class="nav-btn active" onclick="nav('dashboard')">🏠 Dashboard</button>
-        <button class="nav-btn" onclick="nav('vocab')">🍓 Vocabulary</button>
+        <button class="nav-btn active" onclick="nav('dashboard')">🏠 Dash</button>
+        <button class="nav-btn" onclick="nav('vocab')">🍓 Vocab</button>
         <button class="nav-btn" onclick="nav('grammar')">📚 Grammar</button>
-        <button class="nav-btn" onclick="nav('video')">📺 Native Video</button>
-        <button class="nav-btn" onclick="nav('reading')">📖 Reading</button>
-        <button class="nav-btn" onclick="nav('notebook')">📓 Vocab Book</button>
-        <button class="nav-btn" onclick="nav('listening')">🎧 Listen & Speak</button>
+        <button class="nav-btn" onclick="nav('video')">📺 Video</button>
+        <button class="nav-btn" onclick="nav('reading')">📖 Read</button>
+        <button class="nav-btn" onclick="nav('notebook')">📓 Book</button>
     </nav>
 
     <main id="main-content">
-        <!-- Dashboard -->
+        <!-- 1. DASHBOARD -->
         <div id="dashboard" class="section active">
-            <h2>🌸 Welcome to Sanrio Chinese Academy!</h2>
-            <div class="grid-2" style="margin-bottom: 30px;">
-                <div class="card" style="text-align: center; background: var(--yellow);">
-                    <p>Daily Streak</p>
-                    <h3 id="dash-streak" style="font-size:3rem; margin:10px 0;">0</h3>
-                    <p>Days ☁️</p>
-                </div>
-                <div class="card" style="text-align: center; background: var(--mint);">
-                    <p>Vocabulary Mastery</p>
-                    <h3 id="dash-words" style="font-size:3rem; margin:10px 0;">0</h3>
-                    <p>HSK 1 Words 🎀</p>
+            <div class="banner">
+                <h2 style="justify-content: center; font-size: 2.5rem;">你好! Let's Learn 🌸</h2>
+                <div style="font-size: 1.5rem; font-weight: bold; background: white; color: #d6336c; display: inline-block; padding: 5px 20px; border-radius: 20px; margin-top: 15px;">
+                    🔥 Streak: <span id="streak-counter">0</span> Days
                 </div>
             </div>
-            <div class="card">
-                <h3>What's New? ✨</h3>
-                <p>Welcome to your personal learning hub! All 150 standard HSK 1 words and core grammar points have been pre-loaded. Upload your local `.mp4` files in the <strong>Native Video</strong> section to study with interactive subtitles!</p>
+            
+            <div class="grid-fluid">
+                <div class="card card-yellow stat-box">
+                    <p style="color:var(--text-light); font-weight:bold;">Daily Goal (10 Words, 1 Quiz)</p>
+                    <div class="progress-track"><div class="progress-fill" id="goal-progress-bar"></div></div>
+                    <p style="margin-top:10px; font-weight:bold;"><span id="goal-text">0</span>%</p>
+                </div>
+                <div class="card card-mint stat-box">
+                    <p style="color:var(--text-light); font-weight:bold;">Words Learned Today</p>
+                    <h3 id="words-today">0</h3>
+                </div>
+                <div class="card card-pink stat-box" style="color:white;">
+                    <p style="font-weight:bold;">Total Words Mastered</p>
+                    <h3 id="total-words" style="color:white;">150</h3>
+                </div>
             </div>
         </div>
 
-        <!-- Vocabulary -->
+        <!-- 2. VOCABULARY (MULTI-LEVEL) -->
         <div id="vocab" class="section">
-            <h2>🍓 HSK 1 Vocabulary</h2>
-            <div class="tabs-container">
-                <button class="btn-tab active" id="tab-v-study" onclick="switchVocabMode('study')">Study Mode</button>
-                <button class="btn-tab" id="tab-v-quiz" onclick="switchVocabMode('quiz')">Quiz Mode</button>
+            <div id="vocab-home">
+                <h2>🍓 Vocabulary Levels</h2>
+                <div class="hsk-grid">
+                    <div class="hsk-block" onclick="openLevel('vocab', 1)"><h3>HSK 1</h3><p>150 Words</p></div>
+                    <div class="hsk-block" onclick="openLevel('vocab', 2)"><h3>HSK 2</h3><p>Unlocked</p></div>
+                    <div class="hsk-block" onclick="openLevel('vocab', 3)"><h3>HSK 3</h3><p>Unlocked</p></div>
+                    <div class="hsk-block" onclick="openLevel('vocab', 4)"><h3>HSK 4</h3><p>Unlocked</p></div>
+                    <div class="hsk-block" onclick="openLevel('vocab', 5)"><h3>HSK 5</h3><p>Unlocked</p></div>
+                    <div class="hsk-block" onclick="openLevel('vocab', 6)"><h3>HSK 6</h3><p>Unlocked</p></div>
+                </div>
             </div>
             
-            <div id="v-study-view">
-                <div class="fc-container" onclick="this.classList.toggle('flipped')">
-                    <div class="fc-inner">
-                        <div class="fc-front">
-                            <div class="fc-hanzi" id="fc-h"></div>
-                            <div class="fc-pinyin" id="fc-p"></div>
-                            <p style="font-size:0.9rem; color:#aaa;">Click to flip 🔄</p>
-                        </div>
-                        <div class="fc-back">
-                            <h3 id="fc-m" style="font-size:1.8rem; margin-bottom: 10px;"></h3>
-                            <p id="fc-e" style="font-style:italic; font-size:1.1rem; padding: 0 10px;"></p>
-                            <button class="btn-pink" style="margin-top:20px; padding:10px 20px; border-radius:10px;" onclick="playAudio(document.getElementById('fc-h').innerText); event.stopPropagation();">🔊 Speak</button>
-                        </div>
-                    </div>
+            <div id="vocab-workspace" style="display:none;">
+                <div class="workspace-header">
+                    <h2>🍓 HSK <span id="v-lvl-title"></span> Workspace</h2>
+                    <button class="btn btn-pink" onclick="closeLevel('vocab')">🔙 Back</button>
                 </div>
-                <div class="fc-controls">
-                    <button class="btn" onclick="prevCard()">⬅️ Prev</button>
-                    <span id="fc-counter" style="font-weight:bold; font-size: 1.2rem;"></span>
-                    <button class="btn" onclick="nextCard()">Next ➡️</button>
+                <div class="flex-center" style="margin-bottom:20px;">
+                    <button class="tab-btn active" id="tab-v-study" onclick="switchMode('v', 'study')">Study Mode</button>
+                    <button class="tab-btn" id="tab-v-quiz" onclick="switchMode('v', 'quiz')">Quiz Mode</button>
+                    <button class="tab-btn" id="tab-v-add" onclick="switchMode('v', 'add')">Add Word</button>
                 </div>
                 
-                <div class="card">
-                    <h3>➕ Add Custom Word</h3>
-                    <div class="grid-2">
-                        <input type="text" id="add-fc-h" placeholder="Hanzi (e.g. 狗)">
-                        <input type="text" id="add-fc-p" placeholder="Pinyin (e.g. gǒu)">
+                <div id="v-study">
+                    <div class="fc-container" onclick="this.classList.toggle('flipped')">
+                        <div class="fc-inner">
+                            <div class="fc-face fc-front">
+                                <div class="hz-text" id="v-fc-h"></div>
+                                <div class="py-text" id="v-fc-p"></div>
+                                <p style="font-size:0.9rem; color:#aaa; margin-top:15px;">Tap to flip</p>
+                            </div>
+                            <div class="fc-face fc-back">
+                                <div style="margin-bottom:10px;">
+                                    <span class="tag" id="v-fc-pos"></span>
+                                    <span class="tag" style="background:var(--pink); color:white;" id="v-fc-hv"></span>
+                                </div>
+                                <h3 id="v-fc-m" style="font-size:1.6rem; margin-bottom:10px;"></h3>
+                                <p id="v-fc-e" style="font-style:italic; line-height:1.4;"></p>
+                                <button class="btn btn-pink" style="margin-top:15px; border-radius:30px;" onclick="speak(document.getElementById('v-fc-h').innerText); event.stopPropagation();">🔊 Speak</button>
+                                <button class="btn" style="margin-top:5px; border-radius:30px;" onclick="markWordLearned(); event.stopPropagation();">✅ Got it!</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid-2">
-                        <input type="text" id="add-fc-m" placeholder="Meaning (e.g. Dog)">
-                        <input type="text" id="add-fc-e" placeholder="Example Sentence">
+                    <div class="flex-center">
+                        <button class="btn" onclick="prevCard()">⬅️</button>
+                        <span id="v-fc-count" style="font-weight:bold; font-size:1.2rem;"></span>
+                        <button class="btn" onclick="nextCard()">➡️</button>
                     </div>
-                    <button class="btn btn-pink" onclick="addCard()">Add Word 🎀</button>
                 </div>
-            </div>
 
-            <div id="v-quiz-view" style="display:none;">
-                <div class="card quiz-container" id="vocab-quiz-box">
-                    <!-- Dynamic Quiz Content -->
+                <div id="v-quiz" style="display:none;">
+                    <div class="quiz-box" id="v-quiz-container">
+                        <button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startVocabQuiz()">🚀 Start Quiz (10 Qs)</button>
+                    </div>
+                </div>
+
+                <div id="v-add" style="display:none;" class="card card-yellow">
+                    <h3>➕ Add to HSK <span id="v-add-lvl"></span></h3>
+                    <div class="grid-2">
+                        <input type="text" id="v-add-h" placeholder="Hanzi">
+                        <input type="text" id="v-add-p" placeholder="Pinyin">
+                        <input type="text" id="v-add-m" placeholder="Meaning">
+                        <input type="text" id="v-add-pos" placeholder="Part of Speech">
+                        <input type="text" id="v-add-hv" placeholder="Âm Hán Việt">
+                        <input type="text" id="v-add-e" placeholder="Example">
+                    </div>
+                    <button class="btn btn-pink" style="width:100%" onclick="addVocab()">Save Word</button>
                 </div>
             </div>
         </div>
 
-        <!-- Grammar -->
+        <!-- 3. GRAMMAR (MULTI-LEVEL) -->
         <div id="grammar" class="section">
-            <h2>📚 Core HSK 1 Grammar</h2>
-            <div class="tabs-container">
-                <button class="btn-tab active" id="tab-g-study" onclick="switchGrammarMode('study')">Study Mode</button>
-                <button class="btn-tab" id="tab-g-quiz" onclick="switchGrammarMode('quiz')">Quiz Mode</button>
-            </div>
-
-            <div id="g-study-view">
-                <div id="grammar-list" style="display: flex; flex-direction: column; gap:15px;"></div>
-                <div class="card" style="margin-top:20px;">
-                    <h4>➕ Add Custom Grammar</h4>
-                    <input type="text" id="add-g-title" placeholder="Structure / Title">
-                    <textarea id="add-g-desc" placeholder="Explanation & Example..." rows="3"></textarea>
-                    <button class="btn btn-pink" onclick="addGrammar()">Save Grammar</button>
+            <div id="gram-home">
+                <h2>📚 Grammar Levels</h2>
+                <div class="hsk-grid">
+                    <div class="hsk-block" onclick="openLevel('grammar', 1)"><h3>HSK 1</h3></div>
+                    <div class="hsk-block" onclick="openLevel('grammar', 2)"><h3>HSK 2</h3></div>
                 </div>
             </div>
+            
+            <div id="gram-workspace" style="display:none;">
+                <div class="workspace-header">
+                    <h2>📚 HSK <span id="g-lvl-title"></span> Grammar</h2>
+                    <button class="btn btn-pink" onclick="closeLevel('grammar')">🔙 Back</button>
+                </div>
+                <div class="flex-center" style="margin-bottom:20px;">
+                    <button class="tab-btn active" id="tab-g-study" onclick="switchMode('g', 'study')">Reference</button>
+                    <button class="tab-btn" id="tab-g-quiz" onclick="switchMode('g', 'quiz')">Quiz</button>
+                </div>
 
-            <div id="g-quiz-view" style="display:none;">
-                <div class="card quiz-container" id="grammar-quiz-box">
-                    <!-- Dynamic Quiz Content -->
+                <div id="g-study">
+                    <div id="g-list" style="display:flex; flex-direction:column; gap:15px;"></div>
+                    <div class="card card-mint" style="margin-top:20px;">
+                        <h4>➕ Add Grammar</h4>
+                        <input type="text" id="g-add-t" placeholder="Structure (e.g. Subj + 很 + Adj)">
+                        <textarea id="g-add-d" rows="3" placeholder="Explanation & Example..."></textarea>
+                        <button class="btn btn-pink" onclick="addGrammar()">Save</button>
+                    </div>
+                </div>
+
+                <div id="g-quiz" style="display:none;">
+                    <div class="quiz-box" id="g-quiz-container">
+                        <button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startGrammarQuiz()">🚀 Start Quiz</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Native Video Learning -->
+        <!-- 4. ADVANCED VIDEO HUB -->
         <div id="video" class="section">
-            <h2>📺 Native Video Subtitle Hub</h2>
-            <div class="grid-2">
-                <div>
-                    <div class="card">
-                        <h4>1. Video Profile (Saves Subtitles)</h4>
-                        <select id="video-profile-selector" onchange="loadSubtitleProfile()"></select>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <input type="text" id="new-profile-name" placeholder="New Profile Name..." style="margin:0;">
-                            <button class="btn btn-pink" onclick="createVideoProfile()">Create</button>
+            <h2>📺 Subtitle & Dictation Hub</h2>
+            <div class="video-hub">
+                <!-- Left: Video & Controls -->
+                <div class="vh-left">
+                    <div class="video-wrapper">
+                        <video id="vid-player" controls preload="metadata"></video>
+                    </div>
+                    <div class="card card-yellow" style="margin-bottom:0; display:flex; flex-direction:column; gap:10px;">
+                        <input type="file" id="vid-upload" accept="video/mp4,video/webm" style="margin:0; padding:10px;" onchange="loadVideo(event)">
+                        <div class="flex-center" style="justify-content:space-between;">
+                            <label style="font-weight:bold; cursor:pointer;">
+                                <input type="checkbox" id="auto-pause-toggle"> ⏸️ Tự động dừng từng câu
+                            </label>
+                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="resumeVideo()">▶️ Tiếp tục (Space)</button>
                         </div>
                     </div>
-                    <div class="card">
-                        <h4>2. Load Local Video (MP4/WebM)</h4>
-                        <input type="file" id="local-video-file" accept="video/mp4,video/webm" style="background:var(--white);" onchange="handleVideoUpload(event)">
-                    </div>
-                    <div class="video-wrapper">
-                        <video id="native-player" controls preload="metadata"></video>
+                    <div class="card" style="margin-bottom:0;">
+                        <h4>➕ Add/Edit Subtitle</h4>
+                        <input type="hidden" id="sub-idx" value="-1">
+                        <div class="grid-2">
+                            <input type="number" id="sub-s" placeholder="Start (sec)">
+                            <input type="number" id="sub-e" placeholder="End (sec)">
+                            <input type="text" id="sub-zh" placeholder="Hanzi">
+                            <input type="text" id="sub-py" placeholder="Pinyin">
+                            <input type="text" id="sub-trans" placeholder="Translation">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-pink" style="flex:1;" onclick="saveSub()">Save Subtitle</button>
+                            <button class="btn btn-danger" style="display:none;" id="sub-cancel-btn" onclick="cancelSub()">Cancel</button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h3>Interactive Subtitles</h3>
-                    <p style="font-size: 0.9rem; margin-bottom:10px;">Syncs with playback. Click a line to skip.</p>
-                    <div class="subtitles-container" id="subs-container"></div>
-                    
-                    <div class="card" style="margin-top:20px;">
-                        <h4 id="sub-form-title">Add / Edit Subtitle</h4>
-                        <input type="hidden" id="edit-sub-idx" value="-1">
-                        <div class="grid-2">
-                            <input type="text" id="sub-time" placeholder="Time (e.g. 1:30 or 90)">
-                            <input type="text" id="sub-zh" placeholder="Chinese (Hanzi)">
-                        </div>
-                        <div class="grid-2">
-                            <input type="text" id="sub-py" placeholder="Pinyin">
-                            <input type="text" id="sub-en" placeholder="Translation">
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn" style="flex:1;" onclick="saveSubtitle()">Save Line</button>
-                            <button class="btn btn-danger" style="display:none;" id="cancel-edit-btn" onclick="cancelEditSub()">Cancel</button>
-                        </div>
+
+                <!-- Right: Subtitles Panel -->
+                <div class="vh-right">
+                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center; display:flex; justify-content:space-between; align-items:center;">
+                        <span>Phụ đề</span>
                     </div>
+                    <div class="sub-list" id="sub-list-container"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Interactive Reading -->
+        <!-- 5. READING & NOTEBOOK -->
         <div id="reading" class="section">
             <h2>📖 Interactive Reading</h2>
-            <p style="margin-bottom: 20px;">Highlight any text with your mouse to activate the Sanrio Dictionary Tooltip! 🖍️</p>
-            <div id="story-list"></div>
-            
-            <div class="card" style="margin-top:20px;">
-                <h3>➕ Add a Story</h3>
-                <input type="text" id="add-s-title" placeholder="Story Title">
-                <textarea id="add-s-content" rows="5" placeholder="Paste Chinese text here..."></textarea>
+            <p style="margin-bottom:20px; color:var(--text-light);">Highlight text to access the dictionary and save to your notebook!</p>
+            <div id="story-list" class="grid-fluid"></div>
+            <div class="card card-mint" style="margin-top:20px;">
+                <h3>➕ Add Story</h3>
+                <input type="text" id="s-add-t" placeholder="Title">
+                <textarea id="s-add-c" rows="5" placeholder="Paste Chinese text..."></textarea>
                 <button class="btn btn-pink" onclick="addStory()">Save Story</button>
             </div>
         </div>
 
-        <!-- Personal Vocab Book -->
         <div id="notebook" class="section">
             <h2>📓 Personal Vocab Book</h2>
-            <div id="personal-vocab-list" style="display: flex; flex-direction: column; gap:15px;"></div>
+            <div class="grid-fluid" id="notebook-list"></div>
         </div>
-
-        <!-- Listening & Speaking -->
-        <div id="listening" class="section">
-            <h2>🎧 Listen & Speak</h2>
-            <div class="grid-2">
-                <div>
-                    <h3>Dictation Practice</h3>
-                    <div id="listening-list" style="display: flex; flex-direction: column; gap:15px;"></div>
-                    <div class="card" style="margin-top:20px;">
-                        <h4>➕ Add Script</h4>
-                        <input type="text" id="add-l-title" placeholder="Title">
-                        <textarea id="add-l-text" placeholder="Chinese text..." rows="3"></textarea>
-                        <button class="btn btn-pink" onclick="addListen()">Add Script</button>
-                    </div>
-                </div>
-                <div>
-                    <h3>🗣️ Speech Assessment</h3>
-                    <div class="card" style="text-align: center; padding: 40px;">
-                        <p>Read aloud:</p>
-                        <h3 id="speak-target" style="font-size: 2rem; margin: 20px 0; color: #594a4e;"></h3>
-                        <button class="btn" onclick="generateRandomSpeak()">Shuffle Phrase</button>
-                        <button class="mic-btn" id="mic-btn" onclick="startSpeechRec()">🎤</button>
-                        <p id="speech-result" style="margin-top:15px; font-size: 1.2rem; font-weight:bold;"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Global Reading Tooltip -->
-    <div id="tooltip">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong id="tt-word" style="color:#d6336c; font-size:1.8rem;"></strong>
-            <button class="btn-pink" style="padding: 5px 10px; border-radius: 10px;" onclick="playAudio(document.getElementById('tt-word').innerText)">🔊</button>
+    <!-- Global Hover Dictionary Tooltip -->
+    <div id="dict-tooltip" class="tooltip-float">
+        <div style="display:flex; justify-content:space-between;">
+            <div class="hz-text" style="font-size:2rem;" id="dt-h"></div>
+            <button class="btn" style="padding:5px 10px;" onclick="speak(document.getElementById('dt-h').innerText)">🔊</button>
         </div>
-        <input type="text" id="tt-pinyin" placeholder="Pinyin">
-        <input type="text" id="tt-meaning" placeholder="Meaning">
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-            <button class="btn" style="flex: 1;" onclick="saveVocabFromTooltip()">Save 🎀</button>
-            <button class="btn btn-danger" onclick="closeTooltip()">X</button>
+        <div class="py-text" style="font-size:1.2rem; margin-bottom:5px;" id="dt-p"></div>
+        <div style="margin-bottom:10px;">
+            <span class="tag" style="background:var(--mint);" id="dt-pos"></span>
+            <span class="tag" style="background:var(--pink); color:white;" id="dt-hv"></span>
+        </div>
+        <div style="font-weight:bold; margin-bottom:5px;" id="dt-m"></div>
+        <div style="font-style:italic; font-size:0.9rem; color:var(--text-light);" id="dt-e"></div>
+    </div>
+
+    <!-- Action Tooltip for Text Selection -->
+    <div id="action-tooltip" class="tooltip-float" style="padding:15px;">
+        <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+            <strong id="at-word" style="font-size:1.5rem; color:#d6336c;"></strong>
+            <button class="btn" style="padding: 8px 12px;" onclick="speak(document.getElementById('at-word').innerText)">🔊</button>
+            <button class="btn btn-pink" style="padding: 8px 12px;" onclick="saveToNotebook(document.getElementById('at-word').innerText)">Save 🎀</button>
         </div>
     </div>
 </div>
 
 <script>
 /* ==========================================================================
-   DATA SEEDING: COMPLETE 150 HSK 1 WORDS, GRAMMAR, ETC.
+   COMPLETE HSK 1 DATASET (NO PLACEHOLDERS)
+   Format: [Hanzi, Pinyin, Meaning, Part of Speech, Âm Hán Việt, Example]
    ========================================================================== */
-const seedWords = [
-    ["爱","ài","to love","我爱你。"],["八","bā","eight","八个苹果。"],["爸爸","bàba","father","我爸爸是医生。"],["杯子","bēizi","cup","杯子里有水。"],["北京","Běijīng","Beijing","我去北京。"],
-    ["本","běn","measure word (books)","一本书。"],["不","bù","not","我不是学生。"],["客气","kèqi","polite","不客气。"],["菜","cài","vegetable/dish","中国菜很好吃。"],["茶","chá","tea","喝茶。"],
-    ["吃","chī","to eat","吃饭。"],["出租车","chūzūchē","taxi","坐出租车。"],["打电话","dǎ diànhuà","make phone call","他在打电话。"],["大","dà","big","大苹果。"],["的","de","possessive particle","我的书。"],
-    ["点","diǎn","o'clock","十点。"],["电脑","diànnǎo","computer","买电脑。"],["电视","diànshì","TV","看电视。"],["电影","diànyǐng","movie","看电影。"],["东西","dōngxi","thing","买东西。"],
-    ["都","dōu","all/both","我们都是学生。"],["读","dú","to read","读书。"],["对不起","duìbuqǐ","sorry","对不起！"],["多","duō","many/much","很多人。"],["多少","duōshao","how many/much","多少钱？"],
-    ["儿子","érzi","son","我儿子三岁。"],["二","èr","two","二月。"],["饭店","fàndiàn","restaurant","去饭店。"],["飞机","fēijī","airplane","坐飞机。"],["分钟","fēnzhōng","minute","十分钟。"],
-    ["高兴","gāoxìng","happy","很高兴。"],["个","gè","measure word","一个人。"],["工作","gōngzuò","job/work","去工作。"],["狗","gǒu","dog","一只狗。"],["汉语","Hànyǔ","Chinese","学汉语。"],
-    ["好","hǎo","good","你好！"],["号","hào","date/number","一号。"],["喝","hē","to drink","喝水。"],["和","hé","and","我和你。"],["很","hěn","very","很好。"],
-    ["后面","hòumiàn","behind","在后面。"],["回","huí","to return","回家。"],["会","huì","can/know how","我会说汉语。"],["几","jǐ","how many","几个人？"],["家","jiā","family/home","我家。"],
-    ["叫","jiào","to be called","我叫大卫。"],["今天","jīntiān","today","今天很冷。"],["九","jiǔ","nine","九个月。"],["开","kāi","to open/drive","开车。"],["看","kàn","to look/read","看书。"],
-    ["看见","kànjiàn","to see","看见了。"],["块","kuài","piece/RMB yuan","十块钱。"],["来","lái","to come","来我家。"],["老师","lǎoshī","teacher","王老师。"],["了","le","completed action","下雨了。"],
-    ["冷","lěng","cold","很冷。"],["里","lǐ","inside","在里面。"],["零","líng","zero","二零二三。"],["六","liù","six","六个人。"],["妈妈","māma","mother","我妈妈。"],
-    ["吗","ma","question particle","好吗？"],["买","mǎi","to buy","买东西。"],["猫","māo","cat","一只猫。"],["没","méi","not have","没有钱。"],["没关系","méi guānxi","it's ok","没关系。"],
-    ["明天","míngtiān","tomorrow","明天见。"],["名字","míngzi","name","什么名字？"],["哪","nǎ","which","哪个？"],["哪儿","nǎr","where","去哪儿？"],["那","nà","that","那个。"],
-    ["那儿","nàr","there","在那儿。"],["呢","ne","question particle","你呢？"],["能","néng","can","能不能？"],["你","nǐ","you","你好。"],["年","nián","year","今年。"],
-    ["女儿","nǚ'ér","daughter","我女儿。"],["朋友","péngyou","friend","好朋友。"],["漂亮","piàoliang","beautiful","很漂亮。"],["苹果","píngguǒ","apple","吃苹果。"],["七","qī","seven","七天。"],
-    ["钱","qián","money","多少钱？"],["前面","qiánmiàn","front","在前面。"],["请","qǐng","please","请坐。"],["去","qù","to go","去学校。"],["热","rè","hot","很热。"],
-    ["人","rén","person","中国人。"],["认识","rènshi","to know","认识你。"],["三","sān","three","三本书。"],["商店","shāngdiàn","store","去商店。"],["上","shàng","up/above","桌子上。"],
-    ["上午","shàngwǔ","morning","今天上午。"],["少","shǎo","few/little","很少。"],["谁","shéi","who","他是谁？"],["什么","shénme","what","什么名字？"],["十","shí","ten","十个人。"],
-    ["时候","shíhou","time/moment","什么时候？"],["是","shì","is/am/are","我是学生。"],["书","shū","book","看书。"],["水","shuǐ","water","喝水。"],["水果","shuǐguǒ","fruit","买水果。"],
-    ["睡觉","shuìjiào","to sleep","去睡觉。"],["说话","shuōhuà","to speak","不说话。"],["四","sì","four","四个。"],["岁","suì","years old","十岁。"],["他","tā","he","他是我朋友。"],
-    ["她","tā","she","她很漂亮。"],["太","tài","too","太好了！"],["天气","tiānqì","weather","天气很好。"],["听","tīng","to listen","听我说。"],["同学","tóngxué","classmate","好同学。"],
-    ["喂","wèi","hello (phone)","喂，你好。"],["我","wǒ","I/me","是我。"],["我们","wǒmen","we","我们去。"],["五","wǔ","five","五个月。"],["喜欢","xǐhuan","to like","我喜欢。"],
-    ["下","xià","down/below","桌子下。"],["下午","xiàwǔ","afternoon","今天下午。"],["下雨","xiàyǔ","to rain","下雨了。"],["先生","xiānsheng","Mr.","王先生。"],["现在","xiànzài","now","现在几点？"],
-    ["想","xiǎng","to want/think","我想去。"],["小","xiǎo","small","很小。"],["小姐","xiǎojie","Miss","李小姐。"],["些","xiē","some","一些。"],["写","xiě","to write","写字。"],
-    ["谢谢","xièxie","thank you","谢谢你。"],["星期","xīngqī","week","星期一。"],["学生","xuésheng","student","好学生。"],["学习","xuéxí","to study","学习汉语。"],["学校","xuéxiào","school","去学校。"],
-    ["一","yī","one","一个。"],["一点儿","yīdiǎnr","a little","喝一点儿水。"],["衣服","yīfu","clothes","买衣服。"],["医生","yīshēng","doctor","看医生。"],["医院","yīyuàn","hospital","去医院。"],
-    ["椅子","yǐzi","chair","坐椅子。"],["有","yǒu","to have","我有一本书。"],["月","yuè","month","八月。"],["再见","zàijiàn","goodbye","老师再见。"],["在","zài","at/in/on","在家。"],
-    ["怎么","zěnme","how","怎么去？"],["怎么样","zěnmeyàng","how about","天气怎么样？"],["这","zhè","this","这个。"],["这儿","zhèr","here","在这儿。"],["中国","Zhōngguó","China","去中国。"],
-    ["中午","zhōngwǔ","noon","中午好。"],["住","zhù","to live","住在哪儿？"],["桌子","zhuōzi","table","一张桌子。"],["字","zì","character","写字。"],["昨天","zuótiān","yesterday","昨天很冷。"]
-].map(w => ({ h: w[0], p: w[1], m: w[2], e: w[3] }));
-
-const seedGrammar = [
-    {t:"是...的 (shì...de)", d:"Emphasizes time, place, or manner of a past action.\nEx: 我是昨天来的。(I came yesterday.)"},
-    {t:"了 (le)", d:"Indicates completed action or change of state.\nEx: 下雨了。(It started raining.)"},
-    {t:"太...了 (tài...le)", d:"Means 'too' or 'extremely'.\nEx: 太好了！(That's great!)"},
-    {t:"吗 (ma)", d:"Yes/no question particle at the end of a sentence.\nEx: 你是学生吗？(Are you a student?)"},
-    {t:"呢 (ne)", d:"Contextual question particle (How about...?).\nEx: 我很好，你呢？(I'm fine, and you?)"},
-    {t:"在 (zài)", d:"Indicates action in progress or location.\nEx: 我在看书。(I am reading.)"},
-    {t:"会 (huì)", d:"Can / know how to (learned skill).\nEx: 我会说汉语。(I can speak Chinese.)"},
-    {t:"和 (hé)", d:"And (used to join nouns, not sentences).\nEx: 爸爸和妈妈。(Dad and mom.)"},
-    {t:"几 (jǐ)", d:"How many (usually for numbers < 10).\nEx: 几个苹果？(How many apples?)"},
-    {t:"都 (dōu)", d:"Both / All. Placed before the verb.\nEx: 我们都是学生。(We are all students.)"}
+const rawHSK1 = [
+    ["爱","ài","yêu, thích","Động từ","Ái","我爱你。"],["八","bā","tám","Số từ","Bát","八个人。"],["爸爸","bàba","bố, cha","Danh từ","Ba ba","我爸爸是医生。"],["杯子","bēizi","cái cốc","Danh từ","Bôi tử","杯子里有水。"],["北京","Běijīng","Bắc Kinh","Danh từ","Bắc Kinh","我去北京。"],
+    ["本","běn","quyển (lượng từ)","Lượng từ","Bản","一本书。"],["不","bù","không","Phó từ","Bất","我不是学生。"],["不客气","bù kèqi","đừng khách sáo","Cụm từ","Bất khách khí","不客气。"],["菜","cài","rau, món ăn","Danh từ","Thái","中国菜。"],["茶","chá","trà","Danh từ","Trà","喝茶。"],
+    ["吃","chī","ăn","Động từ","Cật","吃饭。"],["出租车","chūzūchē","taxi","Danh từ","Xuất tô xa","坐出租车。"],["打电话","dǎ diànhuà","gọi điện thoại","Động từ","Đả điện thoại","他在打电话。"],["大","dà","to, lớn","Tính từ","Đại","这个苹果很大。"],["的","de","của","Trợ từ","Đích","我的书。"],
+    ["点","diǎn","giờ","Lượng từ","Điểm","现在十点。"],["电脑","diànnǎo","máy tính","Danh từ","Điện não","我的电脑。"],["电视","diànshì","TV","Danh từ","Điện thị","看电视。"],["电影","diànyǐng","phim","Danh từ","Điện ảnh","看电影。"],["东西","dōngxi","đồ vật","Danh từ","Đông tây","买东西。"],
+    ["都","dōu","đều","Phó từ","Đô","我们都去。"],["读","dú","đọc","Động từ","Độc","读书。"],["对不起","duìbuqǐ","xin lỗi","Cụm từ","Đối bất khởi","对不起！"],["多","duō","nhiều","Tính từ","Đa","很多人。"],["多少","duōshao","bao nhiêu","Đại từ","Đa thiểu","多少钱？"],
+    ["儿子","érzi","con trai","Danh từ","Nhi tử","我儿子。"],["二","èr","hai","Số từ","Nhị","二月。"],["饭店","fàndiàn","nhà hàng","Danh từ","Phạn điếm","去饭店。"],["飞机","fēijī","máy bay","Danh từ","Phi cơ","坐飞机去。"],["分钟","fēnzhōng","phút","Danh từ","Phân chung","十分钟。"],
+    ["高兴","gāoxìng","vui vẻ","Tính từ","Cao hứng","很高兴。"],["个","gè","cái, con","Lượng từ","Cá","一个人。"],["工作","gōngzuò","làm việc","Động/Danh từ","Công tác","他在工作。"],["狗","gǒu","chó","Danh từ","Cẩu","一只狗。"],["汉语","Hànyǔ","tiếng Trung","Danh từ","Hán ngữ","学汉语。"],
+    ["好","hǎo","tốt","Tính từ","Hảo","你好。"],["号","hào","ngày, số","Danh từ","Hiệu","一号。"],["喝","hē","uống","Động từ","Hát","喝水。"],["和","hé","và","Liên từ","Hòa","我和你。"],["很","hěn","rất","Phó từ","Ngận","很好。"],
+    ["后面","hòumiàn","phía sau","Danh từ","Hậu diện","在后面。"],["回","huí","về","Động từ","Hồi","回家。"],["会","huì","biết (kỹ năng)","Động từ","Hội","我会说汉语。"],["几","jǐ","mấy","Đại từ","Kỷ","几个人？"],["家","jiā","nhà","Danh từ","Gia","我家。"],
+    ["叫","jiào","tên là, gọi","Động từ","Khiếu","我叫大卫。"],["今天","jīntiān","hôm nay","Danh từ","Kim thiên","今天很好。"],["九","jiǔ","chín","Số từ","Cửu","九点。"],["开","kāi","mở, lái xe","Động từ","Khai","开车。"],["看","kàn","nhìn, xem","Động từ","Khán","看书。"],
+    ["看见","kànjiàn","nhìn thấy","Động từ","Khán kiến","我看见了。"],["块","kuài","đồng (tiền)","Lượng từ","Khối","十块钱。"],["来","lái","đến","Động từ","Lai","来我家。"],["老师","lǎoshī","giáo viên","Danh từ","Lão sư","王老师。"],["了","le","rồi (trợ từ)","Trợ từ","Liễu","下雨了。"],
+    ["冷","lěng","lạnh","Tính từ","Lãnh","今天很冷。"],["里","lǐ","trong","Danh từ","Lý","在里边。"],["零","líng","không (0)","Số từ","Linh","二零二三年。"],["六","liù","sáu","Số từ","Lục","六个人。"],["妈妈","māma","mẹ","Danh từ","Ma ma","我妈妈。"],
+    ["吗","ma","không? (hỏi)","Trợ từ","Ma","你好吗？"],["买","mǎi","mua","Động từ","Mãi","买东西。"],["猫","māo","mèo","Danh từ","Miêu","一只猫。"],["没","méi","không (quá khứ)","Phó từ","Một","没有钱。"],["没关系","méi guānxi","không sao","Cụm từ","Một quan hệ","没关系。"],
+    ["明天","míngtiān","ngày mai","Danh từ","Minh thiên","明天见。"],["名字","míngzi","tên","Danh từ","Danh tự","你叫什么名字？"],["哪","nǎ","nào","Đại từ","Ná","哪国人？"],["哪儿","nǎr","ở đâu","Đại từ","Ná nhi","你去哪儿？"],["那","nà","kia, đó","Đại từ","Na","那个。"],
+    ["那儿","nàr","chỗ kia","Đại từ","Na nhi","在那儿。"],["呢","ne","nhỉ, thế (hỏi)","Trợ từ","Ni","你呢？"],["能","néng","có thể","Động từ","Năng","我能去吗？"],["你","nǐ","bạn","Đại từ","Nhĩ","你好。"],["年","nián","năm","Danh từ","Niên","今年。"],
+    ["女儿","nǚ'ér","con gái","Danh từ","Nữ nhi","我女儿。"],["朋友","péngyou","bạn bè","Danh từ","Bằng hữu","好朋友。"],["漂亮","piàoliang","đẹp","Tính từ","Phiêu lượng","很漂亮。"],["苹果","píngguǒ","quả táo","Danh từ","Bình quả","吃苹果。"],["七","qī","bảy","Số từ","Thất","七个人。"],
+    ["钱","qián","tiền","Danh từ","Tiền","多少钱？"],["前面","qiánmiàn","phía trước","Danh từ","Tiền diện","在前面。"],["请","qǐng","mời, xin","Động từ","Thỉnh","请坐。"],["去","qù","đi","Động từ","Khứ","去学校。"],["热","rè","nóng","Tính từ","Nhiệt","今天很热。"],
+    ["人","rén","người","Danh từ","Nhân","中国人。"],["认识","rènshi","quen biết","Động từ","Nhận thức","认识你很高兴。"],["三","sān","ba","Số từ","Tam","三本书。"],["商店","shāngdiàn","cửa hàng","Danh từ","Thương điếm","去商店。"],["上","shàng","trên","Danh/Động từ","Thượng","桌子上。"],
+    ["上午","shàngwǔ","buổi sáng","Danh từ","Thượng ngọ","上午好。"],["少","shǎo","ít","Tính từ","Thiểu","很少。"],["谁","shéi","ai","Đại từ","Thùy","他是谁？"],["什么","shénme","cái gì","Đại từ","Thập ma","什么名字？"],["十","shí","mười","Số từ","Thập","十块钱。"],
+    ["时候","shíhou","lúc, khi","Danh từ","Thời hậu","什么时候？"],["是","shì","là","Động từ","Thị","我是学生。"],["书","shū","sách","Danh từ","Thư","看书。"],["水","shuǐ","nước","Danh từ","Thủy","喝水。"],["水果","shuǐguǒ","hoa quả","Danh từ","Thủy quả","买水果。"],
+    ["睡觉","shuìjiào","ngủ","Động từ","Thụy giác","去睡觉。"],["说话","shuōhuà","nói chuyện","Động từ","Thuyết thoại","不说话。"],["四","sì","bốn","Số từ","Tứ","四个。"],["岁","suì","tuổi","Lượng từ","Tuế","十岁。"],["他","tā","anh ấy","Đại từ","Tha","他是我朋友。"],
+    ["她","tā","cô ấy","Đại từ","Tha","她很漂亮。"],["太","tài","quá, lắm","Phó từ","Thái","太好了！"],["天气","tiānqì","thời tiết","Danh từ","Thiên khí","天气很好。"],["听","tīng","nghe","Động từ","Thính","听我说。"],["同学","tóngxué","bạn học","Danh từ","Đồng học","我的同学。"],
+    ["喂","wèi","alo","Thán từ","Uy","喂，你好。"],["我","wǒ","tôi","Đại từ","Ngã","我是医生。"],["我们","wǒmen","chúng tôi","Đại từ","Ngã môn","我们去。"],["五","wǔ","năm","Số từ","Ngũ","五个月。"],["喜欢","xǐhuan","thích","Động từ","Hỉ hoan","我喜欢。"],
+    ["下","xià","dưới, xuống","Danh/Động từ","Hạ","下雨了。"],["下午","xiàwǔ","buổi chiều","Danh từ","Hạ ngọ","下午好。"],["下雨","xiàyǔ","trời mưa","Động từ","Hạ vũ","明天下雨。"],["先生","xiānsheng","ngài, ông","Danh từ","Tiên sinh","王先生。"],["现在","xiànzài","bây giờ","Danh từ","Hiện tại","现在几点？"],
+    ["想","xiǎng","muốn, nhớ, nghĩ","Động từ","Tưởng","我想去。"],["小","xiǎo","nhỏ","Tính từ","Tiểu","很小。"],["小姐","xiǎojie","cô (gái)","Danh từ","Tiểu thư","李小姐。"],["些","xiē","một vài","Lượng từ","Ta","一些。"],["写","xiě","viết","Động từ","Tả","写字。"],
+    ["谢谢","xièxie","cảm ơn","Động từ","Tạ tạ","谢谢你。"],["星期","xīngqī","tuần","Danh từ","Tinh kỳ","星期一。"],["学生","xuésheng","học sinh","Danh từ","Học sinh","好学生。"],["学习","xuéxí","học tập","Động từ","Học tập","学习汉语。"],["学校","xuéxiào","trường học","Danh từ","Học hiệu","去学校。"],
+    ["一","yī","một","Số từ","Nhất","一个。"],["一点儿","yīdiǎnr","một chút","Lượng từ","Nhất điểm nhi","喝一点儿水。"],["衣服","yīfu","quần áo","Danh từ","Y phục","买衣服。"],["医生","yīshēng","bác sĩ","Danh từ","Y sinh","看医生。"],["医院","yīyuàn","bệnh viện","Danh từ","Y viện","去医院。"],
+    ["椅子","yǐzi","cái ghế","Danh từ","Y tử","坐椅子。"],["有","yǒu","có","Động từ","Hữu","我有一本书。"],["月","yuè","tháng","Danh từ","Nguyệt","八月。"],["再见","zàijiàn","tạm biệt","Động từ","Tái kiến","老师再见。"],["在","zài","ở, đang","Giới/Động từ","Tại","我在家。"],
+    ["怎么","zěnme","như thế nào","Đại từ","Chẩm ma","怎么去？"],["怎么样","zěnmeyàng","thế nào","Đại từ","Chẩm ma dạng","天气怎么样？"],["这","zhè","này, đây","Đại từ","Giá","这个。"],["这儿","zhèr","chỗ này","Đại từ","Giá nhi","在这儿。"],["中国","Zhōngguó","Trung Quốc","Danh từ","Trung Quốc","去中国。"],
+    ["中午","zhōngwǔ","buổi trưa","Danh từ","Trung ngọ","中午好。"],["住","zhù","sống, ở","Động từ","Trụ","住在哪儿？"],["桌子","zhuōzi","cái bàn","Danh từ","Trác tử","一张桌子。"],["字","zì","chữ","Danh từ","Tự","写字。"],["昨天","zuótiān","hôm qua","Danh từ","Tạc thiên","昨天很冷。"]
 ];
 
-const seedGrammarQuiz = [
-    { q: "我 ___ 昨天来的。", options: ["是", "了", "吗", "呢"], a: "是" },
-    { q: "外面下雨 ___。", options: ["吗", "了", "和", "太"], a: "了" },
-    { q: "这个苹果 ___ 大了！", options: ["很", "太", "不", "都"], a: "太" },
-    { q: "你会说汉语 ___？", options: ["呢", "吗", "的", "了"], a: "吗" },
-    { q: "我是医生，你 ___？", options: ["呢", "吗", "在", "和"], a: "呢" },
-    { q: "我 ___ 家看电视。", options: ["是", "在", "去", "有"], a: "在" },
-    { q: "我 ___ 做中国菜。", options: ["会", "是", "在", "的"], a: "会" },
-    { q: "我有三个苹果 ___ 四本书。", options: ["的", "和", "都", "呢"], a: "和" },
-    { q: "你家有 ___ 口人？", options: ["多少", "几", "什么", "哪"], a: "几" },
-    { q: "他们 ___ 是中国人。", options: ["都", "太", "很", "和"], a: "都" }
+const coreGrammar = [
+    {t:"Cấu trúc 是...的 (shì...de)", d:"Nhấn mạnh thời gian, địa điểm, mục đích, cách thức của hành động trong quá khứ.\nVD: 我是昨天来的。(Tôi đến vào hôm qua.)"},
+    {t:"Trợ từ 了 (le)", d:"Biểu thị hành động đã hoàn thành hoặc có sự thay đổi trạng thái.\nVD: 下雨了。(Trời mưa rồi.)"},
+    {t:"Cấu trúc 太...了 (tài...le)", d:"Biểu thị mức độ cao (quá, lắm).\nVD: 太好了！(Tốt quá rồi!)"},
+    {t:"Trợ từ 吗 (ma)", d:"Đặt cuối câu để tạo câu hỏi Có/Không.\nVD: 你是学生吗？(Bạn là học sinh phải không?)"},
+    {t:"Trợ từ 呢 (ne)", d:"Hỏi ngược lại (còn... thì sao) hoặc xác nhận hành động đang diễn ra.\nVD: 我很好，你呢？(Tôi khỏe, còn bạn?)"},
+    {t:"Giới từ 在 (zài)", d:"Chỉ địa điểm (S + 在 + Nơi chốn + Động từ).\nVD: 我在看书。(Tôi đang đọc sách / Tôi đọc ở nhà.)"},
+    {t:"Động từ năng nguyện 会 (huì)", d:"Biết làm gì đó thông qua học tập rèn luyện.\nVD: 我会说汉语。(Tôi biết nói tiếng Trung.)"}
 ];
 
-const seedStories = [
-    {t:"我的家 (My Family)", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
-    {t:"学校的一天 (Day at School)", c:"今天星期一，我去学校。上午我有汉语课。我的汉语老师很好。中午，我和同学在饭店吃饭。下午我回家。"},
-    {t:"买苹果 (Buying Apples)", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”我买了十个苹果。我很高兴。"}
+const sampleStories = [
+    {t:"我的家 (Gia đình tôi)", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
+    {t:"去买苹果 (Đi mua táo)", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”我买了十个苹果。我很高兴。"}
 ];
 
-const seedListen = [
-    {t:"Greeting", c:"大家好，我叫玛丽。我是美国人。认识你们很高兴。"},
-    {t:"Shopping", c:"这个杯子很漂亮。多少钱？五十块？太贵了！"}
-];
-
-const seedVideoProfiles = [
-    {
-        id: '1', title: 'Demo Subtitle Track',
-        subs: [
-            { t: 1, zh: "你好！", py: "nǐ hǎo!", en: "Hello!" },
-            { t: 4, zh: "欢迎来到这里。", py: "huānyíng lái dào zhèlǐ.", en: "Welcome here." },
-            { t: 7, zh: "我们一起学习汉语吧。", py: "wǒmen yīqǐ xuéxí hànyǔ ba.", en: "Let's study Chinese together." }
-        ]
-    }
+const sampleSubs = [
+    {start:0, end:3, zh:"你好！", py:"nǐ hǎo!", en:"Xin chào!"},
+    {start:4, end:7, zh:"欢迎来到这里。", py:"huānyíng lái dào zhèlǐ.", en:"Chào mừng đến với nơi này."}
 ];
 
 /* ==========================================================================
-   STATE MANAGEMENT & ROUTING
+   LOCAL STORAGE & SYSTEM STATE
    ========================================================================== */
 function getData(key, def) { return JSON.parse(localStorage.getItem(key)) || def; }
 function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
-function initData() {
-    if(!localStorage.getItem('hsk_words')) setData('hsk_words', seedWords);
-    if(!localStorage.getItem('hsk_grammar')) setData('hsk_grammar', seedGrammar);
-    if(!localStorage.getItem('hsk_stories')) setData('hsk_stories', seedStories);
-    if(!localStorage.getItem('hsk_listen')) setData('hsk_listen', seedListen);
-    if(!localStorage.getItem('sanrio_video_profiles')) setData('sanrio_video_profiles', seedVideoProfiles);
-    if(!localStorage.getItem('hsk_vocab_book')) setData('hsk_vocab_book', []);
-    
-    // Streak logic
-    let lastLogin = localStorage.getItem('last_login');
-    let streak = parseInt(localStorage.getItem('streak') || 0);
-    let today = new Date().toDateString();
-    if(lastLogin !== today) {
-        if(lastLogin === new Date(Date.now() - 86400000).toDateString()) streak++; 
-        else streak = 1;
-        localStorage.setItem('last_login', today);
-        localStorage.setItem('streak', streak);
-    }
-    updateDashboard();
-}
-initData();
+let currentLevel = 1;
+let vocabDictMap = []; 
 
+function initSystem() {
+    if(!localStorage.getItem('sanrio_hsk1_v')) {
+        const vDB = rawHSK1.map(w => ({h:w[0], p:w[1], m:w[2], pos:w[3], hv:w[4], e:w[5]}));
+        setData('sanrio_hsk1_v', vDB);
+    }
+    if(!localStorage.getItem('sanrio_hsk1_g')) setData('sanrio_hsk1_g', coreGrammar);
+    if(!localStorage.getItem('sanrio_stories')) setData('sanrio_stories', sampleStories);
+    if(!localStorage.getItem('sanrio_subs')) setData('sanrio_subs', sampleSubs);
+    if(!localStorage.getItem('sanrio_notebook')) setData('sanrio_notebook', []);
+    
+    checkAndResetDaily();
+    buildTokenizerMap();
+}
+
+function checkAndResetDaily() {
+    const today = new Date().toLocaleDateString();
+    let daily = getData('sanrio_daily', { date: today, words: 0, quizzes: 0, streak: 0 });
+    
+    if (daily.date !== today) {
+        // Check if streak continues (was active yesterday)
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (daily.date === yesterday.toLocaleDateString()) {
+            daily.streak += 1;
+        } else {
+            daily.streak = 1; // Reset streak if missed a day
+        }
+        daily.date = today;
+        daily.words = 0;
+        daily.quizzes = 0;
+    } else if (daily.streak === 0) {
+        daily.streak = 1; // First time logging in today
+    }
+    
+    setData('sanrio_daily', daily);
+    updateDashboardUI();
+}
+
+function updateDailyProgress(type) {
+    let daily = getData('sanrio_daily');
+    if(type === 'word') daily.words++;
+    if(type === 'quiz') daily.quizzes++;
+    setData('sanrio_daily', daily);
+    updateDashboardUI();
+}
+
+function updateDashboardUI() {
+    const daily = getData('sanrio_daily');
+    document.getElementById('streak-counter').innerText = daily.streak;
+    document.getElementById('words-today').innerText = daily.words;
+    
+    // Target: 10 words, 1 quiz. Max 100%
+    let progress = Math.min(100, Math.round(((daily.words/10) + (daily.quizzes/1))*50));
+    document.getElementById('goal-progress-bar').style.width = progress + '%';
+    document.getElementById('goal-text').innerText = progress;
+    
+    document.getElementById('total-words').innerText = getData('sanrio_hsk1_v').length;
+}
+
+function buildTokenizerMap() {
+    vocabDictMap = getData('sanrio_hsk1_v', []).sort((a,b) => b.h.length - a.h.length);
+}
+
+// Navigation
 function nav(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     event.currentTarget.classList.add('active');
     
-    if(id === 'dashboard') updateDashboard();
-    if(id === 'vocab') { switchVocabMode('study'); }
-    if(id === 'grammar') { switchGrammarMode('study'); }
+    if(id === 'dashboard') updateDashboardUI();
     if(id === 'reading') renderStories();
-    if(id === 'notebook') renderVocabBook();
-    if(id === 'video') initVideoSection();
-    if(id === 'listening') renderListening();
+    if(id === 'notebook') renderNotebook();
+    if(id === 'video') renderSubtitles();
 }
 
-function updateDashboard() {
-    document.getElementById('dash-streak').innerText = localStorage.getItem('streak');
-    document.getElementById('dash-words').innerText = getData('hsk_words', []).length;
+// HSK Block Logic
+function openLevel(module, level) {
+    currentLevel = level;
+    document.getElementById(`${module}-home`).style.display = 'none';
+    document.getElementById(`${module}-workspace`).style.display = 'block';
+    
+    if(module === 'vocab') {
+        document.getElementById('v-lvl-title').innerText = level;
+        document.getElementById('v-add-lvl').innerText = level;
+        switchMode('v', 'study');
+    } else {
+        document.getElementById('g-lvl-title').innerText = level;
+        switchMode('g', 'study');
+    }
+}
+function closeLevel(module) {
+    document.getElementById(`${module}-home`).style.display = 'block';
+    document.getElementById(`${module}-workspace`).style.display = 'none';
 }
 
-// Global TTS API
-function playAudio(text) {
+function switchMode(prefix, mode) {
+    const tabs = ['study', 'quiz', 'add'];
+    tabs.forEach(m => {
+        let btn = document.getElementById(`tab-${prefix}-${m}`);
+        let view = document.getElementById(`${prefix}-${m}`);
+        if(btn) btn.classList.toggle('active', mode === m);
+        if(view) view.style.display = mode === m ? 'block' : 'none';
+    });
+    
+    if(prefix === 'v') {
+        if(mode === 'study') initFC();
+        if(mode === 'quiz') document.getElementById('v-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startVocabQuiz()">🚀 Start Quiz (10 Qs)</button>`;
+    }
+    if(prefix === 'g') {
+        if(mode === 'study') renderGrammar();
+        if(mode === 'quiz') document.getElementById('g-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startGrammarQuiz()">🚀 Start Quiz</button>`;
+    }
+}
+
+// Global TTS
+function speak(text) {
     if('speechSynthesis' in window) {
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = 'zh-CN';
@@ -469,512 +584,401 @@ function playAudio(text) {
 }
 
 /* ==========================================================================
-   VOCABULARY (Study & Quiz)
+   VOCABULARY (Study, Quiz, Add)
    ========================================================================== */
 let fcIndex = 0;
-let fcData = [];
-
-function switchVocabMode(mode) {
-    document.getElementById('tab-v-study').classList.toggle('active', mode==='study');
-    document.getElementById('tab-v-quiz').classList.toggle('active', mode==='quiz');
-    document.getElementById('v-study-view').style.display = mode === 'study' ? 'block' : 'none';
-    document.getElementById('v-quiz-view').style.display = mode === 'quiz' ? 'block' : 'none';
-    if(mode==='study') initFC();
-    if(mode==='quiz') document.getElementById('vocab-quiz-box').innerHTML = `<button class="btn btn-pink" style="font-size:1.2rem; padding:15px 30px;" onclick="startVocabQuiz()">🚀 Start Vocab Quiz (10 Questions)</button>`;
-}
+let curVocab = [];
 
 function initFC() {
-    fcData = getData('hsk_words', []);
-    if(fcIndex >= fcData.length) fcIndex = 0;
+    curVocab = getData(`sanrio_hsk${currentLevel}_v`, []);
+    if(!curVocab.length) return alert(`No words in HSK ${currentLevel} yet! Add some first.`);
+    if(fcIndex >= curVocab.length) fcIndex = 0;
     renderFC();
 }
 function renderFC() {
-    if(!fcData.length) return;
-    const c = fcData[fcIndex];
-    document.getElementById('fc-h').innerText = c.h;
-    document.getElementById('fc-p').innerText = c.p;
-    document.getElementById('fc-m').innerText = c.m;
-    document.getElementById('fc-e').innerText = c.e;
-    document.getElementById('fc-counter').innerText = `${fcIndex + 1} / ${fcData.length}`;
+    if(!curVocab.length) return;
+    const c = curVocab[fcIndex];
+    document.getElementById('v-fc-h').innerText = c.h;
+    document.getElementById('v-fc-p').innerText = c.p;
+    document.getElementById('v-fc-m').innerText = c.m;
+    document.getElementById('v-fc-pos').innerText = c.pos;
+    document.getElementById('v-fc-hv').innerText = c.hv;
+    document.getElementById('v-fc-e').innerText = c.e;
+    document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${curVocab.length}`;
     document.querySelector('.fc-container').classList.remove('flipped');
 }
-function nextCard() { fcIndex = (fcIndex + 1) % fcData.length; renderFC(); }
-function prevCard() { fcIndex = (fcIndex - 1 + fcData.length) % fcData.length; renderFC(); }
-function addCard() {
-    const h = document.getElementById('add-fc-h').value.trim();
-    const p = document.getElementById('add-fc-p').value.trim();
-    const m = document.getElementById('add-fc-m').value.trim();
-    const e = document.getElementById('add-fc-e').value.trim();
+function nextCard() { fcIndex = (fcIndex + 1) % curVocab.length; renderFC(); }
+function prevCard() { fcIndex = (fcIndex - 1 + curVocab.length) % curVocab.length; renderFC(); }
+
+function markWordLearned() {
+    updateDailyProgress('word');
+    nextCard();
+}
+
+function addVocab() {
+    const h = document.getElementById('v-add-h').value.trim();
+    const p = document.getElementById('v-add-p').value.trim();
+    const m = document.getElementById('v-add-m').value.trim();
+    const pos = document.getElementById('v-add-pos').value.trim() || 'N/A';
+    const hv = document.getElementById('v-add-hv').value.trim() || 'N/A';
+    const e = document.getElementById('v-add-e').value.trim();
     if(h && p && m) {
-        fcData.push({h, p, m, e});
-        setData('hsk_words', fcData);
-        alert('Word added successfully! 🌸');
-        ['add-fc-h','add-fc-p','add-fc-m','add-fc-e'].forEach(id => document.getElementById(id).value = '');
-        fcIndex = fcData.length - 1;
-        initFC();
+        const key = `sanrio_hsk${currentLevel}_v`;
+        let arr = getData(key, []);
+        arr.push({h,p,m,pos,hv,e});
+        setData(key, arr);
+        buildTokenizerMap();
+        alert(`Saved to HSK ${currentLevel}!`);
+        ['v-add-h','v-add-p','v-add-m','v-add-pos','v-add-hv','v-add-e'].forEach(id=>document.getElementById(id).value='');
     }
 }
 
-let vQuizState = { qIndex: 0, score: 0, questions: [] };
+// Vocab Quiz
+let vQuizState = { qIdx: 0, score: 0, qs: [] };
 function startVocabQuiz() {
-    let pool = getData('hsk_words', []);
-    if(pool.length < 4) return alert("Need at least 4 words in database for quiz!");
-    
-    let questions = [];
+    let pool = getData(`sanrio_hsk${currentLevel}_v`, []);
+    if(pool.length < 4) return alert("Need at least 4 words!");
+    let qs = [];
     for(let i=0; i<10; i++) {
-        let correctItem = pool[Math.floor(Math.random() * pool.length)];
-        let type = Math.random() > 0.5; // true = Hanzi->Meaning, false = Meaning->Hanzi
-        let qText = type ? `What does "${correctItem.h}" mean?` : `Which character means "${correctItem.m}"?`;
-        let correctAns = type ? correctItem.m : correctItem.h;
-        
-        let options = [correctAns];
-        while(options.length < 4) {
-            let randItem = pool[Math.floor(Math.random() * pool.length)];
-            let wrongAns = type ? randItem.m : randItem.h;
-            if(!options.includes(wrongAns)) options.push(wrongAns);
+        let correct = pool[Math.floor(Math.random()*pool.length)];
+        let isH2M = Math.random()>0.5;
+        let q = isH2M ? `Nghĩa của "${correct.h}" là?` : `Chữ Hán của "${correct.m}" là?`;
+        let a = isH2M ? correct.m : correct.h;
+        let opts = [a];
+        while(opts.length<4){
+            let rand = pool[Math.floor(Math.random()*pool.length)];
+            let wrong = isH2M ? rand.m : rand.h;
+            if(!opts.includes(wrong)) opts.push(wrong);
         }
-        options.sort(() => Math.random() - 0.5); 
-        questions.push({ q: qText, options, a: correctAns, hint: correctItem.p });
+        qs.push({q, opts:opts.sort(()=>Math.random()-0.5), a});
     }
-    vQuizState = { qIndex: 0, score: 0, questions };
-    renderVocabQuizQ();
+    vQuizState = {qIdx:0, score:0, qs};
+    renderVQuiz();
 }
-
-function renderVocabQuizQ() {
-    if(vQuizState.qIndex >= 10) {
-        document.getElementById('vocab-quiz-box').innerHTML = `
-            <h3 style="font-size:2rem; color:#d6336c;">Quiz Complete! 🌸</h3>
-            <p class="quiz-score">Score: ${vQuizState.score} / 10</p>
-            <button class="btn btn-pink mt" onclick="startVocabQuiz()">Try Again</button>`;
+function renderVQuiz() {
+    const box = document.getElementById('v-quiz-container');
+    if(vQuizState.qIdx >= 10) {
+        if(vQuizState.score >= 5) updateDailyProgress('quiz');
+        box.innerHTML = `<h3 style="font-size:2rem;">Quiz Complete! 🌸</h3><p style="font-size:1.5rem;color:#d6336c;margin:15px 0;">Score: ${vQuizState.score} / 10</p><button class="btn btn-pink" onclick="startVocabQuiz()">Try Again</button>`;
         return;
     }
-    const q = vQuizState.questions[vQuizState.qIndex];
-    document.getElementById('vocab-quiz-box').innerHTML = `
-        <div style="font-size:1.2rem; color:#777; margin-bottom:10px;">Question ${vQuizState.qIndex + 1} of 10</div>
-        <div class="quiz-question">${q.q}</div>
-        <p style="color:#aaa; margin-bottom:20px;">(Hint: ${q.hint})</p>
-        <div class="quiz-options">
-            ${q.options.map((opt, i) => `<button class="quiz-option" id="vo-${i}" onclick="answerVocab('${opt.replace(/'/g, "\\'")}', 'vo-${i}')">${opt}</button>`).join('')}
+    const q = vQuizState.qs[vQuizState.qIdx];
+    box.innerHTML = `
+        <div style="color:var(--text-light); margin-bottom:10px;">Question ${vQuizState.qIdx + 1}/10</div>
+        <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
+        <div class="grid-2">
+            ${q.opts.map((opt, i)=>`<button class="quiz-opt" id="vqo-${i}" onclick="ansVQuiz('${opt.replace(/'/g,"\\'")}', 'vqo-${i}')">${opt}</button>`).join('')}
         </div>
-        <button id="v-next-btn" class="btn btn-pink" style="display:none; margin:0 auto;" onclick="vQuizState.qIndex++; renderVocabQuizQ();">Next Question ➡️</button>
+        <button id="vq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; renderVQuiz();">Next ➡️</button>
     `;
 }
-
-function answerVocab(selected, btnId) {
-    const q = vQuizState.questions[vQuizState.qIndex];
-    const btns = document.querySelectorAll('.quiz-option');
-    btns.forEach(b => b.style.pointerEvents = 'none'); 
-    
-    if(selected === q.a) {
-        document.getElementById(btnId).classList.add('correct');
-        vQuizState.score++;
-    } else {
-        document.getElementById(btnId).classList.add('wrong');
-        btns.forEach(b => { if(b.innerText === q.a) b.classList.add('correct'); });
+function ansVQuiz(sel, id) {
+    const q = vQuizState.qs[vQuizState.qIdx];
+    document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
+    if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
+    else {
+        document.getElementById(id).classList.add('wrong');
+        document.querySelectorAll('.quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
     }
-    document.getElementById('v-next-btn').style.display = 'block';
+    document.getElementById('vq-next').style.display='block';
 }
 
 /* ==========================================================================
-   GRAMMAR (Study & Quiz)
+   GRAMMAR MODULE
    ========================================================================== */
-function switchGrammarMode(mode) {
-    document.getElementById('tab-g-study').classList.toggle('active', mode==='study');
-    document.getElementById('tab-g-quiz').classList.toggle('active', mode==='quiz');
-    document.getElementById('g-study-view').style.display = mode === 'study' ? 'block' : 'none';
-    document.getElementById('g-quiz-view').style.display = mode === 'quiz' ? 'block' : 'none';
-    if(mode==='study') renderGrammarStudy();
-    if(mode==='quiz') document.getElementById('grammar-quiz-box').innerHTML = `<button class="btn btn-pink" style="font-size:1.2rem; padding:15px 30px;" onclick="startGrammarQuiz()">🚀 Start Grammar Quiz</button>`;
-}
-
-function renderGrammarStudy() {
-    document.getElementById('grammar-list').innerHTML = getData('hsk_grammar', []).map(g => `
+function renderGrammar() {
+    const key = `sanrio_hsk${currentLevel}_g`;
+    let arr = getData(key, []);
+    if(currentLevel === 1 && arr.length===0) { arr = coreGrammar; setData(key, arr); }
+    
+    document.getElementById('g-list').innerHTML = arr.map(g => `
         <div class="card" style="margin-bottom:0;">
-            <h4 style="font-size:1.3rem;">${g.t}</h4>
-            <p style="white-space: pre-line; line-height:1.6;">${g.d}</p>
+            <h4 style="font-size:1.3rem;">${g.t}</h4><p style="white-space:pre-line; line-height:1.6;">${g.d}</p>
         </div>`).join('');
 }
 function addGrammar() {
-    const t = document.getElementById('add-g-title').value.trim();
-    const d = document.getElementById('add-g-desc').value.trim();
+    const t = document.getElementById('g-add-t').value.trim();
+    const d = document.getElementById('g-add-d').value.trim();
     if(t && d) {
-        const g = getData('hsk_grammar', []); g.push({t, d}); setData('hsk_grammar', g);
-        renderGrammarStudy();
-        document.getElementById('add-g-title').value = ''; document.getElementById('add-g-desc').value = '';
+        const key = `sanrio_hsk${currentLevel}_g`;
+        let arr = getData(key, []); arr.push({t,d}); setData(key, arr);
+        renderGrammar();
+        document.getElementById('g-add-t').value=''; document.getElementById('g-add-d').value='';
     }
 }
-
-let gQuizState = { qIndex: 0, score: 0, questions: [] };
 function startGrammarQuiz() {
-    let pool = [...seedGrammarQuiz].sort(() => Math.random() - 0.5).slice(0, 5); 
-    gQuizState = { qIndex: 0, score: 0, questions: pool };
-    renderGrammarQuizQ();
+    if(currentLevel !== 1) return alert("Grammar Quiz only available in HSK 1 Demo.");
+    vQuizState = {qIdx:0, score:0, qs:[
+        {q:"我 ___ 昨天来的。", opts:["是","了","吗","呢"], a:"是"},
+        {q:"外面下雨 ___。", opts:["吗","了","和","太"], a:"了"},
+        {q:"这个苹果 ___ 大了！", opts:["很","太","不","都"], a:"太"}
+    ]};
+    renderGQuiz();
 }
-function renderGrammarQuizQ() {
-    if(gQuizState.qIndex >= gQuizState.questions.length) {
-        document.getElementById('grammar-quiz-box').innerHTML = `
-            <h3 style="font-size:2rem; color:#d6336c;">Quiz Complete! 🎀</h3>
-            <p class="quiz-score">Score: ${gQuizState.score} / ${gQuizState.questions.length}</p>
-            <button class="btn btn-pink mt" onclick="startGrammarQuiz()">Try Again</button>`;
+function renderGQuiz() {
+    const box = document.getElementById('g-quiz-container');
+    if(vQuizState.qIdx >= vQuizState.qs.length) {
+        box.innerHTML = `<h3>Complete! 🎀</h3><p>Score: ${vQuizState.score} / ${vQuizState.qs.length}</p><button class="btn btn-pink" onclick="startGrammarQuiz()">Try Again</button>`;
         return;
     }
-    const q = gQuizState.questions[gQuizState.qIndex];
-    let optsHTML = q.options.sort(() => Math.random() - 0.5).map((opt, i) => 
-        `<button class="quiz-option" id="go-${i}" onclick="answerGrammar('${opt}', 'go-${i}')">${opt}</button>`
-    ).join('');
-    
-    document.getElementById('grammar-quiz-box').innerHTML = `
-        <div style="font-size:1.2rem; color:#777; margin-bottom:10px;">Question ${gQuizState.qIndex + 1} of ${gQuizState.questions.length}</div>
-        <div class="quiz-question">${q.q}</div>
-        <div class="quiz-options">${optsHTML}</div>
-        <button id="g-next-btn" class="btn btn-pink" style="display:none; margin:0 auto;" onclick="gQuizState.qIndex++; renderGrammarQuizQ();">Next Question ➡️</button>
+    const q = vQuizState.qs[vQuizState.qIdx];
+    box.innerHTML = `
+        <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
+        <div class="grid-2">${q.opts.map((opt, i)=>`<button class="quiz-opt" id="gqo-${i}" onclick="ansGQuiz('${opt}', 'gqo-${i}')">${opt}</button>`).join('')}</div>
+        <button id="gq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; renderGQuiz();">Next ➡️</button>
     `;
 }
-function answerGrammar(selected, btnId) {
-    const q = gQuizState.questions[gQuizState.qIndex];
-    const btns = document.querySelectorAll('.quiz-option');
-    btns.forEach(b => b.style.pointerEvents = 'none');
-    
-    if(selected === q.a) {
-        document.getElementById(btnId).classList.add('correct');
-        gQuizState.score++;
-    } else {
-        document.getElementById(btnId).classList.add('wrong');
-        btns.forEach(b => { if(b.innerText === q.a) b.classList.add('correct'); });
-    }
-    document.getElementById('g-next-btn').style.display = 'block';
+function ansGQuiz(sel, id) {
+    const q = vQuizState.qs[vQuizState.qIdx];
+    document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
+    if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
+    else { document.getElementById(id).classList.add('wrong'); }
+    document.getElementById('gq-next').style.display='block';
 }
 
 /* ==========================================================================
-   READING & TOOLTIP
+   VIDEO HUB (Split Screen, Auto-Pause, Dictation)
    ========================================================================== */
-function renderStories() {
-    document.getElementById('story-list').innerHTML = getData('hsk_stories', []).map(s => `
-        <div class="card">
-            <h3>${s.t}</h3>
-            <div class="story-text" onmouseup="handleTextSelection(event)" ontouchend="handleTextSelection(event)">${s.c}</div>
-        </div>`).join('');
-}
-function addStory() {
-    const t = document.getElementById('add-s-title').value.trim();
-    const c = document.getElementById('add-s-content').value.trim();
-    if(t && c) {
-        const arr = getData('hsk_stories', []); arr.push({t, c}); setData('hsk_stories', arr);
-        renderStories();
-        document.getElementById('add-s-title').value = ''; document.getElementById('add-s-content').value = '';
+const vid = document.getElementById('vid-player');
+let isAutoPause = false;
+let pausedSubIdx = -1;
+
+function loadVideo(e) {
+    const file = e.target.files[0];
+    if(file) {
+        vid.src = URL.createObjectURL(file);
+        vid.load();
     }
 }
 
-function handleTextSelection(e) {
-    setTimeout(() => { 
-        const selection = window.getSelection();
-        const text = selection.toString().trim();
-        const tooltip = document.getElementById('tooltip');
-        
-        if (text.length > 0 && /[\u4e00-\u9fa5]/.test(text)) {
-            document.getElementById('tt-word').innerText = text;
-            const found = getData('hsk_words', []).find(w => w.h === text);
-            document.getElementById('tt-pinyin').value = found ? found.p : '';
-            document.getElementById('tt-meaning').value = found ? found.m : '';
-            
-            const range = selection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-            const mainContent = document.getElementById('main-content');
-            
-            tooltip.style.display = 'block';
-            tooltip.style.left = (rect.left + (rect.width/2)) + 'px';
-            tooltip.style.top = (rect.bottom + mainContent.scrollTop + 10) + 'px';
-        }
-    }, 100);
-}
-
-function closeTooltip() { document.getElementById('tooltip').style.display = 'none'; }
-document.addEventListener('mousedown', (e) => {
-    const tt = document.getElementById('tooltip');
-    if(!tt.contains(e.target) && !e.target.classList.contains('story-text')) closeTooltip();
+document.getElementById('auto-pause-toggle').addEventListener('change', (e) => {
+    isAutoPause = e.target.checked;
 });
 
-function saveVocabFromTooltip() {
-    const word = document.getElementById('tt-word').innerText;
-    const note = `${document.getElementById('tt-pinyin').value} | ${document.getElementById('tt-meaning').value}`;
-    const vocab = getData('hsk_vocab_book', []);
-    vocab.push({ word, note });
-    setData('hsk_vocab_book', vocab);
-    closeTooltip();
-    window.getSelection().removeAllRanges();
-    alert('Saved to Vocab Book! 🎀');
+function resumeVideo() {
+    vid.play();
+    document.getElementById('btn-resume-vid').style.display = 'none';
 }
 
-/* ==========================================================================
-   PERSONAL VOCAB BOOK
-   ========================================================================== */
-function renderVocabBook() {
-    const vocab = getData('hsk_vocab_book', []);
-    const container = document.getElementById('personal-vocab-list');
-    if(!vocab.length) { container.innerHTML = '<p>No words saved yet! Highlight words in the Reading tab to save them here. ☁️</p>'; return; }
-    
-    container.innerHTML = vocab.map((v, i) => `
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0; background:var(--mint);">
-            <div>
-                <h4 style="font-size:1.5rem; margin-bottom:5px;">${v.word}</h4>
-                <p style="color:#777;">${v.note}</p>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <button class="btn btn-pink" onclick="playAudio('${v.word}')">🔊</button>
-                <button class="btn btn-danger" style="padding:10px; border-radius:10px; cursor:pointer;" onclick="deleteVocab(${i})">🗑️</button>
-            </div>
-        </div>`).join('');
-}
-function deleteVocab(i) {
-    const vocab = getData('hsk_vocab_book', []);
-    vocab.splice(i, 1);
-    setData('hsk_vocab_book', vocab);
-    renderVocabBook();
-}
-
-/* ==========================================================================
-   NATIVE VIDEO MODULE
-   ========================================================================== */
-let currentProfileId = null;
-const videoPlayer = document.getElementById('native-player');
-
-function initVideoSection() {
-    const profiles = getData('sanrio_video_profiles', []);
-    const sel = document.getElementById('video-profile-selector');
-    sel.innerHTML = `<option value="">-- Select a Video Profile --</option>` + 
-                    profiles.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
-    if(currentProfileId) sel.value = currentProfileId;
-    renderSubtitles();
-}
-
-function createVideoProfile() {
-    const name = document.getElementById('new-profile-name').value.trim();
-    if(name) {
-        const profiles = getData('sanrio_video_profiles', []);
-        const newId = Date.now().toString();
-        profiles.push({ id: newId, title: name, subs: [] });
-        setData('sanrio_video_profiles', profiles);
-        currentProfileId = newId;
-        document.getElementById('new-profile-name').value = '';
-        initVideoSection();
-        alert("Profile Created! Now select a local video file. 🎬");
+document.addEventListener('keydown', (e) => {
+    if(e.code === 'Space' && document.getElementById('btn-resume-vid').style.display === 'block') {
+        e.preventDefault();
+        resumeVideo();
     }
-}
+});
 
-function loadSubtitleProfile() {
-    currentProfileId = document.getElementById('video-profile-selector').value;
-    renderSubtitles();
-}
-
-function handleVideoUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoPlayer.src = fileURL;
-        videoPlayer.load();
-        if(!currentProfileId) alert("Tip: Select or create a Subtitle Profile to save your subtitles for this video! 🎀");
+// Dictionary Tokenizer for Subs
+function wrapChinese(text) {
+    if(!text) return '';
+    let res = ''; let i = 0;
+    while(i < text.length) {
+        let matched = false;
+        for(let v of vocabDictMap) {
+            let len = v.h.length;
+            if(text.substring(i, i+len) === v.h) {
+                const safeV = encodeURIComponent(JSON.stringify(v));
+                res += `<span class="dict-word" data-entry="${safeV}" onmouseenter="showDict(event)" onmouseleave="hideDict()" ontouchstart="showDict(event)">${v.h}</span>`;
+                i += len; matched = true; break;
+            }
+        }
+        if(!matched) { res += text[i]; i++; }
     }
-}
-
-function formatTime(secs) {
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-function parseTime(input) {
-    if(!input) return 0;
-    if(input.toString().includes(':')) {
-        const parts = input.toString().split(':');
-        return parseInt(parts[0])*60 + parseInt(parts[1]);
-    }
-    return parseInt(input) || 0;
+    return res;
 }
 
 function renderSubtitles() {
-    const profiles = getData('sanrio_video_profiles', []);
-    const profile = profiles.find(p => p.id === currentProfileId);
-    const container = document.getElementById('subs-container');
-    
-    if(!profile || !profile.subs || !profile.subs.length) {
-        container.innerHTML = "<p style='color:#777'>No subtitles available for this profile. Add some below!</p>"; 
-        return;
-    }
-    
-    container.innerHTML = profile.subs.map((s, i) => `
-        <div class="sub-line" id="sub-row-${i}" onclick="seekVideo(${s.t})">
-            <div class="sub-time">${formatTime(s.t)}</div>
-            <div class="sub-content">
-                <strong style="font-size:1.1rem; color:var(--text);">${s.zh}</strong> 
-                <span style="color:#777; margin-left:10px;">${s.py}</span>
-                <div style="font-style:italic; font-size:0.95rem; margin-top:3px;">${s.en}</div>
-            </div>
-            <div style="display:flex; gap:5px; flex-direction:column;">
-                <button class="btn btn-pink" style="padding:5px 10px; font-size:0.8rem;" onclick="editSub(event, ${i})">Edit</button>
-                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem; border:none; border-radius:10px;" onclick="deleteSub(event, ${i})">X</button>
+    const subs = getData('sanrio_subs', []);
+    const cont = document.getElementById('sub-list-container');
+    cont.innerHTML = subs.map((s, i) => `
+        <div class="sub-line" id="sub-row-${i}">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="flex:1;" onclick="seekVid(${s.start})">
+                    <span class="sub-time">${s.start}s - ${s.end}s</span>
+                    
+                    <div class="sub-normal" id="sn-${i}">
+                        <div class="sub-text">${wrapChinese(s.zh)}</div>
+                        <div style="font-size:0.95rem; color:var(--text-light); margin-top:5px;">${s.py} | ${s.en}</div>
+                    </div>
+                    
+                    <div class="dictation-input-area" id="sd-${i}" style="display:none; margin-top:10px;">
+                        <input type="text" id="dic-in-${i}" placeholder="Type what you hear (Hanzi)..." onclick="event.stopPropagation()">
+                        <div style="display:flex; gap:10px; margin-top:5px;">
+                            <button class="btn" style="padding:5px 15px;" onclick="checkDic(${i}, '${s.zh}'); event.stopPropagation()">Kiểm tra</button>
+                            <button class="btn btn-danger" style="padding:5px 15px;" onclick="toggleDic(${i}, false); event.stopPropagation()">Hủy</button>
+                        </div>
+                        <div class="dic-res" id="dic-res-${i}"></div>
+                    </div>
+                </div>
+                
+                <div style="display:flex; flex-direction:column; gap:5px; margin-left:10px;">
+                    <button class="btn" style="padding:5px;" onclick="toggleDic(${i}, true)">✍️</button>
+                    <button class="btn" style="padding:5px;" onclick="editSub(event, ${i})">✏️</button>
+                    <button class="btn btn-danger" style="padding:5px;" onclick="delSub(event, ${i})">X</button>
+                </div>
             </div>
         </div>`).join('');
 }
 
-// Sync active subtitle
-videoPlayer.addEventListener('timeupdate', () => {
-    if(!currentProfileId) return;
-    const profiles = getData('sanrio_video_profiles', []);
-    const profile = profiles.find(p => p.id === currentProfileId);
-    if(!profile) return;
-    
-    let ct = videoPlayer.currentTime;
+// Time Update Logic (Highlight & Auto-Pause)
+vid.addEventListener('timeupdate', () => {
+    const subs = getData('sanrio_subs', []);
+    let ct = vid.currentTime;
     let activeIdx = -1;
-    for(let i = profile.subs.length - 1; i >= 0; i--) {
-        if(ct >= profile.subs[i].t) {
-            activeIdx = i;
-            break;
-        }
+    
+    for(let i=0; i<subs.length; i++) {
+        if(ct >= subs[i].start && ct <= subs[i].end) { activeIdx = i; break; }
     }
     
     document.querySelectorAll('.sub-line').forEach((row, idx) => {
-        if(idx === activeIdx) row.classList.add('active-sub');
-        else row.classList.remove('active-sub');
+        if(idx === activeIdx) {
+            row.classList.add('active');
+            // Auto-pause logic
+            if(isAutoPause && ct >= subs[idx].end - 0.2 && pausedSubIdx !== idx) {
+                vid.pause();
+                pausedSubIdx = idx;
+                document.getElementById('btn-resume-vid').style.display = 'block';
+            }
+        } else {
+            row.classList.remove('active');
+        }
     });
+    
+    // Reset pause tracking if we moved to a new sub
+    if(activeIdx !== pausedSubIdx && activeIdx !== -1) pausedSubIdx = -1;
 });
 
-function seekVideo(seconds) {
-    if(videoPlayer.src) {
-        videoPlayer.currentTime = seconds;
-        videoPlayer.play();
-    }
-}
+function seekVid(s) { if(vid.src) { vid.currentTime = s; vid.play(); document.getElementById('btn-resume-vid').style.display = 'none'; } }
 
-function saveSubtitle() {
-    if(!currentProfileId) return alert("Please select or create a Subtitle Profile first! 🌸");
-    
-    const tInput = document.getElementById('sub-time').value;
-    const t = parseTime(tInput);
+function saveSub() {
+    const start = parseFloat(document.getElementById('sub-s').value);
+    const end = parseFloat(document.getElementById('sub-e').value);
     const zh = document.getElementById('sub-zh').value.trim();
     const py = document.getElementById('sub-py').value.trim();
-    const en = document.getElementById('sub-en').value.trim();
-    const editIdx = parseInt(document.getElementById('edit-sub-idx').value);
+    const en = document.getElementById('sub-trans').value.trim();
+    const idx = parseInt(document.getElementById('sub-idx').value);
     
-    if(zh) {
-        const profiles = getData('sanrio_video_profiles', []);
-        const pIndex = profiles.findIndex(p => p.id === currentProfileId);
-        
-        if (editIdx > -1) {
-            profiles[pIndex].subs[editIdx] = { t, zh, py, en };
-        } else {
-            // Use current video time if input is empty
-            let finalTime = tInput ? t : (videoPlayer.src ? Math.floor(videoPlayer.currentTime) : 0);
-            profiles[pIndex].subs.push({ t: finalTime, zh, py, en });
-        }
-        
-        profiles[pIndex].subs.sort((a,b) => a.t - b.t);
-        setData('sanrio_video_profiles', profiles);
-        
-        cancelEditSub();
-        renderSubtitles();
+    if(zh && !isNaN(start) && !isNaN(end)) {
+        const subs = getData('sanrio_subs', []);
+        if (idx > -1) subs[idx] = {start, end, zh, py, en};
+        else subs.push({start, end, zh, py, en});
+        subs.sort((a,b) => a.start - b.start);
+        setData('sanrio_subs', subs);
+        cancelSub(); renderSubtitles();
+    }
+}
+function editSub(e, i) {
+    e.stopPropagation();
+    const s = getData('sanrio_subs', [])[i];
+    document.getElementById('sub-idx').value = i;
+    document.getElementById('sub-s').value = s.start;
+    document.getElementById('sub-e').value = s.end;
+    document.getElementById('sub-zh').value = s.zh;
+    document.getElementById('sub-py').value = s.py;
+    document.getElementById('sub-trans').value = s.en;
+    document.getElementById('sub-cancel-btn').style.display='block';
+}
+function cancelSub() {
+    document.getElementById('sub-idx').value = "-1";
+    document.getElementById('sub-cancel-btn').style.display='none';
+    ['sub-s','sub-e','sub-zh','sub-py','sub-trans'].forEach(id=>document.getElementById(id).value='');
+}
+function delSub(e, i) {
+    e.stopPropagation();
+    let subs = getData('sanrio_subs', []); subs.splice(i,1); setData('sanrio_subs', subs); renderSubtitles();
+}
+
+// Dictation Mode
+function toggleDic(idx, show) {
+    document.getElementById(`sn-${idx}`).style.display = show ? 'none' : 'block';
+    document.getElementById(`sd-${idx}`).style.display = show ? 'flex' : 'none';
+    if(show) {
+        document.getElementById(`dic-in-${idx}`).value = '';
+        document.getElementById(`dic-res-${idx}`).className = 'dic-res';
+        seekVid(getData('sanrio_subs')[idx].start);
+    }
+}
+function checkDic(idx, trueText) {
+    const inVal = document.getElementById(`dic-in-${idx}`).value.trim();
+    const res = document.getElementById(`dic-res-${idx}`);
+    if(inVal === trueText) {
+        res.innerText = 'Correct 🎉';
+        res.className = 'dic-res correct';
+        updateDailyProgress('quiz');
+    } else {
+        res.innerText = 'Wrong - Try again ❌';
+        res.className = 'dic-res wrong';
     }
 }
 
-function editSub(e, idx) {
-    e.stopPropagation();
-    const profiles = getData('sanrio_video_profiles', []);
-    const sub = profiles.find(p => p.id === currentProfileId).subs[idx];
-    document.getElementById('edit-sub-idx').value = idx;
-    document.getElementById('sub-time').value = formatTime(sub.t);
-    document.getElementById('sub-zh').value = sub.zh;
-    document.getElementById('sub-py').value = sub.py;
-    document.getElementById('sub-en').value = sub.en;
-    
-    document.getElementById('sub-form-title').innerText = "Edit Subtitle Line";
-    document.getElementById('cancel-edit-btn').style.display = "block";
+// Hover Dict Tooltip
+const dictTT = document.getElementById('dict-tooltip');
+function showDict(e) {
+    const data = JSON.parse(decodeURIComponent(e.target.dataset.entry));
+    document.getElementById('dt-h').innerText = data.h; document.getElementById('dt-p').innerText = data.p;
+    document.getElementById('dt-pos').innerText = data.pos; document.getElementById('dt-hv').innerText = data.hv;
+    document.getElementById('dt-m').innerText = data.m; document.getElementById('dt-e').innerText = data.e;
+    const r = e.target.getBoundingClientRect();
+    dictTT.style.display = 'block';
+    dictTT.style.left = (r.left + r.width/2) + 'px';
+    dictTT.style.top = (r.top - 10) + 'px';
 }
-
-function cancelEditSub() {
-    document.getElementById('edit-sub-idx').value = "-1";
-    document.getElementById('sub-form-title').innerText = "Add/Edit Subtitle Line";
-    document.getElementById('cancel-edit-btn').style.display = "none";
-    ['sub-time','sub-zh','sub-py','sub-en'].forEach(id => document.getElementById(id).value = '');
-}
-
-function deleteSub(e, idx) {
-    e.stopPropagation();
-    if(confirm("Delete this subtitle line? 🥺")) {
-        const profiles = getData('sanrio_video_profiles', []);
-        const pIndex = profiles.findIndex(p => p.id === currentProfileId);
-        profiles[pIndex].subs.splice(idx, 1);
-        setData('sanrio_video_profiles', profiles);
-        cancelEditSub();
-        renderSubtitles();
-    }
-}
+function hideDict() { dictTT.style.display = 'none'; }
 
 /* ==========================================================================
-   LISTENING & SPEAKING
+   READING & NOTEBOOK
    ========================================================================== */
-function renderListening() {
-    document.getElementById('listening-list').innerHTML = getData('hsk_listen', []).map(l => `
-        <div class="card" style="margin-bottom:0;">
-            <h4>${l.t}</h4>
-            <p style="white-space: pre-line; display:none; background:var(--yellow); padding:15px; border-radius:10px; margin:10px 0; font-size:1.1rem;" id="l-text-${l.t.replace(/\s/g,'')}">${l.c}</p>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn btn-pink" onclick="playAudio('${l.c}')">🔊 Play Audio</button>
-                <button class="btn" onclick="document.getElementById('l-text-${l.t.replace(/\s/g,'')}').style.display='block'">👁️ Show Script</button>
-            </div>
+function renderStories() {
+    document.getElementById('story-list').innerHTML = getData('sanrio_stories', []).map(s => `
+        <div class="card">
+            <h3>${s.t}</h3><div class="story-content" onmouseup="handleSelect()" ontouchend="handleSelect()">${s.c}</div>
         </div>`).join('');
-    generateRandomSpeak();
 }
-
-function addListen() {
-    const t = document.getElementById('add-l-title').value.trim();
-    const c = document.getElementById('add-l-text').value.trim();
+function addStory() {
+    const t = document.getElementById('s-add-t').value.trim();
+    const c = document.getElementById('s-add-c').value.trim();
     if(t && c) {
-        const arr = getData('hsk_listen', []); arr.push({t, c}); setData('hsk_listen', arr);
-        renderListening();
-        document.getElementById('add-l-title').value=''; document.getElementById('add-l-text').value='';
+        const arr = getData('sanrio_stories', []); arr.push({t, c}); setData('sanrio_stories', arr);
+        renderStories(); document.getElementById('s-add-t').value=''; document.getElementById('s-add-c').value='';
     }
 }
 
-function generateRandomSpeak() {
-    const fc = getData('hsk_words', []);
-    const target = fc[Math.floor(Math.random() * fc.length)];
-    document.getElementById('speak-target').innerText = target.e || target.h;
-    document.getElementById('speech-result').innerText = "";
-}
-
-function startSpeechRec() {
-    const targetText = document.getElementById('speak-target').innerText.replace(/[^\u4e00-\u9fa5]/g, '');
-    const resElem = document.getElementById('speech-result');
-    const btn = document.getElementById('mic-btn');
-    
-    if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        resElem.innerText = "Speech Recognition not supported in this browser. Try Chrome! ☁️";
-        return;
-    }
-    
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRec();
-    recognition.lang = 'zh-CN';
-    
-    recognition.onstart = () => {
-        btn.classList.add('listening');
-        resElem.innerText = "Listening... Speak clearly! 🎀";
-    };
-    
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.replace(/[^\u4e00-\u9fa5]/g, '');
-        let match = 0;
-        for(let i=0; i < Math.min(targetText.length, transcript.length); i++) {
-            if(targetText.includes(transcript[i])) match++;
+const actionTT = document.getElementById('action-tooltip');
+function handleSelect() {
+    setTimeout(() => { 
+        const sel = window.getSelection(); const text = sel.toString().trim();
+        if (text.length > 0 && /[\u4e00-\u9fa5]/.test(text)) {
+            document.getElementById('at-word').innerText = text;
+            const r = sel.getRangeAt(0).getBoundingClientRect();
+            actionTT.style.display = 'block';
+            actionTT.style.left = (r.left + r.width/2) + 'px'; actionTT.style.top = r.bottom + 'px';
         }
-        let percent = targetText.length === 0 ? 0 : Math.round((match / targetText.length) * 100);
-        resElem.innerHTML = `You said: <span style="color:#d6336c">${transcript}</span><br>Accuracy: <span style="color:${percent>=80?'#4ade80':'#f87171'}">${percent}%</span>`;
-    };
-    
-    recognition.onerror = () => resElem.innerText = "Error recognizing speech. Try again!";
-    recognition.onend = () => btn.classList.remove('listening');
-    
-    recognition.start();
+    }, 100);
 }
+document.addEventListener('mousedown', (e) => { if(!actionTT.contains(e.target) && !e.target.classList.contains('story-content')) actionTT.style.display = 'none'; });
+
+function saveToNotebook(word) {
+    const nb = getData('sanrio_notebook', []);
+    if(!nb.includes(word)) { nb.push(word); setData('sanrio_notebook', nb); updateDailyProgress('word'); }
+    actionTT.style.display = 'none'; window.getSelection().removeAllRanges();
+}
+
+function renderNotebook() {
+    const nb = getData('sanrio_notebook', []);
+    document.getElementById('notebook-list').innerHTML = nb.map((word, i) => {
+        const found = vocabDictMap.find(v => v.h === word) || { p: 'Custom', m: 'Add def manually.' };
+        return `
+        <div class="card card-mint" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
+            <div><h4 style="font-size:1.8rem; margin-bottom:5px;">${word}</h4><p style="font-weight:bold;">${found.p} | ${found.m}</p></div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <button class="btn btn-pink" onclick="speak('${word}')">🔊</button>
+                <button class="btn btn-danger" style="padding:10px; border-radius:10px;" onclick="delNb(${i})">🗑️</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+function delNb(i) { let nb = getData('sanrio_notebook', []); nb.splice(i, 1); setData('sanrio_notebook', nb); renderNotebook(); }
+
+initSystem();
 </script>
 </body>
 </html>
