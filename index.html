@@ -92,7 +92,7 @@
     .fc-container.flipped .fc-inner { transform: rotateY(180deg); }
     .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); border: 4px solid var(--white); }
     .fc-front { background: var(--yellow); }
-    .fc-back { background: var(--mint); transform: rotateY(180deg); }
+    .fc-back { background: var(--mint); transform: rotateY(180deg); overflow-y:auto;}
     .hz-text { font-size: 5rem; font-weight: 700; color: #d6336c; }
     .py-text { font-size: 2rem; color: var(--text-light); }
     .tag { display: inline-block; background: var(--white); padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; margin: 2px; }
@@ -109,6 +109,10 @@
     .vh-right { flex: 0.35; display: flex; flex-direction: column; background: var(--white); border-radius: var(--radius); border: 2px solid var(--pink); overflow: hidden; }
     .video-wrapper { background: #000; border-radius: var(--radius); width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; position: relative; }
     video { width: 100%; max-height: 100%; outline: none; border-radius: var(--radius); }
+    
+    .sub-tabs { display:flex; background:var(--pink); }
+    .sub-tab-btn { flex:1; padding:15px; font-weight:bold; cursor:pointer; text-align:center; border:none; background:none; color:var(--text); transition:0.2s; }
+    .sub-tab-btn.active { background:var(--white); color:#d6336c; }
     
     .sub-list { flex: 1; overflow-y: auto; padding: 15px; background: var(--yellow); }
     .sub-line { padding: 15px; border-bottom: 2px dashed #ffccd5; border-radius: 15px; margin-bottom: 10px; background: var(--white); cursor: pointer; transition: 0.2s; position: relative; }
@@ -153,13 +157,13 @@
 </head>
 <body>
 
-<!-- FIREBASE AUTH PORTAL -->
+<!-- FIREBASE AUTH PORTAL (USERNAME LOGIN) -->
 <div id="auth-portal">
     <div class="auth-card">
         <h1>🎀 Sanrio Academy</h1>
         <div class="auth-alert">
             <strong>DEVELOPER NOTE:</strong><br>
-            Please insert your Firebase configuration in the script block to enable Cloud Sync. Username-based login active.
+            Please insert your Firebase configuration in the script block. Username-based login active.
         </div>
         <p style="margin-bottom: 20px; color: var(--text-light);">Đăng nhập bằng Tên đăng nhập (Username). Dữ liệu sẽ được đồng bộ Cloud!</p>
         <input type="text" id="auth-user" placeholder="Tên đăng nhập (VD: vu123)">
@@ -249,7 +253,7 @@
                                     <span class="tag" style="background:var(--pink); color:white;" id="v-fc-hv"></span>
                                 </div>
                                 <h3 id="v-fc-m" style="font-size:1.6rem; margin-bottom:10px;"></h3>
-                                <p id="v-fc-e" style="font-style:italic; line-height:1.4;"></p>
+                                <p id="v-fc-e" style="font-style:italic; line-height:1.4; font-size:1rem;"></p>
                                 <button class="btn btn-pink" style="margin-top:15px; border-radius:30px;" onclick="window.speak(document.getElementById('v-fc-h').innerText); event.stopPropagation();">🔊 Speak</button>
                                 <button class="btn" style="margin-top:5px; border-radius:30px;" onclick="window.markWordLearned(); event.stopPropagation();">✅ Got it!</button>
                             </div>
@@ -342,7 +346,7 @@
                         </div>
                     </div>
                     <div class="card" style="margin-bottom:0;">
-                        <h4>➕ Add/Edit Cloud Subtitle</h4>
+                        <h4>➕ Thêm/Sửa Phụ Đề</h4>
                         <input type="hidden" id="sub-idx" value="-1">
                         <div class="grid-2">
                             <input type="number" id="sub-s" placeholder="Start (sec)">
@@ -352,20 +356,17 @@
                             <input type="text" id="sub-trans" placeholder="Translation">
                         </div>
                         <div style="display:flex; gap:10px;">
-                            <button class="btn btn-pink" style="flex:1;" onclick="window.saveSub()">Save to Cloud</button>
-                            <button class="btn btn-danger" style="display:none;" id="sub-cancel-btn" onclick="window.cancelSub()">Cancel</button>
+                            <button class="btn btn-pink" style="flex:1;" onclick="window.saveSub()">Lưu</button>
+                            <button class="btn btn-danger" style="display:none;" id="sub-cancel-btn" onclick="window.cancelSub()">Hủy</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right: Subtitles Panel -->
                 <div class="vh-right">
-                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center; display:flex; justify-content:space-between; align-items:center;">
-                        <span>Phụ đề</span>
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn" style="padding:5px 10px; font-size:0.8rem; background:var(--white);" onclick="window.setDictationMode(false)">Học</button>
-                            <button class="btn btn-pink" style="padding:5px 10px; font-size:0.8rem;" onclick="window.setDictationMode(true)">Chép chính tả</button>
-                        </div>
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn active" id="tab-learn" onclick="window.setDictationMode(false)">Học / Phụ đề</button>
+                        <button class="sub-tab-btn" id="tab-dict" onclick="window.setDictationMode(true)">Nghe chép chính tả</button>
                     </div>
                     <div class="sub-list" id="sub-list-container"></div>
                 </div>
@@ -409,7 +410,7 @@
     <div id="action-tooltip" class="tooltip-float" style="padding:15px; border-color:var(--mint); width:320px;">
         <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
             <strong id="at-word" style="font-size:1.8rem; color:#d6336c;"></strong>
-            <button class="btn" style="padding: 8px 12px;" onclick="window.speak(document.getElementById('at-word').innerText)">🔊 Phát âm</button>
+            <button class="btn" style="padding: 8px 12px;" onclick="window.speak(document.getElementById('at-word').innerText)">🔊</button>
             <button class="btn btn-pink" style="padding: 8px 12px;" onclick="window.saveToNotebook()">Lưu 🎀</button>
         </div>
         <div id="at-known-data" style="display:none; font-size:1rem; color:var(--text-light);">
@@ -435,7 +436,7 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 // ==========================================
 // ⚠️ FIREBASE CONFIGURATION OBJECT
 // ==========================================
-cconst firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyAakSHB5eBDHSaAYknaeQ8lqspvjqM_N30",
   authDomain: "chinese-hub-b6b19.firebaseapp.com",
   projectId: "chinese-hub-b6b19",
@@ -455,11 +456,11 @@ try {
 }
 
 /* ==========================================================================
-   COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes)
+   COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes) - EXACTLY 150 ITEMS
 ========================================================================== */
 const rawHSK1 = [
     ["爱","ài","yêu, thích","Động từ","Ái","我爱你。"],["八","bā","tám","Số từ","Bát","八个人。"],["爸爸","bàba","bố, cha","Danh từ","Ba ba","我爸爸是医生。"],["杯子","bēizi","cái cốc","Danh từ","Bôi tử","杯子里有水。"],["北京","Běijīng","Bắc Kinh","Danh từ","Bắc Kinh","我去北京。"],
-    ["本","běn","quyển","Lượng từ","Bản","一本书。"],["不","bù","không","Phó từ","Bất","我不是学生。"],["不客气","bùkèqi","đừng khách sáo","Cụm từ","Bất khách khí","不客气。"],["菜","cài","rau, món ăn","Danh từ","Thái","中国菜。"],["茶","chá","trà","Danh từ","Trà","喝茶。"],
+    ["本","běn","quyển (lượng từ)","Lượng từ","Bản","一本书。"],["不","bù","không","Phó từ","Bất","我不是学生。"],["不客气","bùkèqi","đừng khách sáo","Cụm từ","Bất khách khí","不客气。"],["菜","cài","rau, món ăn","Danh từ","Thái","中国菜。"],["茶","chá","trà","Danh từ","Trà","喝茶。"],
     ["吃","chī","ăn","Động từ","Cật","吃饭。"],["出租车","chūzūchē","taxi","Danh từ","Xuất tô xa","坐出租车。"],["打电话","dǎ diànhuà","gọi điện thoại","Động từ","Đả điện thoại","他在打电话。"],["大","dà","to, lớn","Tính từ","Đại","这个苹果很大。"],["的","de","của","Trợ từ","Đích","我的书。"],
     ["点","diǎn","giờ","Lượng từ","Điểm","现在十点。"],["电脑","diànnǎo","máy tính","Danh từ","Điện não","我的电脑。"],["电视","diànshì","TV","Danh từ","Điện thị","看电视。"],["电影","diànyǐng","phim","Danh từ","Điện ảnh","看电影。"],["东西","dōngxi","đồ vật","Danh từ","Đông tây","买东西。"],
     ["都","dōu","đều","Phó từ","Đô","我们都去。"],["读","dú","đọc","Động từ","Độc","读书。"],["对不起","duìbuqǐ","xin lỗi","Cụm từ","Đối bất khởi","对不起！"],["多","duō","nhiều","Tính từ","Đa","很多人。"],["多少","duōshao","bao nhiêu","Đại từ","Đa thiểu","多少钱？"],
@@ -508,8 +509,8 @@ const baseStories = [
 ];
 
 const baseSubs = [
-    {start:0, end:3, zh:"你好！", py:"nǐ hǎo!", en:"Xin chào!"},
-    {start:4, end:7, zh:"欢迎来到这里。", py:"huānyíng lái dào zhèlǐ.", en:"Chào mừng."}
+    {start:0, end:3, zh:"你好吗？", py:"nǐ hǎo ma?", en:"Bạn khỏe không?"},
+    {start:4, end:7, zh:"我很好，谢谢。", py:"wǒ hěn hǎo, xièxiè.", en:"Tôi rất khỏe, cảm ơn."}
 ];
 
 const baseGrammarQuiz = [
@@ -519,30 +520,26 @@ const baseGrammarQuiz = [
 ];
 
 /* ==========================================================================
-   STATE MANAGEMENT (Firebase Sync & Multi-Level Filtering)
+   STATE MANAGEMENT (Strict Virtual Domain Auth & Multi-Level Filtering)
    ========================================================================== */
 let currentUser = null;
-const virtualDomain = "@sanrio.local";
 let userData = {
-    vocab: [],
-    grammar: [],
-    stories: [],
-    notebook: [],
-    subs: [],
+    vocab: [], grammar: [], stories: [], notebook: [], subs: [],
     daily: { date: new Date().toLocaleDateString(), words: 0, quizzes: 0, streak: 0 }
 };
 
 let currentLevel = 1;
 let globalVocabDict = []; 
 
-// Auth Logic
+// Strict Auth Converter
 window.login = async () => {
     const user = document.getElementById('auth-user').value.trim();
     const pass = document.getElementById('auth-pass').value.trim();
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
     
+    const virtualEmail = user.toLowerCase() + "@sanrioapp.com";
     try {
-        if(auth) await signInWithEmailAndPassword(auth, user + virtualDomain, pass);
+        if(auth) await signInWithEmailAndPassword(auth, virtualEmail, pass);
         else bypassAuth(user); 
     } catch(err) {
         document.getElementById('auth-error').innerText = "Đăng nhập thất bại: " + err.message;
@@ -555,8 +552,9 @@ window.register = async () => {
     const pass = document.getElementById('auth-pass').value.trim();
     if(!user || !pass) return alert("Vui lòng nhập tài khoản và mật khẩu!");
 
+    const virtualEmail = user.toLowerCase() + "@sanrioapp.com";
     try {
-        if(auth) await createUserWithEmailAndPassword(auth, user + virtualDomain, pass);
+        if(auth) await createUserWithEmailAndPassword(auth, virtualEmail, pass);
         else bypassAuth(user);
     } catch(err) {
         document.getElementById('auth-error').innerText = "Đăng ký thất bại: " + err.message;
@@ -650,7 +648,6 @@ function updateDashboardUI() {
 }
 
 function buildDictionary() {
-    // Combine base HSK 1 and user's custom vocab for global dictionary lookups
     let combined = [...baseVocab, ...(userData.vocab || [])];
     globalVocabDict = combined.sort((a,b) => b.h.length - a.h.length);
 }
@@ -968,6 +965,13 @@ window.renderSubtitles = function() {
         </div>`).join('');
 };
 
+window.setDictationMode = function(isDict) {
+    isDictationMode = isDict;
+    document.getElementById('tab-learn').classList.toggle('active', !isDict);
+    document.getElementById('tab-dict').classList.toggle('active', isDict);
+    window.renderSubtitles();
+};
+
 vid.addEventListener('timeupdate', () => {
     let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
     let ct = vid.currentTime;
@@ -1034,11 +1038,6 @@ window.delSub = function(e, i) {
     syncToCloud(); window.renderSubtitles();
 };
 
-window.setDictationMode = function(isDict) {
-    isDictationMode = isDict;
-    window.renderSubtitles();
-};
-
 window.checkDic = function(idx, correctText) {
     event.stopPropagation();
     const userIn = document.getElementById(`dic-in-${idx}`).value.trim();
@@ -1057,7 +1056,7 @@ window.checkDic = function(idx, correctText) {
                 feedbackHTML += `<span style="color: #991b1b; font-weight: bold;">*</span>`;
             }
         } else {
-            // User typed extra characters
+            // User typed extra characters -> strikethrough red
             feedbackHTML += `<span style="color: #991b1b; text-decoration: line-through;">${userIn[i]}</span>`;
         }
     }
