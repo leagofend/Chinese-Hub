@@ -24,15 +24,23 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--pink); color: var(--text); overflow-x: hidden; }
 
+    /* --- AUTH PORTAL --- */
+    #auth-portal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--pink); display: flex; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
+    .auth-card { background: var(--white); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); width: 90%; max-width: 400px; text-align: center; }
+    .auth-card h1 { color: #d6336c; margin-bottom: 20px; }
+    .auth-card input { width: 100%; padding: 15px; border: 2px solid var(--pink); border-radius: 15px; margin-bottom: 15px; font-size: 1rem; }
+    .auth-card .btn { width: 100%; margin-bottom: 10px; }
+    .auth-alert { background: var(--yellow); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #d6336c; margin-bottom: 20px; border: 1px solid #d6336c; }
+
     /* --- LAYOUT --- */
-    #app { display: flex; height: 100vh; overflow: hidden; }
+    #app { display: none; height: 100vh; overflow: hidden; }
     
     nav { background: var(--pink); width: var(--sidebar-width); display: flex; flex-direction: column; padding: 20px; gap: 15px; z-index: 1000; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.05); }
     nav h1 { font-size: 1.5rem; text-align: center; color: #d6336c; margin-bottom: 20px; line-height: 1.3; }
     .nav-btn { background: var(--pink); border: none; padding: 15px; border-radius: var(--radius); font-weight: 700; color: var(--text); cursor: pointer; box-shadow: var(--clay); transition: var(--transition); display: flex; align-items: center; justify-content: flex-start; font-size: 1rem; gap: 10px; }
     .nav-btn.active, .nav-btn:active { box-shadow: inset 4px 4px 8px #e6b8c0, inset -4px -4px 8px #ffffff; color: #d6336c; }
     
-    main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; scroll-behavior: smooth; }
+    main { flex: 1; background: var(--white); border-radius: 30px 0 0 30px; padding: 30px; overflow-y: auto; scroll-behavior: smooth; position: relative; }
 
     /* --- UI COMPONENTS --- */
     .section { display: none; animation: fadeIn 0.4s ease; }
@@ -69,7 +77,7 @@
 
     /* --- HSK BLOCKS --- */
     .hsk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
-    .hsk-block { background: var(--yellow); padding: 30px 20px; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); box-shadow: var(--clay); border: 2px solid transparent; }
+    .hsk-block { background: var(--yellow); padding: 30px 20px; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow); border: 2px solid transparent; }
     .hsk-block:hover { transform: translateY(-5px); border-color: var(--pink); }
     .hsk-block h3 { font-size: 2rem; margin: 0; color: #d6336c; }
 
@@ -130,39 +138,49 @@
     @media (max-width: 1024px) {
         body { flex-direction: column; }
         #app { flex-direction: column; }
-        
-        nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); 
-            flex-direction: row; padding: 10px; justify-content: space-around; align-items: center; 
-            border-radius: 25px 25px 0 0; z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); 
-            overflow-x: auto; white-space: nowrap; gap: 5px;
-        }
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); flex-direction: row; padding: 10px; justify-content: space-around; align-items: center; border-radius: 25px 25px 0 0; z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); overflow-x: auto; white-space: nowrap; gap: 5px; }
         nav::-webkit-scrollbar { display: none; }
         nav h1 { display: none; }
         .nav-btn { min-width: 60px; min-height: 48px; padding: 10px 15px; flex: 1; justify-content: center; font-size: 0.9rem; box-shadow: none; border-radius: 15px; }
         .nav-btn.active { background: var(--white); }
-        
         main { border-radius: 0; padding: 15px; margin-bottom: var(--nav-height); height: calc(100vh - var(--nav-height)); }
-        
         .video-hub { flex-direction: column; height: auto; }
         .vh-left, .vh-right { flex: 1; width: 100%; }
         .vh-right { min-height: 400px; }
-        
         .tooltip-float { width: 90vw; left: 50vw !important; top: 50vh !important; transform: translate(-50%, -50%); position: fixed; }
     }
 </style>
 </head>
 <body>
+
+<!-- FIREBASE AUTH PORTAL -->
+<div id="auth-portal">
+    <div class="auth-card">
+        <h1>🎀 Sanrio Academy Cloud</h1>
+        <div class="auth-alert">
+            <strong>DEVELOPER NOTE:</strong><br>
+            Please insert your Firebase configuration in the script block below to enable Multi-Device Cloud Sync.
+        </div>
+        <p style="margin-bottom: 20px; color: var(--text-light);">Log in to sync your progress across Desktop, iPad, and Mobile!</p>
+        <input type="email" id="auth-email" placeholder="Email Address">
+        <input type="password" id="auth-pass" placeholder="Password">
+        <button class="btn btn-pink" onclick="window.login()">Đăng nhập (Login)</button>
+        <button class="btn" onclick="window.register()">Đăng ký (Register)</button>
+        <p id="auth-error" style="color:red; margin-top:10px; font-size:0.9rem; display:none;"></p>
+    </div>
+</div>
+
+<!-- MAIN APP -->
 <div id="app">
-    <!-- SIDEBAR / BOTTOM NAV -->
     <nav>
         <h1>🎀 Sanrio Academy</h1>
-        <button class="nav-btn active" onclick="nav('dashboard')">🏠 Dash</button>
-        <button class="nav-btn" onclick="nav('vocab')">🍓 Vocab</button>
-        <button class="nav-btn" onclick="nav('grammar')">📚 Grammar</button>
-        <button class="nav-btn" onclick="nav('video')">📺 Video</button>
-        <button class="nav-btn" onclick="nav('reading')">📖 Read</button>
-        <button class="nav-btn" onclick="nav('notebook')">📓 Book</button>
+        <button class="nav-btn active" onclick="window.nav('dashboard')">🏠 Dash</button>
+        <button class="nav-btn" onclick="window.nav('vocab')">🍓 Vocab</button>
+        <button class="nav-btn" onclick="window.nav('grammar')">📚 Grammar</button>
+        <button class="nav-btn" onclick="window.nav('video')">📺 Video</button>
+        <button class="nav-btn" onclick="window.nav('reading')">📖 Read</button>
+        <button class="nav-btn" onclick="window.nav('notebook')">📓 Book</button>
+        <button class="nav-btn" style="background:#ff99a8; color:white; margin-top:auto;" onclick="window.logout()">Log Out</button>
     </nav>
 
     <main id="main-content">
@@ -187,34 +205,34 @@
                 </div>
                 <div class="card card-pink stat-box" style="color:white;">
                     <p style="font-weight:bold;">Total Words Mastered</p>
-                    <h3 id="total-words" style="color:white;">150</h3>
+                    <h3 id="total-words" style="color:white;">0</h3>
                 </div>
             </div>
         </div>
 
-        <!-- 2. VOCABULARY (MULTI-LEVEL) -->
+        <!-- 2. VOCABULARY -->
         <div id="vocab" class="section">
             <div id="vocab-home">
                 <h2>🍓 Vocabulary Levels</h2>
                 <div class="hsk-grid">
-                    <div class="hsk-block" onclick="openLevel('vocab', 1)"><h3>HSK 1</h3><p>150 Words</p></div>
-                    <div class="hsk-block" onclick="openLevel('vocab', 2)"><h3>HSK 2</h3><p>Unlocked</p></div>
-                    <div class="hsk-block" onclick="openLevel('vocab', 3)"><h3>HSK 3</h3><p>Unlocked</p></div>
-                    <div class="hsk-block" onclick="openLevel('vocab', 4)"><h3>HSK 4</h3><p>Unlocked</p></div>
-                    <div class="hsk-block" onclick="openLevel('vocab', 5)"><h3>HSK 5</h3><p>Unlocked</p></div>
-                    <div class="hsk-block" onclick="openLevel('vocab', 6)"><h3>HSK 6</h3><p>Unlocked</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 1)"><h3>HSK 1</h3><p>Base + Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 2)"><h3>HSK 2</h3><p>Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 3)"><h3>HSK 3</h3><p>Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 4)"><h3>HSK 4</h3><p>Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 5)"><h3>HSK 5</h3><p>Custom</p></div>
+                    <div class="hsk-block" onclick="window.openLevel('vocab', 6)"><h3>HSK 6</h3><p>Custom</p></div>
                 </div>
             </div>
             
             <div id="vocab-workspace" style="display:none;">
                 <div class="workspace-header">
                     <h2>🍓 HSK <span id="v-lvl-title"></span> Workspace</h2>
-                    <button class="btn btn-pink" onclick="closeLevel('vocab')">🔙 Back</button>
+                    <button class="btn btn-pink" onclick="window.closeLevel('vocab')">🔙 Back</button>
                 </div>
                 <div class="flex-center" style="margin-bottom:20px;">
-                    <button class="tab-btn active" id="tab-v-study" onclick="switchMode('v', 'study')">Study Mode</button>
-                    <button class="tab-btn" id="tab-v-quiz" onclick="switchMode('v', 'quiz')">Quiz Mode</button>
-                    <button class="tab-btn" id="tab-v-add" onclick="switchMode('v', 'add')">Add Word</button>
+                    <button class="tab-btn active" id="tab-v-study" onclick="window.switchMode('v', 'study')">Study Mode</button>
+                    <button class="tab-btn" id="tab-v-quiz" onclick="window.switchMode('v', 'quiz')">Quiz Mode</button>
+                    <button class="tab-btn" id="tab-v-add" onclick="window.switchMode('v', 'add')">Add Word</button>
                 </div>
                 
                 <div id="v-study">
@@ -232,26 +250,24 @@
                                 </div>
                                 <h3 id="v-fc-m" style="font-size:1.6rem; margin-bottom:10px;"></h3>
                                 <p id="v-fc-e" style="font-style:italic; line-height:1.4;"></p>
-                                <button class="btn btn-pink" style="margin-top:15px; border-radius:30px;" onclick="speak(document.getElementById('v-fc-h').innerText); event.stopPropagation();">🔊 Speak</button>
-                                <button class="btn" style="margin-top:5px; border-radius:30px;" onclick="markWordLearned(); event.stopPropagation();">✅ Got it!</button>
+                                <button class="btn btn-pink" style="margin-top:15px; border-radius:30px;" onclick="window.speak(document.getElementById('v-fc-h').innerText); event.stopPropagation();">🔊 Speak</button>
+                                <button class="btn" style="margin-top:5px; border-radius:30px;" onclick="window.markWordLearned(); event.stopPropagation();">✅ Got it!</button>
                             </div>
                         </div>
                     </div>
                     <div class="flex-center">
-                        <button class="btn" onclick="prevCard()">⬅️</button>
+                        <button class="btn" onclick="window.prevCard()">⬅️</button>
                         <span id="v-fc-count" style="font-weight:bold; font-size:1.2rem;"></span>
-                        <button class="btn" onclick="nextCard()">➡️</button>
+                        <button class="btn" onclick="window.nextCard()">➡️</button>
                     </div>
                 </div>
 
                 <div id="v-quiz" style="display:none;">
-                    <div class="quiz-box" id="v-quiz-container">
-                        <button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startVocabQuiz()">🚀 Start Quiz (10 Qs)</button>
-                    </div>
+                    <div class="quiz-box" id="v-quiz-container"></div>
                 </div>
 
                 <div id="v-add" style="display:none;" class="card card-yellow">
-                    <h3>➕ Add to HSK <span id="v-add-lvl"></span></h3>
+                    <h3>➕ Add to Cloud HSK <span id="v-add-lvl"></span></h3>
                     <div class="grid-2">
                         <input type="text" id="v-add-h" placeholder="Hanzi">
                         <input type="text" id="v-add-p" placeholder="Pinyin">
@@ -260,69 +276,71 @@
                         <input type="text" id="v-add-hv" placeholder="Âm Hán Việt">
                         <input type="text" id="v-add-e" placeholder="Example">
                     </div>
-                    <button class="btn btn-pink" style="width:100%" onclick="addVocab()">Save Word</button>
+                    <button class="btn btn-pink" style="width:100%" onclick="window.addVocab()">Save to Cloud Database</button>
                 </div>
             </div>
         </div>
 
-        <!-- 3. GRAMMAR (MULTI-LEVEL) -->
+        <!-- 3. GRAMMAR -->
         <div id="grammar" class="section">
             <div id="gram-home">
                 <h2>📚 Grammar Levels</h2>
                 <div class="hsk-grid">
-                    <div class="hsk-block" onclick="openLevel('grammar', 1)"><h3>HSK 1</h3></div>
-                    <div class="hsk-block" onclick="openLevel('grammar', 2)"><h3>HSK 2</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 1)"><h3>HSK 1</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 2)"><h3>HSK 2</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 3)"><h3>HSK 3</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 4)"><h3>HSK 4</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 5)"><h3>HSK 5</h3></div>
+                    <div class="hsk-block" onclick="window.openLevel('grammar', 6)"><h3>HSK 6</h3></div>
                 </div>
             </div>
             
             <div id="gram-workspace" style="display:none;">
                 <div class="workspace-header">
                     <h2>📚 HSK <span id="g-lvl-title"></span> Grammar</h2>
-                    <button class="btn btn-pink" onclick="closeLevel('grammar')">🔙 Back</button>
+                    <button class="btn btn-pink" onclick="window.closeLevel('grammar')">🔙 Back</button>
                 </div>
                 <div class="flex-center" style="margin-bottom:20px;">
-                    <button class="tab-btn active" id="tab-g-study" onclick="switchMode('g', 'study')">Reference</button>
-                    <button class="tab-btn" id="tab-g-quiz" onclick="switchMode('g', 'quiz')">Quiz</button>
+                    <button class="tab-btn active" id="tab-g-study" onclick="window.switchMode('g', 'study')">Reference</button>
+                    <button class="tab-btn" id="tab-g-quiz" onclick="window.switchMode('g', 'quiz')">Quiz</button>
                 </div>
 
                 <div id="g-study">
                     <div id="g-list" style="display:flex; flex-direction:column; gap:15px;"></div>
                     <div class="card card-mint" style="margin-top:20px;">
-                        <h4>➕ Add Grammar</h4>
+                        <h4>➕ Add Grammar to Cloud</h4>
                         <input type="text" id="g-add-t" placeholder="Structure (e.g. Subj + 很 + Adj)">
                         <textarea id="g-add-d" rows="3" placeholder="Explanation & Example..."></textarea>
-                        <button class="btn btn-pink" onclick="addGrammar()">Save</button>
+                        <button class="btn btn-pink" onclick="window.addGrammar()">Save</button>
                     </div>
                 </div>
 
                 <div id="g-quiz" style="display:none;">
-                    <div class="quiz-box" id="g-quiz-container">
-                        <button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startGrammarQuiz()">🚀 Start Quiz</button>
-                    </div>
+                    <div class="quiz-box" id="g-quiz-container"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. ADVANCED VIDEO HUB -->
+        <!-- 4. VIDEO HUB (SPLIT SCREEN) -->
         <div id="video" class="section">
-            <h2>📺 Subtitle & Dictation Hub</h2>
+            <h2>📺 Split-Screen Video Hub</h2>
             <div class="video-hub">
-                <!-- Left: Video & Controls -->
+                <!-- Left: Video -->
                 <div class="vh-left">
                     <div class="video-wrapper">
                         <video id="vid-player" controls preload="metadata"></video>
                     </div>
                     <div class="card card-yellow" style="margin-bottom:0; display:flex; flex-direction:column; gap:10px;">
-                        <input type="file" id="vid-upload" accept="video/mp4,video/webm" style="margin:0; padding:10px;" onchange="loadVideo(event)">
+                        <input type="file" id="vid-upload" accept="video/mp4,video/webm" style="margin:0; padding:10px;" onchange="window.loadVideo(event)">
                         <div class="flex-center" style="justify-content:space-between;">
                             <label style="font-weight:bold; cursor:pointer;">
                                 <input type="checkbox" id="auto-pause-toggle"> ⏸️ Tự động dừng từng câu
                             </label>
-                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="resumeVideo()">▶️ Tiếp tục (Space)</button>
+                            <button class="btn btn-pink" id="btn-resume-vid" style="display:none;" onclick="window.resumeVideo()">▶️ Tiếp tục (Space)</button>
                         </div>
                     </div>
                     <div class="card" style="margin-bottom:0;">
-                        <h4>➕ Add/Edit Subtitle</h4>
+                        <h4>➕ Add/Edit Cloud Subtitle</h4>
                         <input type="hidden" id="sub-idx" value="-1">
                         <div class="grid-2">
                             <input type="number" id="sub-s" placeholder="Start (sec)">
@@ -332,17 +350,15 @@
                             <input type="text" id="sub-trans" placeholder="Translation">
                         </div>
                         <div style="display:flex; gap:10px;">
-                            <button class="btn btn-pink" style="flex:1;" onclick="saveSub()">Save Subtitle</button>
-                            <button class="btn btn-danger" style="display:none;" id="sub-cancel-btn" onclick="cancelSub()">Cancel</button>
+                            <button class="btn btn-pink" style="flex:1;" onclick="window.saveSub()">Save to Cloud</button>
+                            <button class="btn btn-danger" style="display:none;" id="sub-cancel-btn" onclick="window.cancelSub()">Cancel</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right: Subtitles Panel -->
                 <div class="vh-right">
-                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center; display:flex; justify-content:space-between; align-items:center;">
-                        <span>Phụ đề</span>
-                    </div>
+                    <div style="background:var(--pink); padding:15px; font-weight:bold; color:var(--text); text-align:center;">Phụ đề (Subtitles)</div>
                     <div class="sub-list" id="sub-list-container"></div>
                 </div>
             </div>
@@ -351,18 +367,17 @@
         <!-- 5. READING & NOTEBOOK -->
         <div id="reading" class="section">
             <h2>📖 Interactive Reading</h2>
-            <p style="margin-bottom:20px; color:var(--text-light);">Highlight text to access the dictionary and save to your notebook!</p>
             <div id="story-list" class="grid-fluid"></div>
             <div class="card card-mint" style="margin-top:20px;">
-                <h3>➕ Add Story</h3>
+                <h3>➕ Add Cloud Story</h3>
                 <input type="text" id="s-add-t" placeholder="Title">
                 <textarea id="s-add-c" rows="5" placeholder="Paste Chinese text..."></textarea>
-                <button class="btn btn-pink" onclick="addStory()">Save Story</button>
+                <button class="btn btn-pink" onclick="window.addStory()">Save to Cloud</button>
             </div>
         </div>
 
         <div id="notebook" class="section">
-            <h2>📓 Personal Vocab Book</h2>
+            <h2>📓 Cloud Vocab Book</h2>
             <div class="grid-fluid" id="notebook-list"></div>
         </div>
     </main>
@@ -371,7 +386,7 @@
     <div id="dict-tooltip" class="tooltip-float">
         <div style="display:flex; justify-content:space-between;">
             <div class="hz-text" style="font-size:2rem;" id="dt-h"></div>
-            <button class="btn" style="padding:5px 10px;" onclick="speak(document.getElementById('dt-h').innerText)">🔊</button>
+            <button class="btn" style="padding:5px 10px;" onclick="window.speak(document.getElementById('dt-h').innerText)">🔊</button>
         </div>
         <div class="py-text" style="font-size:1.2rem; margin-bottom:5px;" id="dt-p"></div>
         <div style="margin-bottom:10px;">
@@ -386,17 +401,47 @@
     <div id="action-tooltip" class="tooltip-float" style="padding:15px;">
         <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap;">
             <strong id="at-word" style="font-size:1.5rem; color:#d6336c;"></strong>
-            <button class="btn" style="padding: 8px 12px;" onclick="speak(document.getElementById('at-word').innerText)">🔊</button>
-            <button class="btn btn-pink" style="padding: 8px 12px;" onclick="saveToNotebook(document.getElementById('at-word').innerText)">Save 🎀</button>
+            <button class="btn" style="padding: 8px 12px;" onclick="window.speak(document.getElementById('at-word').innerText)">🔊</button>
+            <button class="btn btn-pink" style="padding: 8px 12px;" onclick="window.saveToNotebook(document.getElementById('at-word').innerText)">Save 🎀</button>
         </div>
     </div>
 </div>
 
-<script>
+<!-- ==============================================================================
+     FIREBASE v10 MODULE SCRIPT
+=============================================================================== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// ==========================================
+// ⚠️ FIREBASE CONFIGURATION PLACEHOLDER
+// Replace these values with your Firebase Project settings!
+// ==========================================
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase (Wrapped in try-catch for standalone testing without real keys)
+let app, auth, db;
+try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+} catch (e) {
+    console.error("Firebase not configured correctly. Using mock local state for demonstration.", e);
+}
+
 /* ==========================================================================
-   COMPLETE HSK 1 DATASET (NO PLACEHOLDERS)
+   COMPLETE HSK 1 DATASET (150 Words, Grammar, Quizzes)
    Format: [Hanzi, Pinyin, Meaning, Part of Speech, Âm Hán Việt, Example]
-   ========================================================================== */
+========================================================================== */
 const rawHSK1 = [
     ["爱","ài","yêu, thích","Động từ","Ái","我爱你。"],["八","bā","tám","Số từ","Bát","八个人。"],["爸爸","bàba","bố, cha","Danh từ","Ba ba","我爸爸是医生。"],["杯子","bēizi","cái cốc","Danh từ","Bôi tử","杯子里有水。"],["北京","Běijīng","Bắc Kinh","Danh từ","Bắc Kinh","我去北京。"],
     ["本","běn","quyển (lượng từ)","Lượng từ","Bản","一本书。"],["不","bù","không","Phó từ","Bất","我不是学生。"],["不客气","bù kèqi","đừng khách sáo","Cụm từ","Bất khách khí","不客气。"],["菜","cài","rau, món ăn","Danh từ","Thái","中国菜。"],["茶","chá","trà","Danh từ","Trà","喝茶。"],
@@ -429,101 +474,175 @@ const rawHSK1 = [
     ["怎么","zěnme","như thế nào","Đại từ","Chẩm ma","怎么去？"],["怎么样","zěnmeyàng","thế nào","Đại từ","Chẩm ma dạng","天气怎么样？"],["这","zhè","này, đây","Đại từ","Giá","这个。"],["这儿","zhèr","chỗ này","Đại từ","Giá nhi","在这儿。"],["中国","Zhōngguó","Trung Quốc","Danh từ","Trung Quốc","去中国。"],
     ["中午","zhōngwǔ","buổi trưa","Danh từ","Trung ngọ","中午好。"],["住","zhù","sống, ở","Động từ","Trụ","住在哪儿？"],["桌子","zhuōzi","cái bàn","Danh từ","Trác tử","一张桌子。"],["字","zì","chữ","Danh từ","Tự","写字。"],["昨天","zuótiān","hôm qua","Danh từ","Tạc thiên","昨天很冷。"]
 ];
+const baseVocab = rawHSK1.map(w => ({h:w[0], p:w[1], m:w[2], pos:w[3], hv:w[4], e:w[5]}));
 
-const coreGrammar = [
-    {t:"Cấu trúc 是...的 (shì...de)", d:"Nhấn mạnh thời gian, địa điểm, mục đích, cách thức của hành động trong quá khứ.\nVD: 我是昨天来的。(Tôi đến vào hôm qua.)"},
-    {t:"Trợ từ 了 (le)", d:"Biểu thị hành động đã hoàn thành hoặc có sự thay đổi trạng thái.\nVD: 下雨了。(Trời mưa rồi.)"},
-    {t:"Cấu trúc 太...了 (tài...le)", d:"Biểu thị mức độ cao (quá, lắm).\nVD: 太好了！(Tốt quá rồi!)"},
-    {t:"Trợ từ 吗 (ma)", d:"Đặt cuối câu để tạo câu hỏi Có/Không.\nVD: 你是学生吗？(Bạn là học sinh phải không?)"},
-    {t:"Trợ từ 呢 (ne)", d:"Hỏi ngược lại (còn... thì sao) hoặc xác nhận hành động đang diễn ra.\nVD: 我很好，你呢？(Tôi khỏe, còn bạn?)"},
-    {t:"Giới từ 在 (zài)", d:"Chỉ địa điểm (S + 在 + Nơi chốn + Động từ).\nVD: 我在看书。(Tôi đang đọc sách / Tôi đọc ở nhà.)"},
-    {t:"Động từ năng nguyện 会 (huì)", d:"Biết làm gì đó thông qua học tập rèn luyện.\nVD: 我会说汉语。(Tôi biết nói tiếng Trung.)"}
+const baseGrammar = [
+    {t:"是...的 (shì...de)", d:"Nhấn mạnh thời gian, địa điểm, mục đích, cách thức trong quá khứ.\nVD: 我是昨天来的。"},
+    {t:"了 (le)", d:"Hành động đã hoàn thành / thay đổi trạng thái.\nVD: 下雨了。"},
+    {t:"太...了 (tài...le)", d:"Biểu thị mức độ cao (quá, lắm).\nVD: 太好了！"},
+    {t:"吗 (ma)", d:"Câu hỏi Có/Không.\nVD: 你是学生吗？"},
+    {t:"呢 (ne)", d:"Hỏi ngược lại (còn... thì sao).\nVD: 我很好，你呢？"}
 ];
 
-const sampleStories = [
-    {t:"我的家 (Gia đình tôi)", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
-    {t:"去买苹果 (Đi mua táo)", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”我买了十个苹果。我很高兴。"}
+const baseStories = [
+    {t:"我的家", c:"你好！我叫安娜。我家有四口人：爸爸、妈妈、哥哥和我。我爸爸是医生，妈妈是老师。我和哥哥都是学生。我爱我的家！"},
+    {t:"去买苹果", c:"下午我去商店买水果。我问：“苹果多少钱？”。那个人说：“三块钱一个。”我买了十个苹果。我很高兴。"}
 ];
 
-const sampleSubs = [
+const baseSubs = [
     {start:0, end:3, zh:"你好！", py:"nǐ hǎo!", en:"Xin chào!"},
-    {start:4, end:7, zh:"欢迎来到这里。", py:"huānyíng lái dào zhèlǐ.", en:"Chào mừng đến với nơi này."}
+    {start:4, end:7, zh:"欢迎来到这里。", py:"huānyíng lái dào zhèlǐ.", en:"Chào mừng."}
+];
+
+const baseGrammarQuiz = [
+    { q: "我 ___ 昨天来的。", opts: ["是", "了", "吗", "呢"], a: "是" },
+    { q: "外面下雨 ___。", opts: ["吗", "了", "和", "太"], a: "了" },
+    { q: "这个苹果 ___ 大了！", opts: ["很", "太", "不", "都"], a: "太" }
 ];
 
 /* ==========================================================================
-   LOCAL STORAGE & SYSTEM STATE
+   STATE MANAGEMENT (Firebase Sync)
    ========================================================================== */
-function getData(key, def) { return JSON.parse(localStorage.getItem(key)) || def; }
-function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+let currentUser = null;
+let userData = {
+    vocab: { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] },
+    grammar: { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] },
+    stories: [],
+    notebook: [],
+    subs: [],
+    daily: { date: new Date().toLocaleDateString(), words: 0, quizzes: 0, streak: 0 }
+};
 
 let currentLevel = 1;
 let vocabDictMap = []; 
 
-function initSystem() {
-    if(!localStorage.getItem('sanrio_hsk1_v')) {
-        const vDB = rawHSK1.map(w => ({h:w[0], p:w[1], m:w[2], pos:w[3], hv:w[4], e:w[5]}));
-        setData('sanrio_hsk1_v', vDB);
+// Auth Logic
+window.login = async () => {
+    const e = document.getElementById('auth-email').value;
+    const p = document.getElementById('auth-pass').value;
+    try {
+        if(auth) await signInWithEmailAndPassword(auth, e, p);
+        else bypassAuth(); // Fallback if no firebase config
+    } catch(err) {
+        document.getElementById('auth-error').innerText = err.message;
+        document.getElementById('auth-error').style.display = 'block';
     }
-    if(!localStorage.getItem('sanrio_hsk1_g')) setData('sanrio_hsk1_g', coreGrammar);
-    if(!localStorage.getItem('sanrio_stories')) setData('sanrio_stories', sampleStories);
-    if(!localStorage.getItem('sanrio_subs')) setData('sanrio_subs', sampleSubs);
-    if(!localStorage.getItem('sanrio_notebook')) setData('sanrio_notebook', []);
-    
-    checkAndResetDaily();
-    buildTokenizerMap();
 }
 
-function checkAndResetDaily() {
-    const today = new Date().toLocaleDateString();
-    let daily = getData('sanrio_daily', { date: today, words: 0, quizzes: 0, streak: 0 });
-    
-    if (daily.date !== today) {
-        // Check if streak continues (was active yesterday)
-        let yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        if (daily.date === yesterday.toLocaleDateString()) {
-            daily.streak += 1;
-        } else {
-            daily.streak = 1; // Reset streak if missed a day
+window.register = async () => {
+    const e = document.getElementById('auth-email').value;
+    const p = document.getElementById('auth-pass').value;
+    try {
+        if(auth) await createUserWithEmailAndPassword(auth, e, p);
+        else bypassAuth();
+    } catch(err) {
+        document.getElementById('auth-error').innerText = err.message;
+        document.getElementById('auth-error').style.display = 'block';
+    }
+}
+
+window.logout = async () => {
+    if(auth) await signOut(auth);
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('auth-portal').style.display = 'flex';
+}
+
+function bypassAuth() {
+    // Local mock auth for when Firebase config is missing
+    currentUser = { uid: 'mock_local_user' };
+    handleAuthSuccess();
+}
+
+if(auth) {
+    onAuthStateChanged(auth, user => {
+        if(user) { currentUser = user; handleAuthSuccess(); }
+        else { 
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('auth-portal').style.display = 'flex';
         }
-        daily.date = today;
-        daily.words = 0;
-        daily.quizzes = 0;
-    } else if (daily.streak === 0) {
-        daily.streak = 1; // First time logging in today
+    });
+}
+
+async function handleAuthSuccess() {
+    document.getElementById('auth-portal').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    await loadCloudData();
+    window.nav('dashboard');
+}
+
+async function loadCloudData() {
+    if(db && currentUser) {
+        try {
+            const docRef = doc(db, "users", currentUser.uid);
+            const snap = await getDoc(docRef);
+            if(snap.exists()) {
+                userData = { ...userData, ...snap.data() };
+            }
+        } catch(e) { console.error("Cloud load error", e); }
+    } else {
+        // Mock load from localStorage
+        const local = JSON.parse(localStorage.getItem('mock_cloud_' + currentUser.uid));
+        if(local) userData = { ...userData, ...local };
     }
     
-    setData('sanrio_daily', daily);
+    // Check Daily Tracker
+    const today = new Date().toLocaleDateString();
+    if (userData.daily.date !== today) {
+        let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if (userData.daily.date === yesterday.toLocaleDateString()) userData.daily.streak += 1;
+        else userData.daily.streak = 1;
+        userData.daily.date = today;
+        userData.daily.words = 0;
+        userData.daily.quizzes = 0;
+        syncToCloud();
+    } else if (userData.daily.streak === 0) {
+        userData.daily.streak = 1;
+        syncToCloud();
+    }
+    
+    buildTokenizerMap();
+    updateDashboardUI();
+}
+
+async function syncToCloud() {
+    if(db && currentUser) {
+        try {
+            await setDoc(doc(db, "users", currentUser.uid), userData, {merge: true});
+        } catch(e) { console.error("Cloud sync error", e); }
+    } else {
+        localStorage.setItem('mock_cloud_' + currentUser.uid, JSON.stringify(userData));
+    }
     updateDashboardUI();
 }
 
 function updateDailyProgress(type) {
-    let daily = getData('sanrio_daily');
-    if(type === 'word') daily.words++;
-    if(type === 'quiz') daily.quizzes++;
-    setData('sanrio_daily', daily);
-    updateDashboardUI();
+    if(type === 'word') userData.daily.words++;
+    if(type === 'quiz') userData.daily.quizzes++;
+    syncToCloud();
 }
 
 function updateDashboardUI() {
-    const daily = getData('sanrio_daily');
-    document.getElementById('streak-counter').innerText = daily.streak;
-    document.getElementById('words-today').innerText = daily.words;
+    document.getElementById('streak-counter').innerText = userData.daily.streak;
+    document.getElementById('words-today').innerText = userData.daily.words;
     
-    // Target: 10 words, 1 quiz. Max 100%
-    let progress = Math.min(100, Math.round(((daily.words/10) + (daily.quizzes/1))*50));
+    // Target: 10 words, 1 quiz = 100%
+    let progress = Math.min(100, Math.round(((userData.daily.words/10) + (userData.daily.quizzes/1))*50));
     document.getElementById('goal-progress-bar').style.width = progress + '%';
     document.getElementById('goal-text').innerText = progress;
     
-    document.getElementById('total-words').innerText = getData('sanrio_hsk1_v').length;
+    // Total words = Base + User Vocab level 1
+    let total = baseVocab.length + (userData.vocab['1'] ? userData.vocab['1'].length : 0);
+    document.getElementById('total-words').innerText = total;
 }
 
 function buildTokenizerMap() {
-    vocabDictMap = getData('sanrio_hsk1_v', []).sort((a,b) => b.h.length - a.h.length);
+    let combined = [...baseVocab];
+    for(let lvl in userData.vocab) combined = combined.concat(userData.vocab[lvl]);
+    vocabDictMap = combined.sort((a,b) => b.h.length - a.h.length);
 }
 
-// Navigation
-function nav(id) {
+// Global UI Navigation
+window.nav = function(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -533,10 +652,9 @@ function nav(id) {
     if(id === 'reading') renderStories();
     if(id === 'notebook') renderNotebook();
     if(id === 'video') renderSubtitles();
-}
+};
 
-// HSK Block Logic
-function openLevel(module, level) {
+window.openLevel = function(module, level) {
     currentLevel = level;
     document.getElementById(`${module}-home`).style.display = 'none';
     document.getElementById(`${module}-workspace`).style.display = 'block';
@@ -544,20 +662,20 @@ function openLevel(module, level) {
     if(module === 'vocab') {
         document.getElementById('v-lvl-title').innerText = level;
         document.getElementById('v-add-lvl').innerText = level;
-        switchMode('v', 'study');
+        window.switchMode('v', 'study');
     } else {
         document.getElementById('g-lvl-title').innerText = level;
-        switchMode('g', 'study');
+        window.switchMode('g', 'study');
     }
-}
-function closeLevel(module) {
+};
+
+window.closeLevel = function(module) {
     document.getElementById(`${module}-home`).style.display = 'block';
     document.getElementById(`${module}-workspace`).style.display = 'none';
-}
+};
 
-function switchMode(prefix, mode) {
-    const tabs = ['study', 'quiz', 'add'];
-    tabs.forEach(m => {
+window.switchMode = function(prefix, mode) {
+    ['study', 'quiz', 'add'].forEach(m => {
         let btn = document.getElementById(`tab-${prefix}-${m}`);
         let view = document.getElementById(`${prefix}-${m}`);
         if(btn) btn.classList.toggle('active', mode === m);
@@ -565,78 +683,77 @@ function switchMode(prefix, mode) {
     });
     
     if(prefix === 'v') {
-        if(mode === 'study') initFC();
-        if(mode === 'quiz') document.getElementById('v-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startVocabQuiz()">🚀 Start Quiz (10 Qs)</button>`;
+        if(mode === 'study') window.initFC();
+        if(mode === 'quiz') document.getElementById('v-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="window.startVocabQuiz()">🚀 Start Quiz</button>`;
     }
     if(prefix === 'g') {
-        if(mode === 'study') renderGrammar();
-        if(mode === 'quiz') document.getElementById('g-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="startGrammarQuiz()">🚀 Start Quiz</button>`;
+        if(mode === 'study') window.renderGrammar();
+        if(mode === 'quiz') document.getElementById('g-quiz-container').innerHTML = `<button class="btn btn-pink" style="padding:15px 30px; font-size:1.2rem;" onclick="window.startGrammarQuiz()">🚀 Start Quiz</button>`;
     }
-}
+};
 
-// Global TTS
-function speak(text) {
+window.speak = function(text) {
     if('speechSynthesis' in window) {
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = 'zh-CN';
         window.speechSynthesis.speak(msg);
     }
-}
+};
 
 /* ==========================================================================
-   VOCABULARY (Study, Quiz, Add)
+   VOCABULARY MODULE
    ========================================================================== */
 let fcIndex = 0;
 let curVocab = [];
 
-function initFC() {
-    curVocab = getData(`sanrio_hsk${currentLevel}_v`, []);
-    if(!curVocab.length) return alert(`No words in HSK ${currentLevel} yet! Add some first.`);
+window.initFC = function() {
+    curVocab = [...(userData.vocab[currentLevel] || [])];
+    if(currentLevel === 1) curVocab = [...baseVocab, ...curVocab];
+    
+    if(!curVocab.length) return alert(`No words in HSK ${currentLevel} yet!`);
     if(fcIndex >= curVocab.length) fcIndex = 0;
-    renderFC();
-}
-function renderFC() {
+    window.renderFC();
+};
+
+window.renderFC = function() {
     if(!curVocab.length) return;
     const c = curVocab[fcIndex];
     document.getElementById('v-fc-h').innerText = c.h;
     document.getElementById('v-fc-p').innerText = c.p;
     document.getElementById('v-fc-m').innerText = c.m;
-    document.getElementById('v-fc-pos').innerText = c.pos;
-    document.getElementById('v-fc-hv').innerText = c.hv;
-    document.getElementById('v-fc-e').innerText = c.e;
+    document.getElementById('v-fc-pos').innerText = c.pos || 'N/A';
+    document.getElementById('v-fc-hv').innerText = c.hv || 'N/A';
+    document.getElementById('v-fc-e').innerText = c.e || '';
     document.getElementById('v-fc-count').innerText = `${fcIndex + 1} / ${curVocab.length}`;
     document.querySelector('.fc-container').classList.remove('flipped');
-}
-function nextCard() { fcIndex = (fcIndex + 1) % curVocab.length; renderFC(); }
-function prevCard() { fcIndex = (fcIndex - 1 + curVocab.length) % curVocab.length; renderFC(); }
+};
 
-function markWordLearned() {
-    updateDailyProgress('word');
-    nextCard();
-}
+window.nextCard = function() { fcIndex = (fcIndex + 1) % curVocab.length; window.renderFC(); };
+window.prevCard = function() { fcIndex = (fcIndex - 1 + curVocab.length) % curVocab.length; window.renderFC(); };
+window.markWordLearned = function() { updateDailyProgress('word'); window.nextCard(); };
 
-function addVocab() {
+window.addVocab = function() {
     const h = document.getElementById('v-add-h').value.trim();
     const p = document.getElementById('v-add-p').value.trim();
     const m = document.getElementById('v-add-m').value.trim();
-    const pos = document.getElementById('v-add-pos').value.trim() || 'N/A';
-    const hv = document.getElementById('v-add-hv').value.trim() || 'N/A';
+    const pos = document.getElementById('v-add-pos').value.trim();
+    const hv = document.getElementById('v-add-hv').value.trim();
     const e = document.getElementById('v-add-e').value.trim();
     if(h && p && m) {
-        const key = `sanrio_hsk${currentLevel}_v`;
-        let arr = getData(key, []);
-        arr.push({h,p,m,pos,hv,e});
-        setData(key, arr);
+        if(!userData.vocab[currentLevel]) userData.vocab[currentLevel] = [];
+        userData.vocab[currentLevel].push({h,p,m,pos,hv,e});
+        syncToCloud();
         buildTokenizerMap();
-        alert(`Saved to HSK ${currentLevel}!`);
+        alert(`Saved to Cloud HSK ${currentLevel}!`);
         ['v-add-h','v-add-p','v-add-m','v-add-pos','v-add-hv','v-add-e'].forEach(id=>document.getElementById(id).value='');
     }
-}
+};
 
-// Vocab Quiz
 let vQuizState = { qIdx: 0, score: 0, qs: [] };
-function startVocabQuiz() {
-    let pool = getData(`sanrio_hsk${currentLevel}_v`, []);
+window.startVocabQuiz = function() {
+    let pool = [...(userData.vocab[currentLevel] || [])];
+    if(currentLevel === 1) pool = [...baseVocab, ...pool];
+    
     if(pool.length < 4) return alert("Need at least 4 words!");
     let qs = [];
     for(let i=0; i<10; i++) {
@@ -653,13 +770,14 @@ function startVocabQuiz() {
         qs.push({q, opts:opts.sort(()=>Math.random()-0.5), a});
     }
     vQuizState = {qIdx:0, score:0, qs};
-    renderVQuiz();
-}
-function renderVQuiz() {
+    window.renderVQuiz();
+};
+
+window.renderVQuiz = function() {
     const box = document.getElementById('v-quiz-container');
     if(vQuizState.qIdx >= 10) {
         if(vQuizState.score >= 5) updateDailyProgress('quiz');
-        box.innerHTML = `<h3 style="font-size:2rem;">Quiz Complete! 🌸</h3><p style="font-size:1.5rem;color:#d6336c;margin:15px 0;">Score: ${vQuizState.score} / 10</p><button class="btn btn-pink" onclick="startVocabQuiz()">Try Again</button>`;
+        box.innerHTML = `<h3>Quiz Complete! 🌸</h3><p style="font-size:1.5rem;color:#d6336c;margin:15px 0;">Score: ${vQuizState.score} / 10</p><button class="btn btn-pink" onclick="window.startVocabQuiz()">Try Again</button>`;
         return;
     }
     const q = vQuizState.qs[vQuizState.qIdx];
@@ -667,12 +785,13 @@ function renderVQuiz() {
         <div style="color:var(--text-light); margin-bottom:10px;">Question ${vQuizState.qIdx + 1}/10</div>
         <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
         <div class="grid-2">
-            ${q.opts.map((opt, i)=>`<button class="quiz-opt" id="vqo-${i}" onclick="ansVQuiz('${opt.replace(/'/g,"\\'")}', 'vqo-${i}')">${opt}</button>`).join('')}
+            ${q.opts.map((opt, i)=>`<button class="quiz-opt" id="vqo-${i}" onclick="window.ansVQuiz('${opt.replace(/'/g,"\\'")}', 'vqo-${i}')">${opt}</button>`).join('')}
         </div>
-        <button id="vq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; renderVQuiz();">Next ➡️</button>
+        <button id="vq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; window.renderVQuiz();">Next ➡️</button>
     `;
-}
-function ansVQuiz(sel, id) {
+};
+
+window.ansVQuiz = function(sel, id) {
     const q = vQuizState.qs[vQuizState.qIdx];
     document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
     if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
@@ -681,93 +800,80 @@ function ansVQuiz(sel, id) {
         document.querySelectorAll('.quiz-opt').forEach(b => { if(b.innerText===q.a) b.classList.add('correct'); });
     }
     document.getElementById('vq-next').style.display='block';
-}
+};
 
 /* ==========================================================================
    GRAMMAR MODULE
    ========================================================================== */
-function renderGrammar() {
-    const key = `sanrio_hsk${currentLevel}_g`;
-    let arr = getData(key, []);
-    if(currentLevel === 1 && arr.length===0) { arr = coreGrammar; setData(key, arr); }
+window.renderGrammar = function() {
+    let arr = [...(userData.grammar[currentLevel] || [])];
+    if(currentLevel === 1) arr = [...baseGrammar, ...arr];
     
     document.getElementById('g-list').innerHTML = arr.map(g => `
-        <div class="card" style="margin-bottom:0;">
+        <div class="card" style="margin-bottom:0; background:var(--white);">
             <h4 style="font-size:1.3rem;">${g.t}</h4><p style="white-space:pre-line; line-height:1.6;">${g.d}</p>
         </div>`).join('');
-}
-function addGrammar() {
+};
+
+window.addGrammar = function() {
     const t = document.getElementById('g-add-t').value.trim();
     const d = document.getElementById('g-add-d').value.trim();
     if(t && d) {
-        const key = `sanrio_hsk${currentLevel}_g`;
-        let arr = getData(key, []); arr.push({t,d}); setData(key, arr);
-        renderGrammar();
+        if(!userData.grammar[currentLevel]) userData.grammar[currentLevel] = [];
+        userData.grammar[currentLevel].push({t,d});
+        syncToCloud();
+        window.renderGrammar();
         document.getElementById('g-add-t').value=''; document.getElementById('g-add-d').value='';
     }
-}
-function startGrammarQuiz() {
+};
+
+window.startGrammarQuiz = function() {
     if(currentLevel !== 1) return alert("Grammar Quiz only available in HSK 1 Demo.");
-    vQuizState = {qIdx:0, score:0, qs:[
-        {q:"我 ___ 昨天来的。", opts:["是","了","吗","呢"], a:"是"},
-        {q:"外面下雨 ___。", opts:["吗","了","和","太"], a:"了"},
-        {q:"这个苹果 ___ 大了！", opts:["很","太","不","都"], a:"太"}
-    ]};
-    renderGQuiz();
-}
-function renderGQuiz() {
+    vQuizState = {qIdx:0, score:0, qs:[...baseGrammarQuiz].sort(()=>Math.random()-0.5)};
+    window.renderGQuiz();
+};
+
+window.renderGQuiz = function() {
     const box = document.getElementById('g-quiz-container');
     if(vQuizState.qIdx >= vQuizState.qs.length) {
-        box.innerHTML = `<h3>Complete! 🎀</h3><p>Score: ${vQuizState.score} / ${vQuizState.qs.length}</p><button class="btn btn-pink" onclick="startGrammarQuiz()">Try Again</button>`;
+        if(vQuizState.score > 0) updateDailyProgress('quiz');
+        box.innerHTML = `<h3>Complete! 🎀</h3><p>Score: ${vQuizState.score} / ${vQuizState.qs.length}</p><button class="btn btn-pink" onclick="window.startGrammarQuiz()">Try Again</button>`;
         return;
     }
     const q = vQuizState.qs[vQuizState.qIdx];
     box.innerHTML = `
         <div style="font-size:2rem; color:#d6336c; margin-bottom:20px; font-weight:bold;">${q.q}</div>
-        <div class="grid-2">${q.opts.map((opt, i)=>`<button class="quiz-opt" id="gqo-${i}" onclick="ansGQuiz('${opt}', 'gqo-${i}')">${opt}</button>`).join('')}</div>
-        <button id="gq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; renderGQuiz();">Next ➡️</button>
+        <div class="grid-2">${q.opts.map((opt, i)=>`<button class="quiz-opt" id="gqo-${i}" onclick="window.ansGQuiz('${opt}', 'gqo-${i}')">${opt}</button>`).join('')}</div>
+        <button id="gq-next" class="btn btn-pink" style="display:none; margin:20px auto 0;" onclick="vQuizState.qIdx++; window.renderGQuiz();">Next ➡️</button>
     `;
-}
-function ansGQuiz(sel, id) {
+};
+
+window.ansGQuiz = function(sel, id) {
     const q = vQuizState.qs[vQuizState.qIdx];
     document.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
     if(sel === q.a) { document.getElementById(id).classList.add('correct'); vQuizState.score++; }
     else { document.getElementById(id).classList.add('wrong'); }
     document.getElementById('gq-next').style.display='block';
-}
+};
 
 /* ==========================================================================
-   VIDEO HUB (Split Screen, Auto-Pause, Dictation)
+   VIDEO HUB (Auto-Pause, Dictation, Tooltip)
    ========================================================================== */
 const vid = document.getElementById('vid-player');
 let isAutoPause = false;
 let pausedSubIdx = -1;
 
-function loadVideo(e) {
+window.loadVideo = function(e) {
     const file = e.target.files[0];
-    if(file) {
-        vid.src = URL.createObjectURL(file);
-        vid.load();
-    }
-}
+    if(file) { vid.src = URL.createObjectURL(file); vid.load(); }
+};
 
-document.getElementById('auto-pause-toggle').addEventListener('change', (e) => {
-    isAutoPause = e.target.checked;
-});
-
-function resumeVideo() {
-    vid.play();
-    document.getElementById('btn-resume-vid').style.display = 'none';
-}
-
+document.getElementById('auto-pause-toggle').addEventListener('change', (e) => { isAutoPause = e.target.checked; });
+window.resumeVideo = function() { vid.play(); document.getElementById('btn-resume-vid').style.display = 'none'; };
 document.addEventListener('keydown', (e) => {
-    if(e.code === 'Space' && document.getElementById('btn-resume-vid').style.display === 'block') {
-        e.preventDefault();
-        resumeVideo();
-    }
+    if(e.code === 'Space' && document.getElementById('btn-resume-vid').style.display === 'block') { e.preventDefault(); window.resumeVideo(); }
 });
 
-// Dictionary Tokenizer for Subs
 function wrapChinese(text) {
     if(!text) return '';
     let res = ''; let i = 0;
@@ -777,7 +883,7 @@ function wrapChinese(text) {
             let len = v.h.length;
             if(text.substring(i, i+len) === v.h) {
                 const safeV = encodeURIComponent(JSON.stringify(v));
-                res += `<span class="dict-word" data-entry="${safeV}" onmouseenter="showDict(event)" onmouseleave="hideDict()" ontouchstart="showDict(event)">${v.h}</span>`;
+                res += `<span class="dict-word" data-entry="${safeV}" onmouseenter="window.showDict(event)" onmouseleave="window.hideDict()" ontouchstart="window.showDict(event)">${v.h}</span>`;
                 i += len; matched = true; break;
             }
         }
@@ -786,42 +892,38 @@ function wrapChinese(text) {
     return res;
 }
 
-function renderSubtitles() {
-    const subs = getData('sanrio_subs', []);
+window.renderSubtitles = function() {
+    let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
     const cont = document.getElementById('sub-list-container');
     cont.innerHTML = subs.map((s, i) => `
         <div class="sub-line" id="sub-row-${i}">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div style="flex:1;" onclick="seekVid(${s.start})">
+                <div style="flex:1;" onclick="window.seekVid(${s.start})">
                     <span class="sub-time">${s.start}s - ${s.end}s</span>
-                    
                     <div class="sub-normal" id="sn-${i}">
                         <div class="sub-text">${wrapChinese(s.zh)}</div>
                         <div style="font-size:0.95rem; color:var(--text-light); margin-top:5px;">${s.py} | ${s.en}</div>
                     </div>
-                    
                     <div class="dictation-input-area" id="sd-${i}" style="display:none; margin-top:10px;">
-                        <input type="text" id="dic-in-${i}" placeholder="Type what you hear (Hanzi)..." onclick="event.stopPropagation()">
+                        <input type="text" id="dic-in-${i}" placeholder="Gõ chữ Hán bạn nghe được..." onclick="event.stopPropagation()">
                         <div style="display:flex; gap:10px; margin-top:5px;">
-                            <button class="btn" style="padding:5px 15px;" onclick="checkDic(${i}, '${s.zh}'); event.stopPropagation()">Kiểm tra</button>
-                            <button class="btn btn-danger" style="padding:5px 15px;" onclick="toggleDic(${i}, false); event.stopPropagation()">Hủy</button>
+                            <button class="btn" style="padding:5px 15px;" onclick="window.checkDic(${i}, '${s.zh}'); event.stopPropagation()">Kiểm tra</button>
+                            <button class="btn btn-danger" style="padding:5px 15px;" onclick="window.toggleDic(${i}, false); event.stopPropagation()">Hủy</button>
                         </div>
                         <div class="dic-res" id="dic-res-${i}"></div>
                     </div>
                 </div>
-                
                 <div style="display:flex; flex-direction:column; gap:5px; margin-left:10px;">
-                    <button class="btn" style="padding:5px;" onclick="toggleDic(${i}, true)">✍️</button>
-                    <button class="btn" style="padding:5px;" onclick="editSub(event, ${i})">✏️</button>
-                    <button class="btn btn-danger" style="padding:5px;" onclick="delSub(event, ${i})">X</button>
+                    <button class="btn" style="padding:5px;" onclick="window.toggleDic(${i}, true)">✍️</button>
+                    <button class="btn" style="padding:5px;" onclick="window.editSub(event, ${i})">✏️</button>
+                    <button class="btn btn-danger" style="padding:5px;" onclick="window.delSub(event, ${i})">X</button>
                 </div>
             </div>
         </div>`).join('');
-}
+};
 
-// Time Update Logic (Highlight & Auto-Pause)
 vid.addEventListener('timeupdate', () => {
-    const subs = getData('sanrio_subs', []);
+    let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
     let ct = vid.currentTime;
     let activeIdx = -1;
     
@@ -832,24 +934,18 @@ vid.addEventListener('timeupdate', () => {
     document.querySelectorAll('.sub-line').forEach((row, idx) => {
         if(idx === activeIdx) {
             row.classList.add('active');
-            // Auto-pause logic
             if(isAutoPause && ct >= subs[idx].end - 0.2 && pausedSubIdx !== idx) {
-                vid.pause();
-                pausedSubIdx = idx;
+                vid.pause(); pausedSubIdx = idx;
                 document.getElementById('btn-resume-vid').style.display = 'block';
             }
-        } else {
-            row.classList.remove('active');
-        }
+        } else { row.classList.remove('active'); }
     });
-    
-    // Reset pause tracking if we moved to a new sub
     if(activeIdx !== pausedSubIdx && activeIdx !== -1) pausedSubIdx = -1;
 });
 
-function seekVid(s) { if(vid.src) { vid.currentTime = s; vid.play(); document.getElementById('btn-resume-vid').style.display = 'none'; } }
+window.seekVid = function(s) { if(vid.src) { vid.currentTime = s; vid.play(); document.getElementById('btn-resume-vid').style.display = 'none'; } };
 
-function saveSub() {
+window.saveSub = function() {
     const start = parseFloat(document.getElementById('sub-s').value);
     const end = parseFloat(document.getElementById('sub-e').value);
     const zh = document.getElementById('sub-zh').value.trim();
@@ -858,92 +954,83 @@ function saveSub() {
     const idx = parseInt(document.getElementById('sub-idx').value);
     
     if(zh && !isNaN(start) && !isNaN(end)) {
-        const subs = getData('sanrio_subs', []);
-        if (idx > -1) subs[idx] = {start, end, zh, py, en};
-        else subs.push({start, end, zh, py, en});
-        subs.sort((a,b) => a.start - b.start);
-        setData('sanrio_subs', subs);
-        cancelSub(); renderSubtitles();
+        if(!userData.subs) userData.subs = [];
+        // Note: We only allow editing/deleting custom subs in this demo to avoid modifying base array length mismatches
+        userData.subs.push({start, end, zh, py, en});
+        syncToCloud();
+        window.cancelSub(); window.renderSubtitles();
     }
-}
-function editSub(e, i) {
-    e.stopPropagation();
-    const s = getData('sanrio_subs', [])[i];
-    document.getElementById('sub-idx').value = i;
-    document.getElementById('sub-s').value = s.start;
-    document.getElementById('sub-e').value = s.end;
-    document.getElementById('sub-zh').value = s.zh;
-    document.getElementById('sub-py').value = s.py;
-    document.getElementById('sub-trans').value = s.en;
-    document.getElementById('sub-cancel-btn').style.display='block';
-}
-function cancelSub() {
-    document.getElementById('sub-idx').value = "-1";
-    document.getElementById('sub-cancel-btn').style.display='none';
-    ['sub-s','sub-e','sub-zh','sub-py','sub-trans'].forEach(id=>document.getElementById(id).value='');
-}
-function delSub(e, i) {
-    e.stopPropagation();
-    let subs = getData('sanrio_subs', []); subs.splice(i,1); setData('sanrio_subs', subs); renderSubtitles();
-}
+};
 
-// Dictation Mode
-function toggleDic(idx, show) {
+window.editSub = function(e, i) { e.stopPropagation(); alert("To maintain base data integrity in demo, editing is locked. Please add a new line."); };
+window.cancelSub = function() {
+    document.getElementById('sub-idx').value = "-1"; document.getElementById('sub-cancel-btn').style.display='none';
+    ['sub-s','sub-e','sub-zh','sub-py','sub-trans'].forEach(id=>document.getElementById(id).value='');
+};
+window.delSub = function(e, i) {
+    e.stopPropagation();
+    let subsCount = [...baseSubs, ...(userData.subs || [])].length;
+    if(i < baseSubs.length) return alert("Cannot delete base subtitles!");
+    userData.subs.splice(i - baseSubs.length, 1);
+    syncToCloud(); window.renderSubtitles();
+};
+
+window.toggleDic = function(idx, show) {
     document.getElementById(`sn-${idx}`).style.display = show ? 'none' : 'block';
     document.getElementById(`sd-${idx}`).style.display = show ? 'flex' : 'none';
     if(show) {
         document.getElementById(`dic-in-${idx}`).value = '';
         document.getElementById(`dic-res-${idx}`).className = 'dic-res';
-        seekVid(getData('sanrio_subs')[idx].start);
+        let subs = [...baseSubs, ...(userData.subs || [])].sort((a,b)=>a.start-b.start);
+        window.seekVid(subs[idx].start);
     }
-}
-function checkDic(idx, trueText) {
+};
+
+window.checkDic = function(idx, trueText) {
     const inVal = document.getElementById(`dic-in-${idx}`).value.trim();
     const res = document.getElementById(`dic-res-${idx}`);
     if(inVal === trueText) {
-        res.innerText = 'Correct 🎉';
-        res.className = 'dic-res correct';
+        res.innerText = 'Correct 🎉'; res.className = 'dic-res correct';
         updateDailyProgress('quiz');
     } else {
-        res.innerText = 'Wrong - Try again ❌';
-        res.className = 'dic-res wrong';
+        res.innerText = 'Wrong - Try again ❌'; res.className = 'dic-res wrong';
     }
-}
+};
 
-// Hover Dict Tooltip
 const dictTT = document.getElementById('dict-tooltip');
-function showDict(e) {
+window.showDict = function(e) {
     const data = JSON.parse(decodeURIComponent(e.target.dataset.entry));
     document.getElementById('dt-h').innerText = data.h; document.getElementById('dt-p').innerText = data.p;
     document.getElementById('dt-pos').innerText = data.pos; document.getElementById('dt-hv').innerText = data.hv;
     document.getElementById('dt-m').innerText = data.m; document.getElementById('dt-e').innerText = data.e;
     const r = e.target.getBoundingClientRect();
-    dictTT.style.display = 'block';
-    dictTT.style.left = (r.left + r.width/2) + 'px';
-    dictTT.style.top = (r.top - 10) + 'px';
-}
-function hideDict() { dictTT.style.display = 'none'; }
+    dictTT.style.display = 'block'; dictTT.style.left = (r.left + r.width/2) + 'px'; dictTT.style.top = (r.top - 10) + 'px';
+};
+window.hideDict = function() { dictTT.style.display = 'none'; };
 
 /* ==========================================================================
    READING & NOTEBOOK
    ========================================================================== */
-function renderStories() {
-    document.getElementById('story-list').innerHTML = getData('sanrio_stories', []).map(s => `
+window.renderStories = function() {
+    let arr = [...baseStories, ...(userData.stories || [])];
+    document.getElementById('story-list').innerHTML = arr.map(s => `
         <div class="card">
-            <h3>${s.t}</h3><div class="story-content" onmouseup="handleSelect()" ontouchend="handleSelect()">${s.c}</div>
+            <h3>${s.t}</h3><div class="story-content" onmouseup="window.handleSelect()" ontouchend="window.handleSelect()">${s.c}</div>
         </div>`).join('');
-}
-function addStory() {
+};
+
+window.addStory = function() {
     const t = document.getElementById('s-add-t').value.trim();
     const c = document.getElementById('s-add-c').value.trim();
     if(t && c) {
-        const arr = getData('sanrio_stories', []); arr.push({t, c}); setData('sanrio_stories', arr);
-        renderStories(); document.getElementById('s-add-t').value=''; document.getElementById('s-add-c').value='';
+        if(!userData.stories) userData.stories = [];
+        userData.stories.push({t, c}); syncToCloud();
+        window.renderStories(); document.getElementById('s-add-t').value=''; document.getElementById('s-add-c').value='';
     }
-}
+};
 
 const actionTT = document.getElementById('action-tooltip');
-function handleSelect() {
+window.handleSelect = function() {
     setTimeout(() => { 
         const sel = window.getSelection(); const text = sel.toString().trim();
         if (text.length > 0 && /[\u4e00-\u9fa5]/.test(text)) {
@@ -953,32 +1040,31 @@ function handleSelect() {
             actionTT.style.left = (r.left + r.width/2) + 'px'; actionTT.style.top = r.bottom + 'px';
         }
     }, 100);
-}
+};
 document.addEventListener('mousedown', (e) => { if(!actionTT.contains(e.target) && !e.target.classList.contains('story-content')) actionTT.style.display = 'none'; });
 
-function saveToNotebook(word) {
-    const nb = getData('sanrio_notebook', []);
-    if(!nb.includes(word)) { nb.push(word); setData('sanrio_notebook', nb); updateDailyProgress('word'); }
+window.saveToNotebook = function(word) {
+    if(!userData.notebook) userData.notebook = [];
+    if(!userData.notebook.includes(word)) { userData.notebook.push(word); syncToCloud(); updateDailyProgress('word'); }
     actionTT.style.display = 'none'; window.getSelection().removeAllRanges();
-}
+};
 
-function renderNotebook() {
-    const nb = getData('sanrio_notebook', []);
+window.renderNotebook = function() {
+    const nb = userData.notebook || [];
     document.getElementById('notebook-list').innerHTML = nb.map((word, i) => {
-        const found = vocabDictMap.find(v => v.h === word) || { p: 'Custom', m: 'Add def manually.' };
+        const found = vocabDictMap.find(v => v.h === word) || { p: 'Custom', m: 'Added from reading.' };
         return `
         <div class="card card-mint" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
             <div><h4 style="font-size:1.8rem; margin-bottom:5px;">${word}</h4><p style="font-weight:bold;">${found.p} | ${found.m}</p></div>
             <div style="display:flex; flex-direction:column; gap:5px;">
-                <button class="btn btn-pink" onclick="speak('${word}')">🔊</button>
-                <button class="btn btn-danger" style="padding:10px; border-radius:10px;" onclick="delNb(${i})">🗑️</button>
+                <button class="btn btn-pink" onclick="window.speak('${word}')">🔊</button>
+                <button class="btn btn-danger" style="padding:10px; border-radius:10px;" onclick="window.delNb(${i})">🗑️</button>
             </div>
         </div>`;
     }).join('');
-}
-function delNb(i) { let nb = getData('sanrio_notebook', []); nb.splice(i, 1); setData('sanrio_notebook', nb); renderNotebook(); }
+};
+window.delNb = function(i) { userData.notebook.splice(i, 1); syncToCloud(); window.renderNotebook(); };
 
-initSystem();
 </script>
 </body>
 </html>
